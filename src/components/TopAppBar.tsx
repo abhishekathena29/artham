@@ -5,7 +5,7 @@ export default function TopAppBar() {
     <header className="flex justify-between items-center px-md py-sm w-full fixed top-0 z-50 bg-surface border-b border-outline-variant shadow-sm h-16">
       <Link to="/" className="flex items-center gap-sm">
         <span className="font-headline-md text-headline-md font-bold text-primary">
-          Treatment Navigator
+          Artham
         </span>
       </Link>
       <div className="flex items-center gap-md">

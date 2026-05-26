@@ -120,7 +120,7 @@ export default function LandingPage() {
                   <span className="text-secondary"> clear plan</span> — without the anxiety.
                 </h1>
                 <p className="font-body-lg text-body-lg text-on-surface-variant max-w-[640px] mb-lg">
-                  Financial Treatment Navigator turns complex medical billing into one
+                  Artham turns complex medical billing into one
                   trustworthy view: realistic cost estimates, insurance coverage, government
                   schemes you qualify for, and a step-by-step action plan personalized to your
                   treatment.
@@ -306,7 +306,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-lg items-center">
             <div>
               <p className="font-label-md text-secondary uppercase tracking-wider mb-xs">
-                Why Treatment Navigator
+                Why Artham
               </p>
               <h2 className="font-headline-lg text-headline-lg text-primary mb-md">
                 Built around the people, not the paperwork
@@ -351,8 +351,8 @@ export default function LandingPage() {
               <div className="bg-gradient-to-br from-primary to-primary-container rounded-xl p-lg text-on-primary shadow-2xl">
                 <span className="material-symbols-outlined text-[48px] opacity-30 mb-sm">format_quote</span>
                 <p className="font-body-lg text-body-lg mb-md leading-relaxed">
-                  "We had been quoted three wildly different prices for the same surgery. Treatment
-                  Navigator showed us exactly which scheme covered my mother and saved us close to
+                  "We had been quoted three wildly different prices for the same surgery. Artham
+                  showed us exactly which scheme covered my mother and saved us close to
                   ₹70,000 — and the action plan told us exactly which office to visit on which day."
                 </p>
                 <div className="flex items-center gap-md pt-md border-t border-on-primary/20">
