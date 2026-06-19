@@ -47,17 +47,10 @@ const features: Feature[] = [
   },
   {
     icon: "lightbulb",
-    title: "Step-by-Step Action Plan",
-    body: "A day-by-day plan, document readiness tracker, key contacts and a pro-tip card so nothing falls through the cracks.",
+    title: "Action & Support Plan",
+    body: "A day-by-day checklist, document readiness tracker, and matched financial-aid schemes in a single unified workspace.",
     tone: "tertiary",
     to: "/action-plan",
-  },
-  {
-    icon: "volunteer_activism",
-    title: "Personalized Support Plan",
-    body: "Eligible government schemes, NGO grants, and trust programs matched to your profile with progress tracking.",
-    tone: "primary",
-    to: "/support-plan",
   },
   {
     icon: "library_books",
@@ -128,17 +121,16 @@ export default function LandingPage() {
                 <div className="flex flex-col sm:flex-row gap-sm">
                   <button
                     onClick={() => nav("/intake")}
-                    className="bg-primary text-on-primary px-lg py-md rounded-xl font-label-md text-label-md hover:brightness-110 transition-all shadow-lg flex items-center justify-center gap-sm"
+                    className="bg-primary text-on-primary px-lg py-md rounded-xl font-label-md text-label-md hover:brightness-110 transition-all shadow-lg flex items-center justify-center gap-sm focus-visible:ring-2 focus-visible:ring-primary"
                   >
                     <span className="material-symbols-outlined">play_arrow</span>
-                    Start Your Plan — It's Free
+                    Start Your Journey — It's Free
                   </button>
                   <button
-                    onClick={() => nav("/medical-input")}
-                    className="border-2 border-primary text-primary px-lg py-md rounded-xl font-label-md text-label-md hover:bg-primary/5 transition-all flex items-center justify-center gap-sm"
+                    onClick={() => nav("/preventive-plans")}
+                    className="border-2 border-primary text-primary px-lg py-md rounded-xl font-label-md text-label-md hover:bg-primary/5 transition-all flex items-center justify-center focus-visible:ring-2 focus-visible:ring-primary"
                   >
-                    <span className="material-symbols-outlined">mic</span>
-                    Try Voice Intake
+                    Preventive Plans
                   </button>
                 </div>
                 <div className="mt-lg flex flex-wrap items-center gap-md text-on-surface-variant">
@@ -170,22 +162,22 @@ export default function LandingPage() {
                         92% confidence
                       </span>
                     </div>
-                    <h3 className="font-headline-lg text-headline-lg mb-xs">₹2,50,000 – ₹4,00,000</h3>
+                    <h3 className="font-headline-lg text-headline-lg mb-xs">₹4,50,000 – ₹7,50,000</h3>
                     <p className="font-body-sm opacity-80 mb-md">
-                      Laparoscopic Myomectomy • 3-day stay • Bengaluru
+                      Breast Cancer Lumpectomy • Chemo & Radiation • Bengaluru
                     </p>
                     <div className="space-y-sm mb-md">
                       <div className="flex justify-between text-sm">
                         <span>Insurance covers</span>
-                        <span className="font-bold">₹1,80,000</span>
+                        <span className="font-bold">₹4,35,000</span>
                       </div>
                       <div className="w-full h-3 bg-white/15 rounded-full overflow-hidden flex">
-                        <div className="bg-secondary-fixed" style={{ width: "60%" }} />
-                        <div className="bg-tertiary-fixed" style={{ width: "40%" }} />
+                        <div className="bg-secondary-fixed" style={{ width: "75%" }} />
+                        <div className="bg-tertiary-fixed" style={{ width: "25%" }} />
                       </div>
                       <div className="flex justify-between text-sm">
                         <span>Your out-of-pocket</span>
-                        <span className="font-bold">₹1,30,000</span>
+                        <span className="font-bold">₹1,45,000</span>
                       </div>
                     </div>
                     <div className="bg-white/10 backdrop-blur-md p-sm rounded-lg flex items-center gap-sm">
@@ -410,6 +402,7 @@ export default function LandingPage() {
           </div>
         </section>
       </div>
+
     </AppShell>
   );
 }

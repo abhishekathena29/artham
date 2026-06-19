@@ -6,8 +6,8 @@ const items = [
   { to: "/dashboard", label: "Financial Dashboard", icon: "dashboard" },
   { to: "/cost-breakdown", label: "Cost Breakdown", icon: "payments" },
   { to: "/action-plan", label: "Action Plan", icon: "lightbulb" },
-  { to: "/support-plan", label: "Support Plan", icon: "volunteer_activism" },
-  { to: "/schemes", label: "Schemes Catalogue", icon: "library_books" },
+  { to: "/schemes", label: "Government Schemes", icon: "account_balance" },
+  { to: "/insurances", label: "General Insurances", icon: "security" },
 ];
 
 export default function SideNav() {

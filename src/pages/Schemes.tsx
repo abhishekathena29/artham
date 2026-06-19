@@ -1,4 +1,6 @@
-import { useState, useMemo, useEffect } from "react";
+/* eslint-disable react-refresh/only-export-components */
+import { useState, useMemo, useEffect, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import AppShell from "../components/AppShell";
 
 type SchemeLink = {
@@ -21,6 +23,25 @@ type Scheme = {
   description: string;
   requiredDocuments: string[];
 };
+
+export type Insurance = {
+  name: string;
+  regNumber: string;
+  sector: "Public Sector" | "Private Sector" | "Standalone Health";
+  hq: string;
+  networkHospitals: string;
+  networkSize: number;
+  primaryPolicy: string;
+  policyFeatures: string[];
+  body: string;
+  reliability: number;
+  website: string;
+  requiredDocuments: string[];
+  contactPerson: string;
+  contactEmail: string;
+  contactPhone: string;
+};
+
 
 const schemes: Scheme[] = [
   {
@@ -1765,17 +1786,946 @@ const statesList = [
   "West Bengal"
 ];
 
+export const generalInsurers: Insurance[] = [
+  {
+    name: "The New India Assurance Co. Ltd.",
+    regNumber: "190",
+    sector: "Public Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "10,000+ Cashless Hospitals",
+    networkSize: 10000,
+    primaryPolicy: "New India Cancer Guard Policy",
+    policyFeatures: [
+      "Cashless cancer treatment across all stages I to IV",
+      "No sub-limits on room rent or diagnostic tests",
+      "Lifelong renewability and tax benefits under Section 80D"
+    ],
+    body: "Owned by the Government of India, New India Assurance is the largest public sector general insurance company in India, operating in over 28 countries.",
+    reliability: 96,
+    website: "https://www.newindia.co.in",
+    requiredDocuments: [
+      "Duly completed Claim Form A and B",
+      "KYC documents (Aadhaar Card, PAN Card)",
+      "Original hospital discharge summary sheet",
+      "Oncology biopsy report confirming diagnosis and stage",
+      "All medical bills, receipts, and physician prescriptions"
+    ],
+    contactPerson: "Ms. Girija Subramanian (CMD)",
+    contactEmail: "cmd.nia@newindia.co.in",
+    contactPhone: "+91-22-22624987"
+  },
+  {
+    name: "National Insurance Co. Ltd.",
+    regNumber: "105",
+    sector: "Public Sector",
+    hq: "Kolkata, West Bengal",
+    networkHospitals: "8,500+ Cashless Hospitals",
+    networkSize: 8500,
+    primaryPolicy: "National Cancer Vivek Policy",
+    policyFeatures: [
+      "Covers surgery, chemotherapy, radiation therapy, and bone marrow transplant",
+      "Cumulative bonus of 5% for every claim-free year",
+      "Pre and post hospitalization medical expenses up to 30 and 60 days"
+    ],
+    body: "National Insurance is a premier government-owned general insurance company, serving millions of policyholders across India with reliable critical illness plans.",
+    reliability: 94,
+    website: "https://nationalinsurance.nic.co.in",
+    requiredDocuments: [
+      "Claim form with signatures of the policyholder and doctor",
+      "Copy of original doctor prescription for hospitalization",
+      "Original diagnostic test reports (biopsies, blood panels, scans)",
+      "Original itemized medicine bills and invoices",
+      "Cancelled cheque with printed name for direct DBT transfer"
+    ],
+    contactPerson: "Shri Mrsingh (CMD Office)",
+    contactEmail: "cmd@nic.co.in",
+    contactPhone: "+91-33-22831705"
+  },
+  {
+    name: "The Oriental Insurance Co. Ltd.",
+    regNumber: "556",
+    sector: "Public Sector",
+    hq: "New Delhi",
+    networkHospitals: "9,000+ Cashless Hospitals",
+    networkSize: 9000,
+    primaryPolicy: "Oriental Cancer Protect",
+    policyFeatures: [
+      "Lump-sum payout upon detection of malignant tumor",
+      "Provides premium waiver for the next policy term upon claims",
+      "Optional critical illness cover rider for family members"
+    ],
+    body: "The Oriental Insurance Company is a fully government-owned general insurer known for robust systems and custom insurance products designed for critical disease cover.",
+    reliability: 93,
+    website: "https://orientalinsurance.org.in",
+    requiredDocuments: [
+      "Completed critical illness claim form",
+      "KYC verified ID proofs (Voter Card / Aadhaar Card)",
+      "Detailed clinical staging summary from a certified Oncologist",
+      "Original prescriptions and medical bills",
+      "Copy of bank passbook first page"
+    ],
+    contactPerson: "Shri R. R. Singh (CMD Office)",
+    contactEmail: "cmd@orientalinsurance.co.in",
+    contactPhone: "+91-11-23320330"
+  },
+  {
+    name: "United India Insurance Co. Ltd.",
+    regNumber: "545",
+    sector: "Public Sector",
+    hq: "Chennai, Tamil Nadu",
+    networkHospitals: "9,500+ Cashless Hospitals",
+    networkSize: 9500,
+    primaryPolicy: "United India Cancer Care Plan",
+    policyFeatures: [
+      "Coverage for inpatient medical expenses, surgeries, and radiotherapy",
+      "No pre-policy medical check-up required for individuals up to 50 years",
+      "Coverage for second medical opinion from registered specialists"
+    ],
+    body: "United India Insurance is one of India's oldest and most trusted public sector insurers, offering extensive hospital networks particularly in South India.",
+    reliability: 95,
+    website: "https://uiic.co.in",
+    requiredDocuments: [
+      "Official Claim Form fully filled",
+      "Aadhaar Card and policy schedule printout",
+      "Discharge card from empanelled hospital",
+      "Biopsy report and detailed staging note from surgeon",
+      "Cancelled cheque copy for direct NEFT"
+    ],
+    contactPerson: "Shri B. S. Rahul (CMD)",
+    contactEmail: "cmdsect@uiic.co.in",
+    contactPhone: "+91-44-28520161"
+  },
+  {
+    name: "ICICI Lombard General Insurance Co. Ltd.",
+    regNumber: "115",
+    sector: "Private Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "11,000+ Cashless Hospitals",
+    networkSize: 11000,
+    primaryPolicy: "ICICI Lombard Complete Health (Cancer Rider)",
+    policyFeatures: [
+      "Instant cashless pre-authorization in 11,000+ network hospitals",
+      "Unlimited reset benefit for unrelated critical conditions",
+      "Includes coverage for outpatient oncology and home-care treatments"
+    ],
+    body: "ICICI Lombard is one of the leading private sector general insurance companies in India, recognized for its advanced digital services and excellent settlement track record.",
+    reliability: 98,
+    website: "https://www.icicilombard.com",
+    requiredDocuments: [
+      "Digital claim submission via IL TakeCare app",
+      "Biopsy, MRI, or CT scans confirming neoplastic malignancy",
+      "Discharge card containing complete patient history",
+      "KYC documents and active health card copy"
+    ],
+    contactPerson: "Mr. Sanjeev Mantri (MD & CEO)",
+    contactEmail: "sanjeev.mantri@icicilombard.com",
+    contactPhone: "+91-22-61961100"
+  },
+  {
+    name: "HDFC ERGO General Insurance Co. Ltd.",
+    regNumber: "146",
+    sector: "Private Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "12,000+ Cashless Hospitals",
+    networkSize: 12000,
+    primaryPolicy: "my:Health Koti Suraksha (Critical Cancer)",
+    policyFeatures: [
+      "Massive critical coverage from ₹10 Lakhs up to ₹1 Crore",
+      "Cashless pre-authorization under 2 hours in empanelled hospitals",
+      "Worldwide medical second opinion and air ambulance riders included"
+    ],
+    body: "HDFC ERGO is a highly trusted joint venture between HDFC Bank and ERGO International. It is renowned for maintaining a high claim settlement ratio and industry-leading network.",
+    reliability: 99,
+    website: "https://www.hdfcergo.com",
+    requiredDocuments: [
+      "KYC verified ID details",
+      "Official HDFC ERGO claim documents signed by medical superintendent",
+      "Original histopathology report confirming cancer grade/stage",
+      "Original discharge card and itemized final bill statement",
+      "Cancelled cheque with beneficiary name printed"
+    ],
+    contactPerson: "Mr. Anuj Tyagi (MD & CEO)",
+    contactEmail: "anuj.tyagi@hdfcergo.com",
+    contactPhone: "+91-22-66383600"
+  },
+  {
+    name: "Bajaj Allianz General Insurance Co. Ltd.",
+    regNumber: "113",
+    sector: "Private Sector",
+    hq: "Pune, Maharashtra",
+    networkHospitals: "10,500+ Cashless Hospitals",
+    networkSize: 10500,
+    primaryPolicy: "Bajaj Allianz Critical Illness (Oncology Plan)",
+    policyFeatures: [
+      "100% lump-sum payout on cancer diagnosis of specified severity",
+      "Free annual preventive health and breast cancer screenings",
+      "Covers chemotherapy, targeted therapies, and reconstructive surgeries"
+    ],
+    body: "A joint venture between Bajaj Finserv and Allianz SE, this insurer is popular for custom retail health products and rapid cashless settlements.",
+    reliability: 98,
+    website: "https://www.bajajallianz.com",
+    requiredDocuments: [
+      "Filled critical illness claim request forms",
+      "KYC card copies (Aadhaar & PAN)",
+      "Detailed staging and oncology medical summary",
+      "Original receipts of all diagnostic imaging and labs",
+      "Cancelled cheque"
+    ],
+    contactPerson: "Mr. Tapan Kumar Singhel (MD & CEO)",
+    contactEmail: "tapan.singhel@bajajgeneral.com",
+    contactPhone: "+91-20-66026666"
+  },
+  {
+    name: "Star Health & Allied Insurance Co. Ltd.",
+    regNumber: "129",
+    sector: "Standalone Health",
+    hq: "Chennai, Tamil Nadu",
+    networkHospitals: "14,000+ Cashless Hospitals",
+    networkSize: 14000,
+    primaryPolicy: "Star Cancer Care Gold",
+    policyFeatures: [
+      "First dedicated policy for patients who have already been diagnosed/treated for cancer",
+      "Covers recurrence of cancer and second malignant tumors",
+      "Cashless daycare cancer therapies at 14,000+ network outlets"
+    ],
+    body: "Star Health is the largest Standalone Health Insurance company in India, offering specialized coverage options for cardiac, diabetic, and cancer patients.",
+    reliability: 97,
+    website: "https://www.starhealth.in",
+    requiredDocuments: [
+      "Star Health Claim Form signed by the policyholder",
+      "Complete medical record of past cancer treatments (if applicable)",
+      "Original discharge summary with detailed oncology course",
+      "Biopsy diagnosis report",
+      "KYC documentation and cancelled cheque"
+    ],
+    contactPerson: "Mr. Anand Roy (MD & CEO)",
+    contactEmail: "anand.roy@starhealth.in",
+    contactPhone: "+91-44-28319100"
+  },
+  {
+    name: "Care Health Insurance Ltd.",
+    regNumber: "148",
+    sector: "Standalone Health",
+    hq: "Gurugram, Haryana",
+    networkHospitals: "11,500+ Cashless Hospitals",
+    networkSize: 11500,
+    primaryPolicy: "Care Cancer Insurance",
+    policyFeatures: [
+      "Comprehensive oncology indemnity cover covering stages I to IV",
+      "Covers chemotherapy, radiotherapy, active oncology surgeries, and organ transplants",
+      "Option for global oncology second opinion from renowned RCCs"
+    ],
+    body: "Care Health Insurance (formerly Religare Health) is a leading standalone health insurer known for high-quality cashless inpatient cancer covers.",
+    reliability: 96,
+    website: "https://www.careinsurance.com",
+    requiredDocuments: [
+      "Care Health claim requisition form",
+      "Histopathology pathology staging report",
+      "Original hospital bills and pharmacy receipt summaries",
+      "Treating oncologist's certificate regarding treatment course",
+      "KYC card copy"
+    ],
+    contactPerson: "Mr. Anuj Gulati (MD & CEO)",
+    contactEmail: "anuj.gulati@careinsurance.com",
+    contactPhone: "+91-124-9781200"
+  },
+  {
+    name: "Niva Bupa Health Insurance Co. Ltd.",
+    regNumber: "145",
+    sector: "Standalone Health",
+    hq: "New Delhi",
+    networkHospitals: "10,000+ Cashless Hospitals",
+    networkSize: 10000,
+    primaryPolicy: "Niva Bupa CritiCare (Oncology)",
+    policyFeatures: [
+      "Lump-sum payout upon detection of malignant tumor to cover personal costs",
+      "No room rent sub-limits on standard hospitalizations",
+      "Premium waiver benefit for the next policy term upon diagnosis"
+    ],
+    body: "Formerly Max Bupa, Niva Bupa is a top-tier standalone health insurer providing flexible medical cover options for families and individuals.",
+    reliability: 96,
+    website: "https://www.nivabupa.com",
+    requiredDocuments: [
+      "Completed critical illness claim form",
+      "KYC verification proofs",
+      "Detailed clinical staging summary from a certified Oncologist",
+      "Original medical bills and hospital bills",
+      "Copy of bank passbook first page"
+    ],
+    contactPerson: "Mr. Krishnan Ramachandran (MD & CEO)",
+    contactEmail: "krishnan.ramachandran@nivabupa.com",
+    contactPhone: "+91-11-46073300"
+  },
+  {
+    name: "Aditya Birla Health Insurance Co. Ltd.",
+    regNumber: "153",
+    sector: "Standalone Health",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "10,500+ Cashless Hospitals",
+    networkSize: 10500,
+    primaryPolicy: "Aditya Birla Activ Secure Cancer",
+    policyFeatures: [
+      "Up to 150% sum insured payout for advanced metastatic stage cancers",
+      "Activ Health returns: Earn up to 100% of premium back for healthy lifestyles",
+      "Cashless oncology daycare chemotherapy, targeted drug cycles, and checkups"
+    ],
+    body: "A joint venture between Aditya Birla Group and MMI Holdings, this health insurer is popular for wellness rewards and customized cancer plans.",
+    reliability: 95,
+    website: "https://www.adityabirlaha.com",
+    requiredDocuments: [
+      "Aditya Birla claim submission form",
+      "Aadhaar Card and policy schedule copy",
+      "Pathology staging report and biopsy diagnoses notes",
+      "Discharge summary card",
+      "Printed cancelled cheque"
+    ],
+    contactPerson: "Mr. Mayank Bathwal (MD & CEO)",
+    contactEmail: "mayank.bathwal@adityabirla.com",
+    contactPhone: "+91-22-62257000"
+  },
+  {
+    name: "ManipalCigna Health Insurance Co. Ltd.",
+    regNumber: "151",
+    sector: "Standalone Health",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "9,000+ Cashless Hospitals",
+    networkSize: 9000,
+    primaryPolicy: "ManipalCigna Cancer Care Protect",
+    policyFeatures: [
+      "Covers early stage & major stage cancer, payout options as lump sum or monthly income",
+      "Additional wellness coaching and dietary advice from registered oncologists",
+      "No deductibles or room sub-limits on oncology hospital stays"
+    ],
+    body: "A joint venture between Manipal Group and Cigna Corporation, ManipalCigna provides high-quality international critical care and wellness insurance policies.",
+    reliability: 96,
+    website: "https://www.manipalcigna.com",
+    requiredDocuments: [
+      "Official ManipalCigna claim papers",
+      "Aadhaar Card and residency proofs",
+      "Hospital discharge card containing diagnostic notes",
+      "Biopsy report and staging index",
+      "Cancelled cheque"
+    ],
+    contactPerson: "Mr. Prasun Sikdar (MD & CEO)",
+    contactEmail: "prasun.sikdar@manipalcigna.com",
+    contactPhone: "+91-22-61703600"
+  },
+  {
+    name: "SBI General Insurance Co. Ltd.",
+    regNumber: "144",
+    sector: "Private Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "10,000+ Cashless Hospitals",
+    networkSize: 10000,
+    primaryPolicy: "SBI General Critical Illness Cover",
+    policyFeatures: [
+      "Lump sum benefit up to ₹50 Lakhs on specified cancer severity",
+      "Simple tax savings under 80D with fast documentation",
+      "No medical test required for individuals up to 45 years with no pre-existing conditions"
+    ],
+    body: "SBI General is backed by the State Bank of India, which provides robust reach across both urban and rural populations with competitive retail pricing.",
+    reliability: 95,
+    website: "https://www.sbigeneral.in",
+    requiredDocuments: [
+      "SBI General critical illness claim form",
+      "KYC Card (PAN and Aadhaar)",
+      "Cancer stage diagnostic note by oncology physician",
+      "Original bills, receipts, and medicine invoices",
+      "Cancelled cheque copy"
+    ],
+    contactPerson: "Mr. Naveen Chandra Jha (MD & CEO)",
+    contactEmail: "naveen.jha@sbigeneral.in",
+    contactPhone: "+91-22-42412000"
+  },
+  {
+    name: "Go Digit General Insurance Ltd.",
+    regNumber: "158",
+    sector: "Private Sector",
+    hq: "Bengaluru, Karnataka",
+    networkHospitals: "11,000+ Cashless Hospitals",
+    networkSize: 11000,
+    primaryPolicy: "Digit Critical Illness (Cancer)",
+    policyFeatures: [
+      "100% digital claiming process with zero paper requirements",
+      "Smartphone app pre-authorization within 90 minutes",
+      "Covers cancer of specified severity with complete lump-sum payouts"
+    ],
+    body: "Go Digit is an innovative digital-first insurer backed by Fairfax Group, popular among younger generations for simplified policy wording.",
+    reliability: 96,
+    website: "https://www.godigit.com",
+    requiredDocuments: [
+      "Digital claim request uploaded via Digit mobile application",
+      "Biopsy or stage biopsy pathology report",
+      "Treating oncologist summary sheet",
+      "Discharge summary card and itemized hospital bills",
+      "KYC ID copy"
+    ],
+    contactPerson: "Ms. Jasleen Kohli (MD & CEO)",
+    contactEmail: "jasleen.kohli@godigit.com",
+    contactPhone: "+91-20-67617600"
+  },
+  {
+    name: "Acko General Insurance Ltd.",
+    regNumber: "157",
+    sector: "Private Sector",
+    hq: "Bengaluru, Karnataka",
+    networkHospitals: "8,500+ Cashless Hospitals",
+    networkSize: 8500,
+    primaryPolicy: "Acko Platinum Health (Oncology)",
+    policyFeatures: [
+      "Zero room sub-limits and zero copayments for senior patients",
+      "100% digital checkups and paperless claiming under 2 hours",
+      "Includes cashless home chemotherapy options and doctor visits"
+    ],
+    body: "Acko is a modern, direct-to-consumer digital insurer known for disrupting standard premium structures and delivering ultra-fast claiming.",
+    reliability: 95,
+    website: "https://www.acko.com",
+    requiredDocuments: [
+      "Acko app digital upload documents",
+      "Original biopsy report PDF",
+      "Treating physician prescription details",
+      "Discharge summary and final invoice"
+    ],
+    contactPerson: "Mr. Animesh Das (MD & CEO)",
+    contactEmail: "animesh@acko.com",
+    contactPhone: "+91-22-62620000"
+  },
+  {
+    name: "Tata AIG General Insurance Co. Ltd.",
+    regNumber: "108",
+    sector: "Private Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "10,000+ Cashless Hospitals",
+    networkSize: 10000,
+    primaryPolicy: "Tata AIG Wellsurance Woman",
+    policyFeatures: [
+      "Specialized female cancer focus protecting against breast, ovarian, and cervical cancers",
+      "Lump-sum payouts, cosmetic reconstructive surgery riders, and post-op care",
+      "Free regular diagnostic checks (mammograms, PAP smears) at network clinics"
+    ],
+    body: "A joint venture between the Tata Group and American International Group (AIG), this insurer is known for top-tier products and female health focus.",
+    reliability: 98,
+    website: "https://www.tataaig.com",
+    requiredDocuments: [
+      "Completed Tata AIG claim documents",
+      "KYC cards and policy number printout",
+      "Malignancy tissue pathology biopsy confirmation stage report",
+      "Hospital discharge history sheet",
+      "Cancelled cheque"
+    ],
+    contactPerson: "Mr. Neelesh Garg (MD & CEO)",
+    contactEmail: "neelesh.garg@tata-aig.com",
+    contactPhone: "+91-22-66699696"
+  },
+  {
+    name: "Cholamandalam MS General Insurance Co. Ltd.",
+    regNumber: "124",
+    sector: "Private Sector",
+    hq: "Chennai, Tamil Nadu",
+    networkHospitals: "9,500+ Cashless Hospitals",
+    networkSize: 9500,
+    primaryPolicy: "Chola MS Criti 10 (Cancer Focus)",
+    policyFeatures: [
+      "Cashless settlement across strong South-focused corporate networks",
+      "Covers 10 major critical illnesses with focused cancer payouts",
+      "Lifelong renewability and custom health coaches"
+    ],
+    body: "A joint venture between Murugappa Group and Mitsui Sumitomo Insurance, Chola MS is a major player with a highly reliable rural and urban network.",
+    reliability: 94,
+    website: "https://www.cholainsurance.com",
+    requiredDocuments: [
+      "Chola MS claim form fully signed",
+      "Biopsy pathology summary Stage and type",
+      "Detailed discharge notes from the network center",
+      "Original bills, prescriptions, and cash memos",
+      "Cancelled cheque"
+    ],
+    contactPerson: "Mr. V. Suryanarayanan (MD & CEO)",
+    contactEmail: "suryanarayananV@cholams.murugappa.com",
+    contactPhone: "+91-44-30985300"
+  },
+  {
+    name: "Future Generali India Insurance Co. Ltd.",
+    regNumber: "132",
+    sector: "Private Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "8,000+ Cashless Hospitals",
+    networkSize: 8000,
+    primaryPolicy: "Future Cancer Protect",
+    policyFeatures: [
+      "Covers both minor (early) and major advanced stages of cancer",
+      "Provides premium waiver for up to 3 years upon early detection claims",
+      "Double payout option: Lump sum + Active treatment hospitalization coverage"
+    ],
+    body: "A joint venture between Future Group and Generali Group, Future Generali is popular for flexible critical cover options and high-speed approvals.",
+    reliability: 95,
+    website: "https://general.futuregenerali.in",
+    requiredDocuments: [
+      "Filled Future Generali claim papers",
+      "Aadhaar and PAN details",
+      "Original surgical or chemotherapy diagnostic stages note",
+      "Final itemized bill receipt",
+      "Cancelled cheque copy"
+    ],
+    contactPerson: "Mr. Anup Rau (MD & CEO)",
+    contactEmail: "anup@futuregenerali.in",
+    contactPhone: "+91-22-40976666"
+  },
+  {
+    name: "Reliance General Insurance Company Limited",
+    regNumber: "103",
+    sector: "Private Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "9,000+ Cashless Hospitals",
+    networkSize: 9000,
+    primaryPolicy: "Reliance Health Infinity (Critical)",
+    policyFeatures: [
+      "Flexible sum insured with unlimited restoration of health limits",
+      "Cashless global oncology second opinion options included",
+      "Covers active day-care chemotherapy and targeted oncology treatments"
+    ],
+    body: "Reliance General Insurance is a well-established private insurer providing customizable retail health insurance plans with solid network backing.",
+    reliability: 93,
+    website: "https://www.reliancegeneral.co.in",
+    requiredDocuments: [
+      "Reliance General claim form",
+      "Residency proof and KYC ID",
+      "Detailed biopsy stage confirmation notes from oncologist",
+      "Hospital bills, pharmacy slips, and cancelled cheque"
+    ],
+    contactPerson: "Mr. Rakesh Jain (MD & CEO)",
+    contactEmail: "rakesh.jain@relianceada.com",
+    contactPhone: "+91-22-43031000"
+  },
+  {
+    name: "Royal Sundaram General Insurance Co. Ltd.",
+    regNumber: "102",
+    sector: "Private Sector",
+    hq: "Chennai, Tamil Nadu",
+    networkHospitals: "8,500+ Cashless Hospitals",
+    networkSize: 8500,
+    primaryPolicy: "Royal Sundaram Lifeline (Cancer)",
+    policyFeatures: [
+      "Covers chemotherapy, active radiotherapy, and organ transplants",
+      "Cashless oncology diagnostic procedures at empanelled diagnostic centers",
+      "Option to get a second medical review from global cancer centers"
+    ],
+    body: "Royal Sundaram is a premier general insurer known for introducing cashless claims in India and providing comprehensive family health benefits.",
+    reliability: 94,
+    website: "https://www.royalsundaram.in",
+    requiredDocuments: [
+      "Filled Royal Sundaram claim form",
+      "ID card copies and health card copy",
+      "Pathology diagnosis report and discharge summary",
+      "Original pharmacy invoices and cancelled cheque"
+    ],
+    contactPerson: "Mr. Amit Ganorkar (MD & CEO)",
+    contactEmail: "amit.ganorkar@royalsundaram.in",
+    contactPhone: "+91-44-71177117"
+  },
+  {
+    name: "Shriram General Insurance Co. Ltd.",
+    regNumber: "137",
+    sector: "Private Sector",
+    hq: "Jaipur, Rajasthan",
+    networkHospitals: "7,000+ Cashless Hospitals",
+    networkSize: 7000,
+    primaryPolicy: "Shriram Critical Illness Insurance",
+    policyFeatures: [
+      "Affordable premium rates particularly tailored for rural sectors",
+      "100% lump-sum payout upon detection of specified cancer stages",
+      "Simplified document processing with regional language claim support"
+    ],
+    body: "Shriram General Insurance is part of the Shriram Group, having a major rural customer base and a strong focus on simplifying microinsurance.",
+    reliability: 92,
+    website: "https://www.shriramgi.com",
+    requiredDocuments: [
+      "Completed claim sheet",
+      "Aadhaar and local regional domicile proof",
+      "Detailed diagnosis biopsy stages card",
+      "Medical bills and doctor certificates",
+      "Cancelled cheque"
+    ],
+    contactPerson: "Mr. Anil Kumar Bansal (MD & CEO)",
+    contactEmail: "anil.bansal@shriramgi.com",
+    contactPhone: "+91-141-3928400"
+  },
+  {
+    name: "Universal Sompo General Insurance Co. Ltd.",
+    regNumber: "134",
+    sector: "Private Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "7,500+ Cashless Hospitals",
+    networkSize: 7500,
+    primaryPolicy: "Universal Sompo Critical Illness",
+    policyFeatures: [
+      "Lump-sum support on cancer diagnostics to pay auxiliary charges",
+      "Collaboration with cooperative banks for local offline processing",
+      "Includes coverage for secondary critical ailments concurrently"
+    ],
+    body: "Universal Sompo is a joint venture of Indian banks (Allahabad, IOB, Karnataka Bank) and Sompo Japan, offering solid regional presence.",
+    reliability: 93,
+    website: "https://www.universalsompo.com",
+    requiredDocuments: [
+      "Filled Sompo claim document",
+      "Cooperative bank account passbook copy",
+      "Biopsy stage report and discharge card copy",
+      "Cancelled cheque"
+    ],
+    contactPerson: "Mr. Sharad Mathur (MD & CEO)",
+    contactEmail: "sharad.mathur@universalsompo.com",
+    contactPhone: "+91-22-29211800"
+  },
+  {
+    name: "Liberty General Insurance Ltd.",
+    regNumber: "150",
+    sector: "Private Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "6,500+ Cashless Hospitals",
+    networkSize: 6500,
+    primaryPolicy: "Liberty Critical Connect",
+    policyFeatures: [
+      "Lump-sum critical payout with flexible 1-year or 2-year terms",
+      "Includes active lifestyle management and psychological counseling riders",
+      "Simple tax exemption benefits under Section 80D"
+    ],
+    body: "A joint venture between Liberty Mutual Group and DP Jindal Group, this insurer focuses on retail health and employee group policies.",
+    reliability: 93,
+    website: "https://www.libertyinsurance.in",
+    requiredDocuments: [
+      "Completed Liberty claim sheet",
+      "KYC card copies",
+      "Detailed clinical staging summary from Oncologist",
+      "Original prescriptions and medical bills",
+      "Cancelled cheque"
+    ],
+    contactPerson: "Mr. Roopam Asthana (MD & CEO)",
+    contactEmail: "roopam.asthana@libertyinsurance.in",
+    contactPhone: "+91-22-67001313"
+  },
+  {
+    name: "Magma HDI General Insurance Co. Ltd.",
+    regNumber: "149",
+    sector: "Private Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "7,000+ Cashless Hospitals",
+    networkSize: 7000,
+    primaryPolicy: "Magma HDI OneHealth (Cancer)",
+    policyFeatures: [
+      "Comprehensive wellness rewards and discounts on yearly health renewal premiums",
+      "Covers inpatient surgical oncology and chemotherapy daycare admissions",
+      "Organ donor treatment charges fully covered up to sum insured"
+    ],
+    body: "Magma HDI is a joint venture between Magma Fincorp and HDI Gerling, offering extremely flexible retail health insurance plans.",
+    reliability: 94,
+    website: "https://www.magmahdi.com",
+    requiredDocuments: [
+      "Magma HDI claim form",
+      "Biopsy stage oncology report",
+      "Original discharge card and invoices",
+      "Cancelled cheque"
+    ],
+    contactPerson: "Mr. Rajive Kumaraswami (MD & CEO)",
+    contactEmail: "rajive.k@magma-hdi.co.in",
+    contactPhone: "+91-22-40407070"
+  },
+  {
+    name: "Zuno General Insurance Ltd.",
+    regNumber: "141",
+    sector: "Private Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "6,000+ Cashless Hospitals",
+    networkSize: 6000,
+    primaryPolicy: "Zuno Health Insurance (Cancer Care)",
+    policyFeatures: [
+      "Earn premium discounts by meeting monthly dynamic walking steps targets",
+      "Covers inpatient cancer surgery, chemotherapy, radiation, and diagnostic labs",
+      "Complete daycare admissions covered cashless across network"
+    ],
+    body: "Zuno (formerly Raheja QBE) is a digitally modernized private insurer focusing on wellness and custom health tracking rewards.",
+    reliability: 92,
+    website: "https://www.zunogi.com",
+    requiredDocuments: [
+      "Digital claim request uploaded via Zuno app",
+      "Biopsy or stage biopsy pathology report",
+      "Treating oncologist summary sheet",
+      "Discharge summary card and itemized hospital bills",
+      "KYC ID copy"
+    ],
+    contactPerson: "Ms. Shanai Ghosh (MD & CEO)",
+    contactEmail: "shanai.ghosh@zunogi.com",
+    contactPhone: "+91-22-69022000"
+  },
+  {
+    name: "Kotak Mahindra General Insurance Co. Ltd.",
+    regNumber: "152",
+    sector: "Private Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "8,000+ Cashless Hospitals",
+    networkSize: 8000,
+    primaryPolicy: "Kotak Secure Shield (Cancer)",
+    policyFeatures: [
+      "100% lump-sum payout upon diagnosis of early or advanced stage cancers",
+      "Income loss protection benefit rider providing supplementary financial support",
+      "Tax savings under Section 80D with lifelong renewal option"
+    ],
+    body: "Part of the Kotak Mahindra Group, Kotak General is a fast-growing private insurer delivering high-quality retail and digital critical care plans.",
+    reliability: 96,
+    website: "https://www.kotakgeneral.com",
+    requiredDocuments: [
+      "Official Kotak claim papers",
+      "Aadhaar Card and residency proofs",
+      "Hospital discharge summary card containing diagnostic notes",
+      "Biopsy report and staging index",
+      "Cancelled cheque"
+    ],
+    contactPerson: "Mr. Suresh Agarwal (MD & CEO)",
+    contactEmail: "suresh.agarwal@kotak.com",
+    contactPhone: "+91-22-66520000"
+  },
+  {
+    name: "Agriculture Insurance Company of India Limited (AIC)",
+    regNumber: "126",
+    sector: "Public Sector",
+    hq: "New Delhi",
+    networkHospitals: "Specialized rural schemes (Non-cashless)",
+    networkSize: 0,
+    primaryPolicy: "Restructured Crop Insurance (Cancer Trust)",
+    policyFeatures: [
+      "Primarily crop and yield cover but features a critical oncology welfare grant for farmer families",
+      "Direct Benefit Transfer (DBT) of welfare funds to farmer bank accounts",
+      "Subsidized premiums funded by Central and State Governments"
+    ],
+    body: "AIC of India is a specialized public sector crop insurer that maintains central welfare trusts to support farming households experiencing cancer diagnosis.",
+    reliability: 90,
+    website: "https://www.aicofindia.com",
+    requiredDocuments: [
+      "Welfare scheme claim sheet signed by village Sarpanch",
+      "Farming land holding records (Patta / Khatauni)",
+      "Biopsy report and cancer diagnosis from government hospital",
+      "Bank passbook copy for DBT"
+    ],
+    contactPerson: "Mr. Girish Radhakrishnan (CMD)",
+    contactEmail: "cmd@aicofindia.com",
+    contactPhone: "+91-11-23318536"
+  },
+  {
+    name: "ECGC Limited",
+    regNumber: "101",
+    sector: "Public Sector",
+    hq: "Mumbai, Maharashtra",
+    networkHospitals: "Corporate health allowances (Non-cashless)",
+    networkSize: 0,
+    primaryPolicy: "Corporate Stakeholder Cancer Welfare Benefit",
+    policyFeatures: [
+      "Welfare oncology allowances for small-medium exporters and associated stakeholders",
+      "Comprehensive medical checkup reimbursements",
+      "Direct grant support of up to ₹2 Lakhs for low-income exporter families"
+    ],
+    body: "Owned by the Government of India, ECGC is primarily an export credit agency that operates dedicated welfare critical care funds for exporters and stakeholders.",
+    reliability: 95,
+    website: "https://www.ecgc.in",
+    requiredDocuments: [
+      "Exporter enrollment certificate and claim form",
+      "Official biopsy report showing malignant staging",
+      "Treating RCC oncologist prescription copy",
+      "Detailed medical invoices",
+      "Cancelled cheque copy"
+    ],
+    contactPerson: "Mr. M. Senthilnathan (CMD)",
+    contactEmail: "cmd@ecgc.in",
+    contactPhone: "+91-22-66590500"
+  }
+];
+
+function getSchemeAttributes(s: Scheme): {
+  ageGroup: string;
+  profession: string;
+  benefitType: string;
+  incomeLimit: string;
+  coverageAmount: string;
+  coverageNum: number;
+  gender: string;
+} {
+  const title = s.title.toLowerCase();
+  const body = s.body.toLowerCase();
+  const bulletsStr = s.bullets.join(" ").toLowerCase();
+  const desc = (s.description || "").toLowerCase();
+  
+  // 1. Determine Age Group
+  let ageGroup = "All Ages";
+  if (title.includes("u-18") || bulletsStr.includes("under 18") || body.includes("children under 18")) {
+    ageGroup = "Child (0-18)";
+  } else if (title.includes("old age") || bulletsStr.includes("old age") || bulletsStr.includes("pensioners") || bulletsStr.includes("destitute pensioner")) {
+    ageGroup = "Senior (60+)";
+  } else if (bulletsStr.includes("18 to 60") || body.includes("18 to 60")) {
+    ageGroup = "Adult (18-60)";
+  }
+
+  // 2. Determine Profession
+  let profession = "General Public";
+  if (title.includes("bocw") || title.includes("construction") || bulletsStr.includes("construction worker") || bulletsStr.includes("builders")) {
+    profession = "Construction Worker";
+  } else if (title.includes("transport") || bulletsStr.includes("transport workers") || body.includes("transport worker")) {
+    profession = "Transport Worker";
+  } else if (title.includes("ex-servicemen") || bulletsStr.includes("ex-servicemen") || title.includes("affdf")) {
+    profession = "Ex-Servicemen / Veterans";
+  } else if (title.includes("cghs") || bulletsStr.includes("government employees") || bulletsStr.includes("govt employee")) {
+    profession = "Govt Employee / Pensioner";
+  } else if (title.includes("tea tribes") || bulletsStr.includes("tea tribes")) {
+    profession = "Tea Tribes / Adivasi";
+  }
+
+  // 3. Determine Benefit Type
+  let benefitType = "One-time Financial Grant";
+  if (title.includes("concession") || bulletsStr.includes("fare concession") || body.includes("airfare") || body.includes("ticket discount") || body.includes("railway")) {
+    benefitType = "Travel Concession";
+  } else if (title.includes("pension") || bulletsStr.includes("monthly pension") || bulletsStr.includes("monthly financial aid") || bulletsStr.includes("₹3,000 per month") || bulletsStr.includes("₹2,000 per month") || bulletsStr.includes("₹500/month")) {
+    benefitType = "Monthly Pension";
+  } else if (bulletsStr.includes("cashless") || body.includes("cashless") || title.includes("yojana") || title.includes("bima") || title.includes("aarogyasri") || title.includes("mjpjay") || title.includes("swasthya sathi") || title.includes("mhis") || title.includes("kasp") || title.includes("himcare")) {
+    benefitType = "Cashless Treatment";
+  }
+
+  // 4. Determine Income Limit
+  let incomeLimit = "Any Income";
+  if (bulletsStr.includes("bpl") || body.includes("bpl") || desc.includes("bpl") || title.includes("ran") || title.includes("hmcpf") || title.includes("hmdg")) {
+    incomeLimit = "BPL Only";
+  } else if (bulletsStr.includes("1,50,000") || bulletsStr.includes("1.5 lakh") || bulletsStr.includes("1.50 lakh") || desc.includes("1,50,000")) {
+    incomeLimit = "Under ₹1.5 Lakhs";
+  } else if (bulletsStr.includes("4 lakh") || bulletsStr.includes("5 lakh") || bulletsStr.includes("6 lakh") || body.includes("income limit") || body.includes("income ceiling")) {
+    incomeLimit = "Under ₹4-6 Lakhs";
+  }
+
+  // 5. Determine Coverage Amount and Numeric value
+  let coverageAmount = "₹1 Lakh - ₹5 Lakhs";
+  let coverageNum = 500000;
+
+  if (benefitType === "Travel Concession") {
+    coverageAmount = "Travel Concessions / Other";
+    coverageNum = 5000;
+  } else if (benefitType === "Monthly Pension") {
+    coverageAmount = "Monthly Pension Support";
+    if (bulletsStr.includes("3,000") || body.includes("3,000")) {
+      coverageNum = 36000;
+    } else if (bulletsStr.includes("2,000") || body.includes("2,000")) {
+      coverageNum = 24000;
+    } else {
+      coverageNum = 12000;
+    }
+  } else if (
+    bulletsStr.includes("15 lakh") ||
+    bulletsStr.includes("15,0,000") ||
+    bulletsStr.includes("10 lakh") ||
+    bulletsStr.includes("10,00,000") ||
+    body.includes("15 lakh") ||
+    body.includes("10 lakh") ||
+    desc.includes("15 lakh")
+  ) {
+    coverageAmount = "Above ₹5 Lakhs";
+    if (bulletsStr.includes("15 lakh") || bulletsStr.includes("15,0,000") || body.includes("15 lakh")) {
+      coverageNum = 1500000;
+    } else {
+      coverageNum = 1000000;
+    }
+  } else if (
+    bulletsStr.includes("50,000") ||
+    bulletsStr.includes("50k") ||
+    bulletsStr.includes("25,000") ||
+    bulletsStr.includes("30,000") ||
+    bulletsStr.includes("15,000") ||
+    body.includes("50,000") ||
+    body.includes("discretionary grant") ||
+    title.includes("discretionary") ||
+    bulletsStr.includes("up to ₹1 lakh")
+  ) {
+    coverageAmount = "Up to ₹1 Lakh";
+    if (bulletsStr.includes("50,000") || body.includes("50,000") || title.includes("discretionary")) {
+      coverageNum = 50000;
+    } else if (bulletsStr.includes("25,000")) {
+      coverageNum = 25000;
+    } else {
+      coverageNum = 20000;
+    }
+  } else if (
+    bulletsStr.includes("5 lakh") ||
+    bulletsStr.includes("5,00,000") ||
+    bulletsStr.includes("3 lakh") ||
+    bulletsStr.includes("2 lakh") ||
+    bulletsStr.includes("4 lakh") ||
+    body.includes("5 lakh") ||
+    title.includes("yojana") ||
+    title.includes("bima")
+  ) {
+    coverageAmount = "₹1 Lakh - ₹5 Lakhs";
+    if (bulletsStr.includes("5 lakh") || bulletsStr.includes("5,00,000")) {
+      coverageNum = 500000;
+    } else if (bulletsStr.includes("3 lakh")) {
+      coverageNum = 300000;
+    } else if (bulletsStr.includes("2 lakh")) {
+      coverageNum = 200000;
+    } else {
+      coverageNum = 400000;
+    }
+  }
+
+  // 6. Determine Gender Focus
+  let gender = "General / All Genders";
+  if (
+    title.includes("female") ||
+    title.includes("woman") ||
+    title.includes("women") ||
+    title.includes("breast cancer") ||
+    body.includes("breast cancer") ||
+    bulletsStr.includes("breast cancer") ||
+    bulletsStr.includes("women") ||
+    bulletsStr.includes("female") ||
+    desc.includes("breast cancer") ||
+    desc.includes("women")
+  ) {
+    gender = "Female Only";
+  }
+
+  return { ageGroup, profession, benefitType, incomeLimit, coverageAmount, coverageNum, gender };
+}
+
 export default function Schemes() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedState, setSelectedState] = useState("All India");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [activeDetailedScheme, setActiveDetailedScheme] = useState<Scheme | null>(null);
 
+  // Dual catalog active tab derived from route path
+  const location = useLocation();
+  const activeTab: "schemes" | "insurances" = location.pathname.includes("insurance") ? "insurances" : "schemes";
+  const [selectedSector, setSelectedSector] = useState("All");
+
+  // Advanced filters state
+  const [selectedAgeGroup, setSelectedAgeGroup] = useState("Any Age");
+  const [selectedProfession, setSelectedProfession] = useState("Any Profession");
+  const [selectedBenefitType, setSelectedBenefitType] = useState("Any Benefit");
+  const [selectedIncomeLimit, setSelectedIncomeLimit] = useState("Any Income Limit");
+  const [selectedCoverageAmount, setSelectedCoverageAmount] = useState("Any Coverage");
+  const [selectedGender, setSelectedGender] = useState("Any Gender");
+  const [sortBy, setSortBy] = useState("Default");
+  const [showAdvancedFilters, setShowAdvancedFilters] = useState(false);
+  const [activeDetailedInsurance, setActiveDetailedInsurance] = useState<Insurance | null>(null);
+
+  // Wizard States
+  const [wizardState, setWizardState] = useState("All India");
+  const [wizardAge, setWizardAge] = useState("");
+  const [wizardGender, setWizardGender] = useState("General / All Genders");
+  const [wizardProfession, setWizardProfession] = useState("General Public");
+  const [wizardIncome, setWizardIncome] = useState("Any Income");
+  const [showWizard, setShowWizard] = useState(false);
+
+  const catalogRef = useRef<HTMLDivElement>(null);
+
   // Esc key closes the drawer/modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setActiveDetailedScheme(null);
+        setActiveDetailedInsurance(null);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -1784,7 +2734,7 @@ export default function Schemes() {
 
   // Lock body scroll when drawer/modal is open
   useEffect(() => {
-    if (activeDetailedScheme) {
+    if (activeDetailedScheme || activeDetailedInsurance) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "unset";
@@ -1792,7 +2742,43 @@ export default function Schemes() {
     return () => {
       document.body.style.overflow = "unset";
     };
-  }, [activeDetailedScheme]);
+  }, [activeDetailedScheme, activeDetailedInsurance]);
+
+  const handleApplyWizard = () => {
+    // 1. Domicile state
+    setSelectedState(wizardState);
+    
+    // 2. Age parsing
+    if (wizardAge !== "") {
+      const ageNum = parseInt(wizardAge);
+      if (ageNum <= 18) {
+        setSelectedAgeGroup("Child (0-18)");
+      } else if (ageNum >= 60) {
+        setSelectedAgeGroup("Senior (60+)");
+      } else {
+        setSelectedAgeGroup("Adult (18-60)");
+      }
+    } else {
+      setSelectedAgeGroup("Any Age");
+    }
+
+    // 3. Gender Focus
+    setSelectedGender(wizardGender === "Female Only" ? "Female Only" : "Any Gender");
+
+    // 4. Profession
+    setSelectedProfession(wizardProfession);
+
+    // 5. Income Status
+    setSelectedIncomeLimit(wizardIncome === "Any Income" ? "Any Income Limit" : wizardIncome);
+
+    // 6. Force opening the advanced collapsible filter panel
+    setShowAdvancedFilters(true);
+
+    // 7. Scroll smoothly to results
+    setTimeout(() => {
+      catalogRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  };
 
   const filteredSchemes = useMemo(() => {
     return schemes.filter((s) => {
@@ -1811,32 +2797,163 @@ export default function Schemes() {
       // 2. Category Filter
       let matchesCategory = true;
       if (selectedCategory !== "All") {
-        if (selectedCategory === "Breast Cancer Specific") {
-          matchesCategory = s.category === "Breast Cancer Specific";
-        } else if (selectedCategory === "General") {
-          matchesCategory = s.category === "General";
-        } else if (selectedCategory === "State Specific") {
-          matchesCategory = s.category === "State Specific";
-        }
+        matchesCategory = s.category === selectedCategory;
       }
 
       // 3. State Filter
       let matchesState = true;
       if (selectedState !== "All India") {
-        // If user selects a specific state, show:
-        // - Schemes from that specific state
-        // - Central Schemes (state === "All India") because they apply everywhere
         matchesState = s.state === selectedState || s.state === "All India";
       }
 
-      return matchesSearch && matchesCategory && matchesState;
+      // 4. Dynamic Attribute Classification
+      const attrs = getSchemeAttributes(s);
+
+      // 5. Age Group Filter
+      let matchesAge = true;
+      if (selectedAgeGroup !== "Any Age") {
+        matchesAge = attrs.ageGroup === "All Ages" || attrs.ageGroup === selectedAgeGroup;
+      }
+
+      // 6. Profession Filter
+      let matchesProfession = true;
+      if (selectedProfession !== "Any Profession") {
+        matchesProfession = attrs.profession === "General Public" || attrs.profession === selectedProfession;
+      }
+
+      // 7. Benefit Type Filter
+      let matchesBenefit = true;
+      if (selectedBenefitType !== "Any Benefit") {
+        matchesBenefit = attrs.benefitType === selectedBenefitType;
+      }
+
+      // 8. Income Limit Filter
+      let matchesIncome = true;
+      if (selectedIncomeLimit !== "Any Income Limit") {
+        if (selectedIncomeLimit === "Any Income") {
+          matchesIncome = attrs.incomeLimit === "Any Income";
+        } else if (selectedIncomeLimit === "BPL Only") {
+          matchesIncome = attrs.incomeLimit === "BPL Only";
+        } else if (selectedIncomeLimit === "Under ₹1.5 Lakhs") {
+          matchesIncome = attrs.incomeLimit !== "BPL Only";
+        } else if (selectedIncomeLimit === "Under ₹4-6 Lakhs") {
+          matchesIncome = attrs.incomeLimit === "Under ₹4-6 Lakhs" || attrs.incomeLimit === "Any Income";
+        }
+      }
+
+      // 9. Coverage Amount Filter
+      let matchesCoverage = true;
+      if (selectedCoverageAmount !== "Any Coverage") {
+        matchesCoverage = attrs.coverageAmount === selectedCoverageAmount;
+      }
+
+      // 10. Gender Filter
+      let matchesGender = true;
+      if (selectedGender !== "Any Gender") {
+        if (selectedGender === "Female Only") {
+          matchesGender = attrs.gender === "Female Only";
+        } else {
+          matchesGender = attrs.gender === "General / All Genders";
+        }
+      }
+
+      return (
+        matchesSearch &&
+        matchesCategory &&
+        matchesState &&
+        matchesAge &&
+        matchesProfession &&
+        matchesBenefit &&
+        matchesIncome &&
+        matchesCoverage &&
+        matchesGender
+      );
     });
-  }, [searchQuery, selectedState, selectedCategory]);
+  }, [
+    searchQuery,
+    selectedState,
+    selectedCategory,
+    selectedAgeGroup,
+    selectedProfession,
+    selectedBenefitType,
+    selectedIncomeLimit,
+    selectedCoverageAmount,
+    selectedGender
+  ]);
+
+  const sortedAndFilteredSchemes = useMemo(() => {
+    if (sortBy === "Default") {
+      return filteredSchemes;
+    }
+
+    return [...filteredSchemes].sort((a, b) => {
+      const attrsA = getSchemeAttributes(a);
+      const attrsB = getSchemeAttributes(b);
+
+      if (sortBy === "Coverage (High to Low)") {
+        return attrsB.coverageNum - attrsA.coverageNum;
+      } else if (sortBy === "Reliability (High to Low)") {
+        return b.reliability - a.reliability;
+      } else if (sortBy === "Name (A-Z)") {
+        return a.title.localeCompare(b.title);
+      }
+      return 0;
+    });
+  }, [filteredSchemes, sortBy]);
+
+  const filteredInsurers = useMemo(() => {
+    return generalInsurers.filter((ins) => {
+      // 1. Text Search Filter
+      const searchLower = searchQuery.toLowerCase().trim();
+      let matchesSearch = true;
+      if (searchLower) {
+        matchesSearch =
+          ins.name.toLowerCase().includes(searchLower) ||
+          ins.primaryPolicy.toLowerCase().includes(searchLower) ||
+          ins.hq.toLowerCase().includes(searchLower) ||
+          ins.body.toLowerCase().includes(searchLower) ||
+          ins.policyFeatures.some((f) => f.toLowerCase().includes(searchLower));
+      }
+
+      // 2. Sector Filter
+      let matchesSector = true;
+      if (selectedSector !== "All") {
+        matchesSector = ins.sector === selectedSector;
+      }
+
+      return matchesSearch && matchesSector;
+    });
+  }, [searchQuery, selectedSector]);
+
+  const sortedAndFilteredInsurers = useMemo(() => {
+    if (sortBy === "Default") {
+      return filteredInsurers;
+    }
+
+    return [...filteredInsurers].sort((a, b) => {
+      if (sortBy === "Network Size (High to Low)") {
+        return b.networkSize - a.networkSize;
+      } else if (sortBy === "Claim Ratio (High to Low)") {
+        return b.reliability - a.reliability;
+      } else if (sortBy === "Name (A-Z)") {
+        return a.name.localeCompare(b.name);
+      }
+      return 0;
+    });
+  }, [filteredInsurers, sortBy]);
 
   const resetFilters = () => {
     setSearchQuery("");
     setSelectedState("All India");
     setSelectedCategory("All");
+    setSelectedAgeGroup("Any Age");
+    setSelectedProfession("Any Profession");
+    setSelectedBenefitType("Any Benefit");
+    setSelectedIncomeLimit("Any Income Limit");
+    setSelectedCoverageAmount("Any Coverage");
+    setSelectedGender("Any Gender");
+    setSortBy("Default");
+    setSelectedSector("All");
   };
 
   return (
@@ -1846,105 +2963,533 @@ export default function Schemes() {
         {/* Header */}
         <div className="mb-lg">
           <h1 className="font-headline-lg text-headline-lg text-on-surface mb-xs">
-            Government Schemes & Insurance Catalog
+            {activeTab === "schemes" ? "Government Schemes" : "General Insurances"}
           </h1>
           <p className="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">
-            Empowering cancer patients and their families by providing simple, verified details for {schemes.length} major financial aid and health insurance programs in India.
+            {activeTab === "schemes"
+              ? "Empowering cancer patients and their families by providing simple, verified details for central and state government financial aid, NGO grants, and trust programs."
+              : "Empowering cancer patients and their families by providing a comprehensive, verified directory of IRDAI registered public, private, and standalone health insurers in India."}
           </p>
         </div>
 
+        {/* Smart Eligibility Matcher Card */}
+        {activeTab === "schemes" && (
+          <div className="bg-gradient-to-br from-primary/5 via-secondary/5 to-surface-container-lowest border border-primary/20 shadow-md rounded-2xl p-md md:p-lg mb-lg">
+            <div className="flex justify-between items-center mb-sm">
+              <h2 className="font-headline-sm text-[18px] md:text-headline-sm text-primary flex items-center gap-xs">
+                <span className="material-symbols-outlined text-primary text-[24px]">explore</span>
+                Smart Scheme Matcher
+              </h2>
+              <button
+                onClick={() => setShowWizard(!showWizard)}
+                className="text-primary hover:text-primary-container font-label-md text-label-md flex items-center gap-2"
+              >
+                {showWizard ? "Minimize Matcher" : "Launch Profile Matcher"}
+                <span className="material-symbols-outlined">
+                  {showWizard ? "expand_less" : "expand_more"}
+                </span>
+              </button>
+            </div>
+            <p className="font-body-md text-body-md text-on-surface-variant max-w-3xl mb-md">
+              Answer a few questions about your profile (Age, State, Gender, Occupation, Income) and we will instantly find all eligible central and state schemes you qualify for.
+            </p>
+
+            {showWizard && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-sm border-t border-outline-variant/40 pt-md mt-xs animate-fade-in">
+                {/* State */}
+                <div className="flex flex-col gap-xs">
+                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">Domicile State</label>
+                  <select
+                    value={wizardState}
+                    onChange={(e) => setWizardState(e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-outline-variant bg-surface-bright font-body-sm text-on-surface outline-none cursor-pointer"
+                  >
+                    {statesList.map((state) => (
+                      <option key={state} value={state}>{state}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Age */}
+                <div className="flex flex-col gap-xs">
+                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">Age (Years)</label>
+                  <input
+                    type="number"
+                    value={wizardAge}
+                    onChange={(e) => setWizardAge(e.target.value)}
+                    placeholder="Enter age (e.g. 45)"
+                    className="w-full p-2.5 rounded-xl border border-outline-variant bg-surface-bright font-body-sm text-on-surface outline-none"
+                    min="0"
+                    max="120"
+                  />
+                </div>
+
+                {/* Gender */}
+                <div className="flex flex-col gap-xs">
+                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">Gender Focus</label>
+                  <select
+                    value={wizardGender}
+                    onChange={(e) => setWizardGender(e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-outline-variant bg-surface-bright font-body-sm text-on-surface outline-none cursor-pointer"
+                  >
+                    <option value="General / All Genders">All Genders / General</option>
+                    <option value="Female Only">Female focus</option>
+                  </select>
+                </div>
+
+                {/* Occupation */}
+                <div className="flex flex-col gap-xs">
+                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">Occupation</label>
+                  <select
+                    value={wizardProfession}
+                    onChange={(e) => setWizardProfession(e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-outline-variant bg-surface-bright font-body-sm text-on-surface outline-none cursor-pointer"
+                  >
+                    <option value="General Public">General Public (Any)</option>
+                    <option value="Construction Worker">Construction / BOCW</option>
+                    <option value="Transport Worker">Transport Worker</option>
+                    <option value="Ex-Servicemen / Veterans">Ex-Servicemen / Sainik</option>
+                    <option value="Govt Employee / Pensioner">Govt Employee / Pensioner</option>
+                    <option value="Tea Tribes / Adivasi">Tea Tribes / Adivasi</option>
+                  </select>
+                </div>
+
+                {/* Income */}
+                <div className="flex flex-col gap-xs">
+                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">Income Ceiling</label>
+                  <select
+                    value={wizardIncome}
+                    onChange={(e) => setWizardIncome(e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-outline-variant bg-surface-bright font-body-sm text-on-surface outline-none cursor-pointer"
+                  >
+                    <option value="Any Income">General / Any Income</option>
+                    <option value="BPL Only">Below Poverty Line (BPL)</option>
+                    <option value="Under ₹1.5 Lakhs">Low Income (Under 1.5L/yr)</option>
+                    <option value="Under ₹4-6 Lakhs">Middle Income (Under 4-6L/yr)</option>
+                  </select>
+                </div>
+
+                <div className="col-span-1 sm:col-span-2 md:col-span-5 flex justify-end gap-sm mt-md border-t border-dashed border-outline-variant/30 pt-md">
+                  <button
+                    onClick={() => {
+                      setWizardState("All India");
+                      setWizardAge("");
+                      setWizardGender("General / All Genders");
+                      setWizardProfession("General Public");
+                      setWizardIncome("Any Income");
+                      resetFilters();
+                    }}
+                    className="px-md py-2 border border-outline text-outline font-label-md text-label-md rounded-xl hover:bg-surface-container transition-all"
+                  >
+                    Reset Form
+                  </button>
+                  <button
+                    onClick={handleApplyWizard}
+                    className="px-lg py-2.5 bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:brightness-110 shadow-md active:scale-95 transition-all flex items-center gap-xs"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">verified_user</span>
+                    Find My Eligible Schemes
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Filters Layout */}
         <div className="bg-surface-container-low p-sm md:p-md rounded-2xl border border-outline-variant/60 shadow-sm mb-lg">
-          <div className="flex flex-col lg:flex-row gap-sm items-stretch lg:items-center">
-            
-            {/* Search Input */}
-            <div className="relative flex-grow">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/80">
-                search
-              </span>
-              <input
-                className="w-full pl-12 pr-12 py-3 rounded-xl border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest outline-none transition-all font-body-md"
-                placeholder="Search by scheme name, benefits, keywords..."
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface p-1 rounded-full hover:bg-surface-container-high transition-all"
-                  aria-label="Clear search"
+          {activeTab === "schemes" ? (
+            <div className="flex flex-col lg:flex-row gap-sm items-stretch lg:items-center">
+              
+              {/* Search Input */}
+              <div className="relative flex-grow">
+                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/80">
+                  search
+                </span>
+                <input
+                  className="w-full pl-12 pr-12 py-3 rounded-xl border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest outline-none transition-all font-body-md"
+                  placeholder="Search by scheme name, benefits, keywords..."
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface p-1 rounded-full hover:bg-surface-container-high transition-all"
+                    aria-label="Clear search"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">close</span>
+                  </button>
+                )}
+              </div>
+
+              {/* State Select Dropdown */}
+              <div className="relative min-w-[200px] flex items-center">
+                <span className="material-symbols-outlined absolute left-4 text-outline/80 z-10 pointer-events-none">
+                  map
+                </span>
+                <select
+                  className="w-full pl-12 pr-8 py-3 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-md text-on-surface outline-none appearance-none cursor-pointer focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  value={selectedState}
+                  onChange={(e) => setSelectedState(e.target.value)}
                 >
-                  <span className="material-symbols-outlined text-[18px]">close</span>
+                  {statesList.map((state) => (
+                    <option key={state} value={state}>
+                      {state}
+                    </option>
+                  ))}
+                </select>
+                <span className="material-symbols-outlined absolute right-3 text-outline pointer-events-none">
+                  expand_more
+                </span>
+              </div>
+
+              {/* Advanced Filters Toggle */}
+              <button
+                onClick={() => setShowAdvancedFilters(!showAdvancedFilters)}
+                className={`flex items-center justify-center gap-xs px-md py-3 rounded-xl border font-label-md text-label-md transition-all active:scale-[0.98] ${
+                  showAdvancedFilters || selectedAgeGroup !== "Any Age" || selectedProfession !== "Any Profession" || selectedBenefitType !== "Any Benefit" || selectedIncomeLimit !== "Any Income Limit" || selectedCoverageAmount !== "Any Coverage" || selectedGender !== "Any Gender"
+                    ? "bg-primary text-on-primary border-primary hover:brightness-110 shadow-sm"
+                    : "border-outline text-outline hover:bg-surface-container"
+                }`}
+              >
+                <span className="material-symbols-outlined text-[18px]">tune</span>
+                Advanced Filters
+                {(selectedAgeGroup !== "Any Age" || selectedProfession !== "Any Profession" || selectedBenefitType !== "Any Benefit" || selectedIncomeLimit !== "Any Income Limit" || selectedCoverageAmount !== "Any Coverage" || selectedGender !== "Any Gender") && (
+                  <span className="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse ml-xs" />
+                )}
+              </button>
+
+              {/* Reset Button */}
+              {(searchQuery || selectedState !== "All India" || selectedCategory !== "All" || selectedAgeGroup !== "Any Age" || selectedProfession !== "Any Profession" || selectedBenefitType !== "Any Benefit" || selectedIncomeLimit !== "Any Income Limit" || selectedCoverageAmount !== "Any Coverage" || selectedGender !== "Any Gender") && (
+                <button
+                  onClick={resetFilters}
+                  className="flex items-center justify-center gap-xs px-md py-3 rounded-xl border border-outline text-outline font-label-md hover:bg-surface-container hover:text-primary transition-all active:scale-[0.98]"
+                >
+                  <span className="material-symbols-outlined text-[18px]">restart_alt</span> Reset
                 </button>
               )}
             </div>
+          ) : (
+            <div className="flex flex-col lg:flex-row gap-sm items-stretch lg:items-center">
+              {/* Insurers Search Input */}
+              <div className="relative flex-grow">
+                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/80">
+                  search
+                </span>
+                <input
+                  className="w-full pl-12 pr-12 py-3 rounded-xl border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest outline-none transition-all font-body-md"
+                  placeholder="Search general insurers by company, headquarters, primary policies..."
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface p-1 rounded-full hover:bg-surface-container-high transition-all"
+                    aria-label="Clear search"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">close</span>
+                  </button>
+                )}
+              </div>
 
-            {/* State Select Dropdown */}
-            <div className="relative min-w-[200px] flex items-center">
-              <span className="material-symbols-outlined absolute left-4 text-outline/80 z-10 pointer-events-none">
-                map
-              </span>
-              <select
-                className="w-full pl-12 pr-8 py-3 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-md text-on-surface outline-none appearance-none cursor-pointer focus:border-primary focus:ring-2 focus:ring-primary/20"
-                value={selectedState}
-                onChange={(e) => setSelectedState(e.target.value)}
-              >
-                {statesList.map((state) => (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </select>
-              <span className="material-symbols-outlined absolute right-3 text-outline pointer-events-none">
-                expand_more
-              </span>
-            </div>
-
-            {/* Reset Button */}
-            {(searchQuery || selectedState !== "All India" || selectedCategory !== "All") && (
-              <button
-                onClick={resetFilters}
-                className="flex items-center justify-center gap-xs px-md py-3 rounded-xl border border-outline text-outline font-label-md hover:bg-surface-container hover:text-primary transition-all active:scale-[0.98]"
-              >
-                <span className="material-symbols-outlined text-[18px]">restart_alt</span> Reset
-              </button>
-            )}
-          </div>
-
-          {/* Category Tabs */}
-          <div className="flex gap-xs mt-sm overflow-x-auto pb-xs custom-scrollbar">
-            {[
-              { id: "All", label: "All Schemes", count: schemes.length },
-              { id: "Breast Cancer Specific", label: "Breast Cancer Focus", count: schemes.filter(s => s.category === "Breast Cancer Specific").length },
-              { id: "General", label: "National & Central Programs", count: schemes.filter(s => s.category === "General").length },
-              { id: "State Specific", label: "State Government Schemes", count: schemes.filter(s => s.category === "State Specific").length }
-            ].map((cat) => {
-              const isActive = selectedCategory === cat.id;
-              return (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`flex items-center gap-xs px-md py-2.5 rounded-full font-label-sm text-[13px] whitespace-nowrap transition-all duration-200 ${
-                    isActive
-                      ? "bg-primary text-on-primary shadow-md transform -translate-y-[1px]"
-                      : "bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high border border-outline-variant/50"
-                  }`}
+              {/* Insurers Sector select dropdown */}
+              <div className="relative min-w-[220px] flex items-center">
+                <span className="material-symbols-outlined absolute left-4 text-outline/80 z-10 pointer-events-none">
+                  corporate_fare
+                </span>
+                <select
+                  className="w-full pl-12 pr-8 py-3 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-md text-on-surface outline-none appearance-none cursor-pointer focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  value={selectedSector}
+                  onChange={(e) => setSelectedSector(e.target.value)}
                 >
-                  {cat.label}
-                  <span className={`px-2 py-0.5 rounded-full text-[11px] ${
-                    isActive ? "bg-on-primary/20 text-on-primary" : "bg-surface-container text-on-surface-variant"
-                  }`}>
-                    {cat.count}
-                  </span>
+                  <option value="All">All Insurer Sectors</option>
+                  <option value="Public Sector">Public Sector Insurers</option>
+                  <option value="Private Sector">Private Sector Insurers</option>
+                  <option value="Standalone Health">Standalone Health Insurers</option>
+                </select>
+                <span className="material-symbols-outlined absolute right-3 text-outline pointer-events-none">
+                  expand_more
+                </span>
+              </div>
+
+              {/* Reset Button */}
+              {(searchQuery || selectedSector !== "All" || sortBy !== "Default") && (
+                <button
+                  onClick={resetFilters}
+                  className="flex items-center justify-center gap-xs px-md py-3 rounded-xl border border-outline text-outline font-label-md hover:bg-surface-container hover:text-primary transition-all active:scale-[0.98]"
+                >
+                  <span className="material-symbols-outlined text-[18px]">restart_alt</span> Reset
                 </button>
-              );
-            })}
-          </div>
+              )}
+            </div>
+          )}
+
+          {/* Advanced Collapsible Filter Panel (only under Schemes tab) */}
+          {activeTab === "schemes" && showAdvancedFilters && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-sm mt-sm pt-sm border-t border-outline-variant/60 animate-fade-in">
+              
+              {/* Age Group Filter */}
+              <div className="flex flex-col gap-xs">
+                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none">
+                  Age Suitability
+                </label>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3 text-outline text-[16px] pointer-events-none">
+                    face
+                  </span>
+                  <select
+                    className="w-full pl-8 pr-7 py-2 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-sm text-[12px] text-on-surface outline-none appearance-none cursor-pointer focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    value={selectedAgeGroup}
+                    onChange={(e) => setSelectedAgeGroup(e.target.value)}
+                  >
+                    <option value="Any Age">Any Age</option>
+                    <option value="Child (0-18)">Child (0-18 yrs)</option>
+                    <option value="Adult (18-60)">Adult (18-60 yrs)</option>
+                    <option value="Senior (60+)">Senior (60+ yrs)</option>
+                    <option value="All Ages">All Ages / Universal</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-2 text-outline pointer-events-none text-[16px]">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+
+              {/* Profession Filter */}
+              <div className="flex flex-col gap-xs">
+                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none">
+                  Target Profession
+                </label>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3 text-outline text-[16px] pointer-events-none">
+                    work
+                  </span>
+                  <select
+                    className="w-full pl-8 pr-7 py-2 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-sm text-[12px] text-on-surface outline-none appearance-none cursor-pointer focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    value={selectedProfession}
+                    onChange={(e) => setSelectedProfession(e.target.value)}
+                  >
+                    <option value="Any Profession">Any Profession</option>
+                    <option value="General Public">General Public (Any)</option>
+                    <option value="Construction Worker">Construction / BOCW</option>
+                    <option value="Transport Worker">Transport Worker</option>
+                    <option value="Ex-Servicemen / Veterans">Ex-Servicemen / Sainik</option>
+                    <option value="Govt Employee / Pensioner">Govt Employee / Pensioner</option>
+                    <option value="Tea Tribes / Adivasi">Tea Tribes / Adivasi</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-2 text-outline pointer-events-none text-[16px]">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+
+              {/* Benefit Type Filter */}
+              <div className="flex flex-col gap-xs">
+                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none">
+                  Benefit Category
+                </label>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3 text-outline text-[16px] pointer-events-none">
+                    card_membership
+                  </span>
+                  <select
+                    className="w-full pl-8 pr-7 py-2 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-sm text-[12px] text-on-surface outline-none appearance-none cursor-pointer focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    value={selectedBenefitType}
+                    onChange={(e) => setSelectedBenefitType(e.target.value)}
+                  >
+                    <option value="Any Benefit">Any Benefit Form</option>
+                    <option value="Cashless Treatment">Cashless Treatment</option>
+                    <option value="One-time Financial Grant">One-time Financial Grant</option>
+                    <option value="Monthly Pension">Monthly Pension Support</option>
+                    <option value="Travel Concession">Travel / Transit Concession</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-2 text-outline pointer-events-none text-[16px]">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+
+              {/* Income Limit Filter */}
+              <div className="flex flex-col gap-xs">
+                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none">
+                  Financial Criteria
+                </label>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3 text-outline text-[16px] pointer-events-none">
+                    savings
+                  </span>
+                  <select
+                    className="w-full pl-8 pr-7 py-2 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-sm text-[12px] text-on-surface outline-none appearance-none cursor-pointer focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    value={selectedIncomeLimit}
+                    onChange={(e) => setSelectedIncomeLimit(e.target.value)}
+                  >
+                    <option value="Any Income Limit">Any Income Status</option>
+                    <option value="Any Income">Any Income (Universal)</option>
+                    <option value="BPL Only">Below Poverty Line (BPL)</option>
+                    <option value="Under ₹1.5 Lakhs">Under ₹1.5 Lakhs / yr</option>
+                    <option value="Under ₹4-6 Lakhs">Under ₹4-6 Lakhs / yr</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-2 text-outline pointer-events-none text-[16px]">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+
+              {/* Treatment Coverage Filter */}
+              <div className="flex flex-col gap-xs">
+                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none">
+                  Treatment Coverage
+                </label>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3 text-outline text-[16px] pointer-events-none">
+                    payments
+                  </span>
+                  <select
+                    className="w-full pl-8 pr-7 py-2 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-sm text-[12px] text-on-surface outline-none appearance-none cursor-pointer focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    value={selectedCoverageAmount}
+                    onChange={(e) => setSelectedCoverageAmount(e.target.value)}
+                  >
+                    <option value="Any Coverage">Any Coverage</option>
+                    <option value="Up to ₹1 Lakh">Up to ₹1 Lakh</option>
+                    <option value="₹1 Lakh - ₹5 Lakhs">₹1 Lakh - ₹5 Lakhs</option>
+                    <option value="Above ₹5 Lakhs">Above ₹5 Lakhs</option>
+                    <option value="Monthly Pension Support">Monthly Pension</option>
+                    <option value="Travel Concessions / Other">Concessions / Other</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-2 text-outline pointer-events-none text-[16px]">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+
+              {/* Gender focus Filter */}
+              <div className="flex flex-col gap-xs">
+                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none">
+                  Gender Focus
+                </label>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3 text-outline text-[16px] pointer-events-none">
+                    wc
+                  </span>
+                  <select
+                    className="w-full pl-8 pr-7 py-2 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-sm text-[12px] text-on-surface outline-none appearance-none cursor-pointer focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    value={selectedGender}
+                    onChange={(e) => setSelectedGender(e.target.value)}
+                  >
+                    <option value="Any Gender">Any Gender</option>
+                    <option value="Female Only">Female Only</option>
+                    <option value="General / All Genders">General / All Genders</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-2 text-outline pointer-events-none text-[16px]">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* Active Filter Tags (only under schemes tab) */}
+          {activeTab === "schemes" && (selectedAgeGroup !== "Any Age" || selectedProfession !== "Any Profession" || selectedBenefitType !== "Any Benefit" || selectedIncomeLimit !== "Any Income Limit" || selectedCoverageAmount !== "Any Coverage" || selectedGender !== "Any Gender") && (
+            <div className="flex flex-wrap gap-xs mt-sm pt-xs border-t border-outline-variant/40 animate-fade-in">
+              <span className="text-[11px] font-bold text-outline uppercase tracking-wider flex items-center pr-xs select-none">
+                Active Criteria:
+              </span>
+              
+              {selectedAgeGroup !== "Any Age" && (
+                <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-secondary/10 text-secondary rounded-lg text-[12px] font-semibold">
+                  <span>Age: {selectedAgeGroup}</span>
+                  <button onClick={() => setSelectedAgeGroup("Any Age")} className="hover:bg-secondary/20 rounded-full p-0.5 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[12px] font-bold">close</span>
+                  </button>
+                </span>
+              )}
+
+              {selectedProfession !== "Any Profession" && (
+                <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-secondary/10 text-secondary rounded-lg text-[12px] font-semibold">
+                  <span>Occupation: {selectedProfession}</span>
+                  <button onClick={() => setSelectedProfession("Any Profession")} className="hover:bg-secondary/20 rounded-full p-0.5 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[12px] font-bold">close</span>
+                  </button>
+                </span>
+              )}
+
+              {selectedBenefitType !== "Any Benefit" && (
+                <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-secondary/10 text-secondary rounded-lg text-[12px] font-semibold">
+                  <span>Benefit: {selectedBenefitType}</span>
+                  <button onClick={() => setSelectedBenefitType("Any Benefit")} className="hover:bg-secondary/20 rounded-full p-0.5 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[12px] font-bold">close</span>
+                  </button>
+                </span>
+              )}
+
+              {selectedIncomeLimit !== "Any Income Limit" && (
+                <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-secondary/10 text-secondary rounded-lg text-[12px] font-semibold">
+                  <span>Income: {selectedIncomeLimit}</span>
+                  <button onClick={() => setSelectedIncomeLimit("Any Income Limit")} className="hover:bg-secondary/20 rounded-full p-0.5 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[12px] font-bold">close</span>
+                  </button>
+                </span>
+              )}
+
+              {selectedCoverageAmount !== "Any Coverage" && (
+                <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-secondary/10 text-secondary rounded-lg text-[12px] font-semibold">
+                  <span>Coverage: {selectedCoverageAmount}</span>
+                  <button onClick={() => setSelectedCoverageAmount("Any Coverage")} className="hover:bg-secondary/20 rounded-full p-0.5 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[12px] font-bold">close</span>
+                  </button>
+                </span>
+              )}
+
+              {selectedGender !== "Any Gender" && (
+                <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-secondary/10 text-secondary rounded-lg text-[12px] font-semibold">
+                  <span>Gender: {selectedGender}</span>
+                  <button onClick={() => setSelectedGender("Any Gender")} className="hover:bg-secondary/20 rounded-full p-0.5 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[12px] font-bold">close</span>
+                  </button>
+                </span>
+              )}
+            </div>
+          )}
+
+          {/* Category Tabs (only under Schemes tab) */}
+          {activeTab === "schemes" && (
+            <div className="flex gap-xs mt-sm overflow-x-auto pb-xs custom-scrollbar">
+              {[
+                { id: "All", label: "All Schemes", count: schemes.length },
+                { id: "Breast Cancer Specific", label: "Breast Cancer Focus", count: schemes.filter(s => s.category === "Breast Cancer Specific").length },
+                { id: "General", label: "National & Central Programs", count: schemes.filter(s => s.category === "General").length },
+                { id: "State Specific", label: "State Government Schemes", count: schemes.filter(s => s.category === "State Specific").length }
+              ].map((cat) => {
+                const isActive = selectedCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`flex items-center gap-xs px-md py-2.5 rounded-full font-label-sm text-[13px] whitespace-nowrap transition-all duration-200 ${
+                      isActive
+                        ? "bg-primary text-on-primary shadow-md transform -translate-y-[1px]"
+                        : "bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container-high border border-outline-variant/50"
+                    }`}
+                  >
+                    {cat.label}
+                    <span className={`px-2 py-0.5 rounded-full text-[11px] ${
+                      isActive ? "bg-on-primary/20 text-on-primary" : "bg-surface-container text-on-surface-variant"
+                    }`}>
+                      {cat.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
-        {/* Featured Hero: Ayushman Bharat (only shown when selected state is All India or when it matches current filters) */}
-        {selectedState === "All India" && selectedCategory !== "State Specific" && !searchQuery && (
+        {/* Featured Hero: Ayushman Bharat (only shown when in Schemes tab, selected state is All India, and no search query exists) */}
+        {activeTab === "schemes" && selectedState === "All India" && selectedCategory !== "State Specific" && !searchQuery && (
           <section className="mb-lg">
             <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary to-primary-container text-on-primary p-md md:p-lg flex flex-col md:flex-row items-stretch gap-md shadow-xl border border-primary/20">
               <div className="flex-grow z-10 flex flex-col justify-between">
@@ -1999,47 +3544,115 @@ export default function Schemes() {
         )}
 
         {/* Dynamic Catalog Section Header */}
-        <div className="flex justify-between items-center mb-md border-b border-outline-variant/40 pb-sm">
+        <div ref={catalogRef} className="flex justify-between items-center mb-md border-b border-outline-variant/40 pb-sm">
           <h2 className="font-headline-sm text-headline-sm text-on-surface flex items-center gap-sm">
-            <span className="material-symbols-outlined text-primary text-[24px]">list_alt</span>
-            {filteredSchemes.length === schemes.length ? "All Catalogue Programs" : "Filtered Matches"}
-            <span className="text-body-sm font-normal text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">
-              {filteredSchemes.length} programs found
+            <span className="material-symbols-outlined text-primary text-[24px]">
+              {activeTab === "schemes" ? "list_alt" : "shield"}
             </span>
+            {activeTab === "schemes" ? (
+              <>
+                {filteredSchemes.length === schemes.length ? "All Catalogue Programs" : "Filtered Matches"}
+                <span className="text-body-sm font-normal text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">
+                  {filteredSchemes.length} programs found
+                </span>
+              </>
+            ) : (
+              <>
+                IRDAI Registered General Insurers
+                <span className="text-body-sm font-normal text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">
+                  {sortedAndFilteredInsurers.length} insurers listed
+                </span>
+              </>
+            )}
           </h2>
+          {/* Active Tab Sort dropdown */}
+          <div className="flex items-center gap-xs">
+            <label className="text-[12px] font-bold text-on-surface-variant hidden md:block">Sort By</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-3 py-1.5 rounded-lg border border-outline-variant bg-surface-bright font-body-sm text-[12px] text-on-surface outline-none cursor-pointer"
+            >
+              {activeTab === "schemes" ? (
+                <>
+                  <option value="Default">Default Order</option>
+                  <option value="Coverage (High to Low)">Coverage (High to Low)</option>
+                  <option value="Reliability (High to Low)">Reliability (High to Low)</option>
+                  <option value="Name (A-Z)">Name (A-Z)</option>
+                </>
+              ) : (
+                <>
+                  <option value="Default">Registration Number</option>
+                  <option value="Network Size (High to Low)">Network Size (High to Low)</option>
+                  <option value="Claim Ratio (High to Low)">Claim Ratio (High to Low)</option>
+                  <option value="Name (A-Z)">Company Name (A-Z)</option>
+                </>
+              )}
+            </select>
+          </div>
         </div>
 
         {/* Catalog Grid */}
-        {filteredSchemes.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter animate-fade-in">
-            {filteredSchemes.map((s) => (
-              <SchemeTile
-                key={s.title}
-                scheme={s}
-                onViewDetails={() => setActiveDetailedScheme(s)}
-              />
-            ))}
-          </div>
+        {activeTab === "schemes" ? (
+          sortedAndFilteredSchemes.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter animate-fade-in">
+              {sortedAndFilteredSchemes.map((s) => (
+                <SchemeTile
+                  key={s.title}
+                  scheme={s}
+                  onViewDetails={() => setActiveDetailedScheme(s)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-xl bg-surface-container-lowest rounded-2xl border border-dashed border-outline-variant/80 p-lg text-center shadow-inner">
+              <span className="material-symbols-outlined text-[64px] text-outline/50 mb-sm">
+                info_i
+              </span>
+              <h3 className="font-headline-sm text-headline-sm text-on-surface mb-xs">No matching schemes found</h3>
+              <p className="font-body-md text-body-md text-on-surface-variant max-w-md mb-md">
+                We couldn't find any schemes in {selectedState !== "All India" ? selectedState : "India"} matching "{searchQuery}" under the active filters.
+              </p>
+              <button
+                onClick={resetFilters}
+                className="px-lg py-3 bg-primary text-on-primary rounded-xl font-label-md text-label-md hover:bg-primary/95 transition-all shadow-md active:scale-95 flex items-center gap-xs"
+              >
+                <span className="material-symbols-outlined text-[18px]">restart_alt</span> Clear Filter Options
+              </button>
+            </div>
+          )
         ) : (
-          <div className="flex flex-col items-center justify-center py-xl bg-surface-container-lowest rounded-2xl border border-dashed border-outline-variant/80 p-lg text-center shadow-inner">
-            <span className="material-symbols-outlined text-[64px] text-outline/50 mb-sm">
-              info_i
-            </span>
-            <h3 className="font-headline-sm text-headline-sm text-on-surface mb-xs">No matching schemes found</h3>
-            <p className="font-body-md text-body-md text-on-surface-variant max-w-md mb-md">
-              We couldn't find any schemes in {selectedState !== "All India" ? selectedState : "India"} matching "{searchQuery}" under "{selectedCategory}".
-            </p>
-            <button
-              onClick={resetFilters}
-              className="px-lg py-3 bg-primary text-on-primary rounded-xl font-label-md text-label-md hover:bg-primary/95 transition-all shadow-md active:scale-95 flex items-center gap-xs"
-            >
-              <span className="material-symbols-outlined text-[18px]">restart_alt</span> Clear Filter Options
-            </button>
-          </div>
+          sortedAndFilteredInsurers.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter animate-fade-in">
+              {sortedAndFilteredInsurers.map((ins) => (
+                <InsuranceTile
+                  key={ins.name}
+                  insurance={ins}
+                  onViewDetails={() => setActiveDetailedInsurance(ins)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-xl bg-surface-container-lowest rounded-2xl border border-dashed border-outline-variant/80 p-lg text-center shadow-inner">
+              <span className="material-symbols-outlined text-[64px] text-outline/50 mb-sm">
+                info_i
+              </span>
+              <h3 className="font-headline-sm text-headline-sm text-on-surface mb-xs">No insurers found</h3>
+              <p className="font-body-md text-body-md text-on-surface-variant max-w-md mb-md">
+                We couldn't find any general insurers matching "{searchQuery}" under "{selectedSector}".
+              </p>
+              <button
+                onClick={resetFilters}
+                className="px-lg py-3 bg-primary text-on-primary rounded-xl font-label-md text-label-md hover:bg-primary/95 transition-all shadow-md active:scale-95 flex items-center gap-xs"
+              >
+                <span className="material-symbols-outlined text-[18px]">restart_alt</span> Clear Filter Options
+              </button>
+            </div>
+          )
         )}
       </div>
 
-      {/* Slide-over Detailed Drawer / Modal */}
+      {/* Slide-over Detailed Scheme Drawer / Modal */}
       {activeDetailedScheme && (
         <div className="fixed inset-0 z-50 flex justify-end transition-all duration-300">
           
@@ -2096,6 +3709,44 @@ export default function Schemes() {
                 <p className="font-body-md text-body-md text-on-surface leading-relaxed">
                   {activeDetailedScheme.description || activeDetailedScheme.body}
                 </p>
+                {/* Target Audience Summary Grid */}
+                {(() => {
+                  const attrs = getSchemeAttributes(activeDetailedScheme);
+                  return (
+                    <div className="grid grid-cols-3 gap-xs bg-surface-container-low p-sm rounded-xl border border-outline-variant/40 mt-sm">
+                      <div className="text-center p-xs border-r border-b border-outline-variant/30 md:border-b-0 pb-sm">
+                        <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">face</span>
+                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">Age Suitability</p>
+                        <p className="text-[11px] font-semibold text-on-surface mt-[2px]">{attrs.ageGroup}</p>
+                      </div>
+                      <div className="text-center p-xs border-r border-b border-outline-variant/30 md:border-b-0 pb-sm">
+                        <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">work</span>
+                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">Profession</p>
+                        <p className="text-[11px] font-semibold text-on-surface mt-[2px] line-clamp-1">{attrs.profession}</p>
+                      </div>
+                      <div className="text-center p-xs border-b border-outline-variant/30 md:border-b-0 pb-sm">
+                        <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">wc</span>
+                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">Gender Focus</p>
+                        <p className="text-[11px] font-semibold text-on-surface mt-[2px]">{attrs.gender}</p>
+                      </div>
+                      <div className="text-center p-xs border-r pt-sm">
+                        <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">card_membership</span>
+                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">Benefit Form</p>
+                        <p className="text-[11px] font-semibold text-on-surface mt-[2px]">{attrs.benefitType}</p>
+                      </div>
+                      <div className="text-center p-xs border-r pt-sm">
+                        <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">savings</span>
+                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">Income Limit</p>
+                        <p className="text-[11px] font-semibold text-on-surface mt-[2px] line-clamp-1">{attrs.incomeLimit}</p>
+                      </div>
+                      <div className="text-center p-xs pt-sm">
+                        <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">payments</span>
+                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">Coverage Max</p>
+                        <p className="text-[11px] font-semibold text-on-surface mt-[2px] line-clamp-1">{attrs.coverageAmount}</p>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Key Benefits Bullet points */}
@@ -2125,7 +3776,7 @@ export default function Schemes() {
                   </h3>
                   <ul className="grid grid-cols-1 gap-xs pl-sm text-body-sm text-on-surface-variant list-disc">
                     {activeDetailedScheme.requiredDocuments.map((doc, idx) => (
-                      <li key={idx}>{doc}</li>
+                      <li key={idx} className="leading-relaxed">{doc}</li>
                     ))}
                   </ul>
                 </div>
@@ -2219,6 +3870,213 @@ export default function Schemes() {
           </div>
         </div>
       )}
+
+      {/* Slide-over Detailed Insurance Drawer / Modal */}
+      {activeDetailedInsurance && (
+        <div className="fixed inset-0 z-50 flex justify-end transition-all duration-300">
+          
+          {/* Backdrop glassmorphic */}
+          <div
+            onClick={() => setActiveDetailedInsurance(null)}
+            className="absolute inset-0 bg-on-surface/40 backdrop-blur-sm transition-opacity duration-300 animate-fade-in"
+          />
+
+          {/* Panel Container */}
+          <div className="relative w-full max-w-2xl bg-surface-bright h-full shadow-2xl flex flex-col justify-between border-l border-outline-variant/40 animate-slide-in overflow-hidden">
+            
+            {/* Header */}
+            <div className="p-md md:p-lg border-b border-outline-variant/40 flex justify-between items-start bg-surface-container-low">
+              <div className="flex-grow pr-sm">
+                <div className="flex items-center gap-sm mb-sm flex-wrap">
+                  <span className="px-3 py-1 text-[12px] rounded-full font-label-sm bg-primary-container text-on-primary-container font-bold">
+                    {activeDetailedInsurance.sector}
+                  </span>
+                  <span className="px-3 py-1 bg-surface-container text-on-surface-variant rounded-full text-[12px] font-semibold flex items-center gap-xs">
+                    <span className="material-symbols-outlined text-[14px]">badge</span>
+                    IRDAI Reg: {activeDetailedInsurance.regNumber}
+                  </span>
+                  <span className="px-3 py-1 bg-secondary/10 text-secondary rounded-full text-[12px] font-semibold flex items-center gap-xs">
+                    <span className="material-symbols-outlined text-[14px]">map</span>
+                    HQ: {activeDetailedInsurance.hq.split(",")[0]}
+                  </span>
+                </div>
+                <h2 className="font-headline-md text-headline-md text-primary leading-tight">
+                  {activeDetailedInsurance.name}
+                </h2>
+              </div>
+              <button
+                onClick={() => setActiveDetailedInsurance(null)}
+                className="p-2 hover:bg-surface-container-high rounded-full text-outline hover:text-on-surface transition-all flex items-center justify-center"
+                aria-label="Close details"
+              >
+                <span className="material-symbols-outlined text-[24px]">close</span>
+              </button>
+            </div>
+
+            {/* Scrollable details container */}
+            <div className="p-md md:p-lg overflow-y-auto flex-grow space-y-md custom-scrollbar">
+              
+              {/* Detailed Description */}
+              <div>
+                <h3 className="font-label-md text-label-md uppercase tracking-wider text-outline mb-xs">
+                  About the Insurer
+                </h3>
+                <p className="font-body-md text-body-md text-on-surface leading-relaxed">
+                  {activeDetailedInsurance.body}
+                </p>
+
+                {/* Grid stats comparing details */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-xs bg-surface-container-low p-sm rounded-xl border border-outline-variant/40 mt-sm">
+                  <div className="text-center p-xs border-r border-outline-variant/30 last:border-r-0">
+                    <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">payments</span>
+                    <p className="text-[10px] uppercase font-bold text-outline tracking-wider leading-none">Claim Ratio</p>
+                    <p className="text-[12px] font-semibold text-on-surface mt-[2px]">{activeDetailedInsurance.reliability}%</p>
+                  </div>
+                  <div className="text-center p-xs border-r border-outline-variant/30 last:border-r-0">
+                    <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">local_hospital</span>
+                    <p className="text-[10px] uppercase font-bold text-outline tracking-wider leading-none">Cashless outlets</p>
+                    <p className="text-[12px] font-semibold text-on-surface mt-[2px] line-clamp-1">{activeDetailedInsurance.networkHospitals}</p>
+                  </div>
+                  <div className="text-center p-xs border-r border-outline-variant/30 last:border-r-0">
+                    <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">category</span>
+                    <p className="text-[10px] uppercase font-bold text-outline tracking-wider leading-none">Regulated By</p>
+                    <p className="text-[12px] font-semibold text-on-surface mt-[2px]">IRDAI Authority</p>
+                  </div>
+                  <div className="text-center p-xs">
+                    <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">business</span>
+                    <p className="text-[10px] uppercase font-bold text-outline tracking-wider leading-none">Registered HQ</p>
+                    <p className="text-[12px] font-semibold text-on-surface mt-[2px] line-clamp-1">{activeDetailedInsurance.hq.split(",")[0]}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Oncology Policy description */}
+              <div className="bg-surface-container-lowest p-md rounded-xl border border-outline-variant/60">
+                <div className="flex items-center gap-xs mb-sm">
+                  <span className="material-symbols-outlined text-secondary text-[22px]">health_and_safety</span>
+                  <h3 className="font-headline-sm text-[16px] text-secondary font-bold">
+                    Primary Oncology Cover: {activeDetailedInsurance.primaryPolicy}
+                  </h3>
+                </div>
+                <div className="space-y-sm">
+                  {activeDetailedInsurance.policyFeatures.map((feat, idx) => (
+                    <div key={idx} className="flex items-start gap-sm">
+                      <span className="material-symbols-outlined text-secondary text-[20px] mt-0.5 select-none">
+                        check_circle
+                      </span>
+                      <span className="font-body-md text-body-md text-on-surface">
+                        {feat}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* IRDAI Official Contact Representative */}
+              <div className="bg-surface-container-low p-md rounded-xl border border-outline-variant/60">
+                <div className="flex items-center gap-xs mb-sm">
+                  <span className="material-symbols-outlined text-primary text-[22px]">contact_phone</span>
+                  <h3 className="font-headline-sm text-[16px] text-primary font-bold">
+                    Official IRDAI Representative Contact
+                  </h3>
+                </div>
+                <p className="text-body-sm text-on-surface-variant mb-md leading-relaxed">
+                  Below are the official IRDAI-registered key contact details and grievance escalation channels for this company:
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-sm">
+                  <div className="bg-surface-container-lowest p-sm rounded-xl border border-outline-variant/40 flex items-start gap-xs">
+                    <span className="material-symbols-outlined text-secondary text-[20px] mt-0.5">person</span>
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-outline tracking-wider leading-none">Principal Officer</p>
+                      <p className="font-label-md text-label-md text-on-surface font-semibold mt-1">{activeDetailedInsurance.contactPerson}</p>
+                    </div>
+                  </div>
+                  <div className="bg-surface-container-lowest p-sm rounded-xl border border-outline-variant/40 flex items-start gap-xs">
+                    <span className="material-symbols-outlined text-secondary text-[20px] mt-0.5">mail</span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[10px] uppercase font-bold text-outline tracking-wider leading-none">Official E-mail</p>
+                      <a href={`mailto:${activeDetailedInsurance.contactEmail}`} className="font-label-md text-label-md text-primary font-semibold mt-1 hover:underline block truncate" title={activeDetailedInsurance.contactEmail}>
+                        {activeDetailedInsurance.contactEmail}
+                      </a>
+                    </div>
+                  </div>
+                  <div className="bg-surface-container-lowest p-sm rounded-xl border border-outline-variant/40 flex items-start gap-xs">
+                    <span className="material-symbols-outlined text-secondary text-[20px] mt-0.5">phone_in_talk</span>
+                    <div>
+                      <p className="text-[10px] uppercase font-bold text-outline tracking-wider leading-none">Telephone Contact</p>
+                      <a href={`tel:${activeDetailedInsurance.contactPhone}`} className="font-label-md text-label-md text-primary font-semibold mt-1 hover:underline block">
+                        {activeDetailedInsurance.contactPhone}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Required Documents checklist */}
+              <div>
+                <h3 className="font-label-md text-label-md uppercase tracking-wider text-outline mb-sm flex items-center gap-xs">
+                  <span className="material-symbols-outlined text-outline text-[18px]">folder_open</span>
+                  Step-by-Step Claim Filing Documents Checklist
+                </h3>
+                <p className="text-body-sm text-on-surface-variant mb-xs pl-1">
+                  To file a cashless or reimbursement oncology claim with {activeDetailedInsurance.name}, keep the following checklist of official documents ready:
+                </p>
+                <ul className="grid grid-cols-1 gap-xs pl-sm text-body-sm text-on-surface-variant list-disc">
+                  {activeDetailedInsurance.requiredDocuments.map((doc, idx) => (
+                    <li key={idx} className="leading-relaxed">{doc}</li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Trust Claim settlement info */}
+              <div className="bg-surface-container-low p-md rounded-xl flex items-center gap-md border border-outline-variant/40">
+                <div className="w-14 h-14 relative flex items-center justify-center flex-shrink-0">
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                    <path
+                      className="text-outline-variant/30"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                    />
+                    <path
+                      className="text-secondary transition-all duration-1000"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeDasharray={`${activeDetailedInsurance.reliability}, 100`}
+                      strokeLinecap="round"
+                      strokeWidth="3.5"
+                    />
+                  </svg>
+                  <span className="absolute text-[12px] font-bold text-secondary">
+                    {activeDetailedInsurance.reliability}%
+                  </span>
+                </div>
+                <div>
+                  <p className="font-label-md text-label-md text-on-surface font-bold">Claim Settlement Ratio: Verified</p>
+                  <p className="text-[12px] text-on-surface-variant leading-tight">
+                    This insurer has a verified settlement success rate of {activeDetailedInsurance.reliability}% under IRDAI auditing protocols.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Bottom Actions Footer */}
+            <div className="p-md md:p-lg border-t border-outline-variant/40 bg-surface-container-low flex items-stretch">
+              <a
+                href={activeDetailedInsurance.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full flex items-center justify-center gap-xs px-md py-3 rounded-xl font-label-md text-label-md transition-all active:scale-[0.98] shadow-sm bg-primary text-on-primary hover:bg-primary/95"
+              >
+                <span className="material-symbols-outlined text-[18px]">language</span>
+                Check Policies on Official Portal
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }
@@ -2259,9 +4117,44 @@ function SchemeTile({ scheme, onViewDetails }: SchemeTileProps) {
           <h3 className="font-headline-sm text-headline-sm text-primary mb-xs group-hover:text-primary-container transition-colors line-clamp-2 min-h-[48px]">
             {scheme.title}
           </h3>
-          <p className="font-body-sm text-body-sm text-on-surface-variant mb-md line-clamp-3">
+          <p className="font-body-sm text-body-sm text-on-surface-variant mb-xs line-clamp-3">
             {scheme.body}
           </p>
+
+          {/* Dynamic Badges */}
+          {(() => {
+            const attrs = getSchemeAttributes(scheme);
+            return (
+              <div className="flex flex-wrap gap-xs mb-sm">
+                <span className="px-2 py-0.5 bg-surface-container text-on-surface-variant rounded-md text-[10px] font-medium flex items-center gap-[2px] select-none">
+                  <span className="material-symbols-outlined text-[12px]">payments</span>
+                  {attrs.benefitType}
+                </span>
+                {attrs.profession !== "General Public" && (
+                  <span className="px-2 py-0.5 bg-secondary-container/20 text-on-secondary-container rounded-md text-[10px] font-medium flex items-center gap-[2px] select-none">
+                    <span className="material-symbols-outlined text-[12px]">work</span>
+                    {attrs.profession}
+                  </span>
+                )}
+                {attrs.ageGroup !== "All Ages" && (
+                  <span className="px-2 py-0.5 bg-tertiary-container/10 text-on-tertiary-container rounded-md text-[10px] font-medium flex items-center gap-[2px] select-none">
+                    <span className="material-symbols-outlined text-[12px]">face</span>
+                    {attrs.ageGroup}
+                  </span>
+                )}
+                <span className="px-2 py-0.5 bg-secondary-container/10 text-on-secondary-container rounded-md text-[10px] font-medium flex items-center gap-[2px] select-none">
+                  <span className="material-symbols-outlined text-[12px]">currency_rupee</span>
+                  {attrs.coverageAmount.split(" ")[0]}
+                </span>
+                {attrs.gender !== "General / All Genders" && (
+                  <span className="px-2 py-0.5 bg-error-container/20 text-on-error-container rounded-md text-[10px] font-medium flex items-center gap-[2px] select-none">
+                    <span className="material-symbols-outlined text-[12px]">wc</span>
+                    {attrs.gender.split(" ")[0]}
+                  </span>
+                )}
+              </div>
+            );
+          })()}
 
           {/* Quick highlights */}
           <div className="space-y-xs mb-md border-t border-dashed border-outline-variant/40 pt-md">
@@ -2314,6 +4207,113 @@ function SchemeTile({ scheme, onViewDetails }: SchemeTileProps) {
             className="w-full py-2.5 border border-primary text-primary rounded-xl font-label-md text-label-md hover:bg-primary/5 transition-all flex items-center justify-center gap-xs active:scale-[0.98]"
           >
             <span className="material-symbols-outlined text-[18px]">launch</span> View Application Details
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface InsuranceTileProps {
+  insurance: Insurance;
+  onViewDetails: () => void;
+}
+
+function InsuranceTile({ insurance, onViewDetails }: InsuranceTileProps) {
+  const isStandalone = insurance.sector === "Standalone Health";
+  const isPublic = insurance.sector === "Public Sector";
+  
+  const tagCls = isStandalone
+    ? "bg-tertiary-container text-on-tertiary-container font-semibold"
+    : isPublic
+    ? "bg-primary-container text-on-primary-container font-semibold"
+    : "bg-surface-variant text-on-surface-variant font-semibold";
+
+  return (
+    <div className="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-lg transition-all duration-300 group">
+      
+      {/* Top Banner section */}
+      <div className="p-md border-b border-outline-variant/40 bg-surface-container-low flex justify-between items-center">
+        <div className="bg-primary/5 p-2 rounded-xl group-hover:bg-primary/10 transition-colors">
+          <span className="material-symbols-outlined text-primary text-[22px]">
+            {isStandalone ? "star_rate" : isPublic ? "domain" : "business"}
+          </span>
+        </div>
+        <div className="flex gap-xs items-center">
+          <span className={`px-2.5 py-0.5 rounded-full font-label-sm text-[11px] ${tagCls}`}>
+            {insurance.sector}
+          </span>
+          <span className="px-2 py-0.5 bg-surface-container text-on-surface-variant rounded-full text-[10px] font-medium flex items-center gap-[2px]">
+            <span className="material-symbols-outlined text-[10px]">badge</span>
+            IRDAI Reg. {insurance.regNumber}
+          </span>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="p-md flex-grow flex flex-col justify-between">
+        <div>
+          <h3 className="font-headline-sm text-headline-sm text-primary mb-xs group-hover:text-primary-container transition-colors line-clamp-2 min-h-[48px]">
+            {insurance.name}
+          </h3>
+          <p className="text-[11px] text-outline font-bold uppercase tracking-wider mb-xs">
+            HQ: {insurance.hq}
+          </p>
+          <p className="font-body-sm text-body-sm text-on-surface-variant mb-sm line-clamp-3">
+            {insurance.body}
+          </p>
+
+          {/* Primary Oncology Policy Card */}
+          <div className="bg-surface-container-low p-sm rounded-xl border border-outline-variant/40 mb-md">
+            <div className="flex items-center gap-xs mb-1">
+              <span className="material-symbols-outlined text-secondary text-[16px]">verified</span>
+              <p className="text-[11px] font-bold uppercase tracking-wider text-secondary leading-none">Primary Cancer Cover</p>
+            </div>
+            <p className="font-label-md text-label-md text-on-surface font-semibold line-clamp-1">{insurance.primaryPolicy}</p>
+          </div>
+
+          {/* Policy Highlights */}
+          <div className="space-y-xs mb-md border-t border-dashed border-outline-variant/40 pt-md">
+            {insurance.policyFeatures.slice(0, 2).map((feat, idx) => (
+              <div key={idx} className="flex items-center gap-xs">
+                <span className="material-symbols-outlined text-secondary text-[16px] flex-shrink-0 select-none">
+                  check_circle
+                </span>
+                <span className="font-body-sm text-[12px] text-on-surface line-clamp-1">{feat}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Network & Reliability Section */}
+        <div>
+          <div className="bg-surface-container-low p-2 rounded-xl flex justify-between items-center mb-md border border-outline-variant/40">
+            <div className="flex items-center gap-sm">
+              <div className="bg-secondary/10 p-1.5 rounded-lg">
+                <span className="material-symbols-outlined text-secondary text-[18px]">local_hospital</span>
+              </div>
+              <div>
+                <p className="font-label-sm text-[10px] text-outline font-bold leading-none">Cashless Network</p>
+                <p className="text-[12px] text-on-surface font-semibold leading-normal">
+                  {insurance.networkSize > 0 ? insurance.networkHospitals.split(" ")[0] : "Reimbursement"}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-xs pr-1">
+              <span className="material-symbols-outlined text-tertiary text-[18px]">percent</span>
+              <div>
+                <p className="font-label-sm text-[10px] text-outline font-bold leading-none">Claim Ratio</p>
+                <p className="text-[12px] text-on-surface font-semibold leading-normal">{insurance.reliability}%</p>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <button
+            onClick={onViewDetails}
+            className="w-full py-2.5 border border-primary text-primary rounded-xl font-label-md text-label-md hover:bg-primary/5 transition-all flex items-center justify-center gap-xs active:scale-[0.98]"
+          >
+            <span className="material-symbols-outlined text-[18px]">launch</span> View Policy & Claim Guide
           </button>
         </div>
       </div>

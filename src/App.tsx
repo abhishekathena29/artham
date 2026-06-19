@@ -5,8 +5,8 @@ import MedicalInput from "./pages/MedicalInput";
 import Dashboard from "./pages/Dashboard";
 import CostBreakdown from "./pages/CostBreakdown";
 import ActionPlan from "./pages/ActionPlan";
-import SupportPlan from "./pages/SupportPlan";
 import Schemes from "./pages/Schemes";
+import PreventivePlans from "./pages/PreventivePlans";
 
 export default function App() {
   return (
@@ -18,8 +18,10 @@ export default function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/cost-breakdown" element={<CostBreakdown />} />
         <Route path="/action-plan" element={<ActionPlan />} />
-        <Route path="/support-plan" element={<SupportPlan />} />
-        <Route path="/schemes" element={<Schemes />} />
+        <Route path="/support-plan" element={<Navigate to="/action-plan" replace />} />
+        <Route path="/schemes" element={<Schemes key="schemes" />} />
+        <Route path="/insurances" element={<Schemes key="insurances" />} />
+        <Route path="/preventive-plans" element={<PreventivePlans />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
