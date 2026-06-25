@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import AppShell from "../components/AppShell";
+import { useLanguage } from "../components/LanguageContext";
 
 type ChatMsg = {
   role: "bot" | "user";
@@ -23,7 +24,19 @@ const queryGeminiCostEstimator = async (history: ChatMsg[], apiKey: string): Pro
   const insurance = hasIns ? (provider || "Yes (details pending)") : "No Insurance";
   const incomeBracket = localStorage.getItem("artham_intake_income_bracket") || "Not specified";
 
+  const lang = localStorage.getItem("artham_language") || "en";
+  const languageNames: Record<string, string> = {
+    en: "English",
+    hi: "Hindi (हिन्दी)",
+    mr: "Marathi (मराठी)",
+    kn: "Kannada (ಕನ್ನಡ)",
+    bn: "Bengali (বাঙালি)"
+  };
+  const activeLanguageName = languageNames[lang] || "English";
+
   const systemPrompt = `You are the Artham Cost Estimator, an expert clinical and financial navigation assistant for breast cancer in India. Your goal is to help the user understand their treatment cost estimate by extracting clinical parameters from their chat and providing cost estimations.
+
+CRITICAL LANGUAGE REQUIREMENT: You MUST speak, explain, and write your entire response (including the JSON 'message', 'diagnosis_details', and 'next_steps') in the ${activeLanguageName} language. The JSON keys and structure itself must remain in English, but all string values must be in ${activeLanguageName}.
 
 Current User Intake Profile (for your context):
 - State: ${patientState}
@@ -39,9 +52,9 @@ Current User Intake Profile (for your context):
 
 Read the dialogue and extract any values the user mentions. You MUST respond ONLY with a valid JSON object. Do not include markdown codeblocks or extra text. The JSON format must be:
 {
-  "message": "Write a highly clear, concise response under 100 words. Empathize and give a brief cost estimation (e.g. telling them their estimated range in Rupees/Lakhs based on their stage or surgery/chemo plans, and next steps). Stay on point and do not spiral.",
-  "diagnosis_details": "Concise summary of their diagnosis details (e.g., 'Stage II HER2+, Private Hospital'). Keep under 15 words.",
-  "next_steps": "Concise bulleted next steps (e.g., '1. Verify PM-JAY eligibility. 2. Submit biopsy report.'). Keep under 25 words.",
+  "message": "Write a highly clear, concise response under 100 words in the ${activeLanguageName} language. Empathize and give a brief cost estimation.",
+  "diagnosis_details": "Concise summary of their diagnosis details in the ${activeLanguageName} language. Keep under 15 words.",
+  "next_steps": "Concise bulleted next steps in the ${activeLanguageName} language. Keep under 25 words.",
   "extracted_profile": {
     "state": "Maharashtra" | "Karnataka" | "West Bengal" | "Tamil Nadu" | "Kerala" | "Delhi" | "Gujarat" | "Telangana" | "Andhra Pradesh" | "Rajasthan" | "Odisha" | null,
     "age": "number string" or null,
@@ -94,6 +107,7 @@ Read the dialogue and extract any values the user mentions. You MUST respond ONL
 };
 
 export default function Dashboard() {
+  const { t } = useLanguage();
   const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem("artham_is_logged_in") === "true");
 
   // Load intake parameters reactively
@@ -691,22 +705,22 @@ export default function Dashboard() {
             <div className="relative z-10 flex flex-col md:flex-row justify-between items-center md:items-end gap-md">
               <div className="text-center md:text-left">
                 <span className="font-label-md text-secondary-container bg-primary-container/80 backdrop-blur-md px-sm py-1 rounded-full inline-block mb-sm text-xs font-semibold border border-white/5 uppercase tracking-wider">
-                  Estimated Total Treatment Cost Range
+                  {t("db_title")}
                 </span>
                 <h1 className="font-headline-lg text-4xl md:text-5xl font-extrabold mb-sm tracking-tight drop-shadow-sm">
-                  {isIntakeFilled ? `${formatINR(minCost)} – ${formatINR(maxCost)}` : "Pending Profile Onboarding"}
+                  {isIntakeFilled ? `${formatINR(minCost)} – ${formatINR(maxCost)}` : t("it_not_specified")}
                 </h1>
                 <p className="text-on-primary/80 font-body-md text-sm font-medium max-w-xl leading-relaxed">
                   {isIntakeFilled ? (
                     `Based on: ${treatmentDesc || "Breast Cancer Screening"} for a ${age}-year old in ${patientState || "India"} (${hospitalType}), Income: ${incomeBracket}.`
                   ) : (
-                    "Please complete the Patient Financial Intake or chat with the Cost Assistant on the right to view personalized treatment cost estimates, government schemes, and financial guidance."
+                    t("db_intake_pending")
                   )}
                 </p>
                 {isIntakeFilled && (
                   <div className="mt-sm text-on-primary/60 text-xs flex items-center justify-center md:justify-start gap-xs">
                     <span className="material-symbols-outlined text-[16px] text-secondary-container animate-pulse">verified</span>
-                    <span>Cost estimates calibrated against clinical data from Dr. Jay Anam's Breast Cancer Clinic, Mumbai.</span>
+                    <span>{t("db_calibration")}</span>
                   </div>
                 )}
                 {!isIntakeFilled && (
@@ -715,14 +729,14 @@ export default function Dashboard() {
                     className="mt-md inline-flex items-center gap-xs px-md py-sm bg-secondary text-on-secondary hover:brightness-110 font-bold rounded-xl active:scale-95 transition-all shadow-md text-xs hover:shadow-lg hover:-translate-y-0.5 duration-300"
                   >
                     <span className="material-symbols-outlined text-[16px]">assignment</span>
-                    Start Onboarding Intake
+                    {t("db_start")}
                   </Link>
                 )}
               </div>
 
               {/* Redesigned Premium Confidence Dial using SVG */}
               <div className="flex flex-col items-center bg-white/10 backdrop-blur-md p-md rounded-2xl border border-white/10 shadow-inner w-44 shrink-0 transition-all duration-300 hover:scale-105">
-                <p className="font-label-sm mb-xs text-[10px] text-white/80 uppercase tracking-widest font-bold">Confidence Level</p>
+                <p className="font-label-sm mb-xs text-[10px] text-white/80 uppercase tracking-widest font-bold">{t("db_confidence")}</p>
                 <div className="relative w-36 h-20 flex justify-center items-end">
                   <svg className="absolute w-32 h-20" viewBox="0 0 100 60">
                     <defs>
@@ -769,31 +783,31 @@ export default function Dashboard() {
             {/* Scenario Comparison Card */}
             <div className="space-y-sm">
               <div className="flex justify-between items-center px-xs">
-                <h3 className="font-headline-sm text-sm text-primary uppercase tracking-wider font-bold">Scenario Comparison</h3>
+                <h3 className="font-headline-sm text-sm text-primary uppercase tracking-wider font-bold">{t("db_scenarios")}</h3>
                 <span className="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors">info</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-sm">
                 <ScenarioCard 
-                  label="Best Case" 
+                  label={t("db_best")} 
                   value={isIntakeFilled ? formatINR(Math.round(totalEstimate * 0.45)) : "—"} 
                   icon="trending_down" 
                   tone="secondary" 
-                  body={isIntakeFilled ? "Early detection, generic drugs, public subsidized care." : "Fill intake form or chat to estimate."} 
+                  body={isIntakeFilled ? t("db_best_desc") : t("db_fill")} 
                 />
                 <ScenarioCard 
-                  label="Expected Case" 
+                  label={t("db_expected")} 
                   value={isIntakeFilled ? formatINR(totalEstimate) : "—"} 
                   icon="stars" 
                   tone="primary" 
                   highlighted 
-                  body={isIntakeFilled ? "Standard surgery, chemo, radiation cycles recommended." : "Fill intake form or chat to estimate."} 
+                  body={isIntakeFilled ? t("db_expected_desc") : t("db_fill")} 
                 />
                 <ScenarioCard 
-                  label="Complex Case" 
+                  label={t("db_complex")} 
                   value={isIntakeFilled ? formatINR(Math.round(totalEstimate * 2.1)) : "—"} 
                   icon="warning" 
                   tone="tertiary" 
-                  body={isIntakeFilled ? "Advanced stage requiring reconstruction, targeted therapies, ICU." : "Fill intake form or chat to estimate."} 
+                  body={isIntakeFilled ? t("db_complex_desc") : t("db_fill")} 
                 />
               </div>
             </div>
@@ -803,7 +817,7 @@ export default function Dashboard() {
               
               {/* Insurance Card */}
               <div className="bg-white/90 backdrop-blur-md p-md rounded-2xl shadow-sm border border-outline-variant/60 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
-                <h3 className="font-headline-sm text-sm text-primary mb-sm uppercase tracking-wider font-bold">Insurance Coverage</h3>
+                <h3 className="font-headline-sm text-sm text-primary mb-sm uppercase tracking-wider font-bold">{t("db_insurance")}</h3>
                 <div className="space-y-sm">
                   <div className="flex justify-between items-center text-xs text-on-surface">
                     <span className="font-medium text-on-surface-variant">Covered by {isIntakeFilled ? (hasInsurance ? insuranceProvider : "Ayushman Bharat / State Plan") : "Pending Profile"}</span>
@@ -814,7 +828,7 @@ export default function Dashboard() {
                     <div className="h-full bg-tertiary-container transition-all duration-500" style={{ width: `${totalEstimate > 0 ? Math.round((outOfPocket / totalEstimate) * 100) : 0}%` }} />
                   </div>
                   <div className="flex justify-between items-center text-xs text-on-surface">
-                    <span className="font-medium text-on-surface-variant">Out-of-Pocket Estimate</span>
+                    <span className="font-medium text-on-surface-variant">{t("db_out_of_pocket")}</span>
                     <span className="font-bold text-tertiary">{isIntakeFilled ? formatINR(outOfPocket) : "—"}</span>
                   </div>
                   
@@ -827,7 +841,7 @@ export default function Dashboard() {
                   )}
                   
                   <div className="flex justify-between items-center text-xs pt-xs border-t border-outline-variant/40 font-bold text-on-surface">
-                    <span>Adjusted Out-of-Pocket</span>
+                    <span>{t("db_adjusted")}</span>
                     <span className="text-primary text-sm">{isIntakeFilled ? formatINR(outOfPocketAdjusted) : "—"}</span>
                   </div>
 
@@ -850,12 +864,12 @@ export default function Dashboard() {
               <div className="bg-surface-container-low/80 backdrop-blur-md p-md rounded-2xl border-l-8 border-secondary-container border border-outline-variant/40 shadow-sm hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
                 <div className="flex items-center gap-xs mb-sm">
                   <span className="material-symbols-outlined text-secondary" style={{ fontSize: 24 }}>account_balance</span>
-                  <h3 className="font-headline-sm text-sm text-on-surface uppercase tracking-wider font-bold">Govt. Schemes</h3>
+                  <h3 className="font-headline-sm text-sm text-on-surface uppercase tracking-wider font-bold">{t("db_schemes")}</h3>
                 </div>
                 <div className="bg-white/80 p-sm rounded-xl border border-secondary-container/40 mb-sm">
                   <div className="flex justify-between items-center mb-xs">
                     <span className="font-label-md text-primary text-xs font-bold truncate max-w-[170px]" title={stateScheme.name}>{stateScheme.name}</span>
-                    {isIntakeFilled && <span className="px-1.5 py-[2px] bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-[8px] font-bold">Eligible</span>}
+                    {isIntakeFilled && <span className="px-1.5 py-[2px] bg-secondary-container text-on-secondary-container rounded-full font-label-sm text-[8px] font-bold">{t("db_eligible")}</span>}
                   </div>
                   <p className="font-body-sm text-on-surface-variant text-[10px] leading-normal">
                     {stateScheme.description}
@@ -888,7 +902,7 @@ export default function Dashboard() {
               to={isIntakeFilled ? "/cost-breakdown" : "/intake"}
               className="w-full bg-primary text-on-primary py-3 rounded-2xl font-headline-sm hover:brightness-110 hover:-translate-y-0.5 transition-all flex justify-center items-center gap-xs shadow-md"
             >
-              {isIntakeFilled ? "View Detailed Cost Breakdown" : "Start Intake Onboarding"}
+              {isIntakeFilled ? t("db_breakdown") : t("db_start")}
               <span className="material-symbols-outlined">arrow_forward</span>
             </Link>
           </div>
@@ -901,7 +915,7 @@ export default function Dashboard() {
               <div className="bg-primary-fixed-dim/20 px-md py-sm border-b border-outline-variant/40 flex justify-between items-center shrink-0">
                 <div className="flex items-center gap-xs">
                   <span className="material-symbols-outlined text-primary text-[20px] active-entity-pulse">calculate</span>
-                  <span className="font-label-md text-xs font-bold text-primary uppercase tracking-wider">AI Cost Calculator Assistant</span>
+                  <span className="font-label-md text-xs font-bold text-primary uppercase tracking-wider">{t("db_assistant_title")}</span>
                 </div>
                 <button 
                   onClick={clearChatHistory}
@@ -1006,7 +1020,7 @@ export default function Dashboard() {
             <div className="bg-white/90 backdrop-blur-md p-md rounded-2xl shadow-sm border border-outline-variant/60">
               <div className="flex items-center gap-xs mb-md">
                 <span className="material-symbols-outlined text-tertiary" style={{ fontSize: 24 }}>lightbulb</span>
-                <h3 className="font-headline-sm text-sm text-on-surface uppercase tracking-wider font-bold">Savings Checklist</h3>
+                <h3 className="font-headline-sm text-sm text-on-surface uppercase tracking-wider font-bold">{t("db_savings")}</h3>
               </div>
               <div className="space-y-sm">
                 <Tip 
@@ -1038,7 +1052,7 @@ export default function Dashboard() {
                 to={isIntakeFilled ? "/action-plan" : "/intake"}
                 className="mt-md w-full bg-secondary text-on-secondary py-2 rounded-xl font-label-md flex items-center justify-center gap-xs hover:brightness-110 transition-all shadow-xs hover:shadow text-xs"
               >
-                {isIntakeFilled ? "Build my Action Plan" : "Fill Intake First"}
+                {isIntakeFilled ? t("db_action") : t("db_fill")}
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </Link>
             </div>
@@ -1048,17 +1062,17 @@ export default function Dashboard() {
               <div className="bg-gradient-to-br from-primary/5 via-secondary/5 to-surface-bright border border-outline-variant/50 rounded-2xl p-md shadow-xs flex flex-col gap-sm">
                 <div className="flex items-center gap-xs">
                   <span className="material-symbols-outlined text-primary text-[20px]">verified_user</span>
-                  <h3 className="font-label-md text-xs font-bold text-primary uppercase tracking-wider">Save Your Progress</h3>
+                  <h3 className="font-label-md text-xs font-bold text-primary uppercase tracking-wider">{t("db_save")}</h3>
                 </div>
                 <p className="text-xs text-on-surface-variant leading-relaxed">
-                  Artham stores estimates and chat locally. Create a free account to back up details permanently.
+                  {t("db_save_desc")}
                 </p>
                 <button
                   onClick={() => window.dispatchEvent(new CustomEvent("open-auth"))}
                   className="w-full py-2 bg-primary text-on-primary hover:brightness-110 text-xs font-bold rounded-xl transition-all shadow-xs active:scale-95 flex items-center justify-center gap-xs"
                 >
                   <span className="material-symbols-outlined text-[16px]">lock_open</span>
-                  <span>Secure My Data</span>
+                  <span>{t("db_secure")}</span>
                 </button>
               </div>
             )}

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import AppShell from "../components/AppShell";
 import { auth, saveUserCustomBreakdownToFirestore } from "../firebase";
 import MarkdownRenderer from "../components/MarkdownRenderer";
+import { useLanguage } from "../components/LanguageContext";
 
 type Item = { 
   title: string; 
@@ -31,6 +32,16 @@ const queryBreakdownPersonalizer = async (
   apiKey: string,
   modelName: string
 ): Promise<{ reply: string; parsed: Record<string, unknown> }> => {
+  const lang = localStorage.getItem("artham_language") || "en";
+  const languageNames: Record<string, string> = {
+    en: "English",
+    hi: "Hindi (हिन्दी)",
+    mr: "Marathi (मराठी)",
+    kn: "Kannada (ಕನ್ನಡ)",
+    bn: "Bengali (বাঙালি)"
+  };
+  const activeLanguageName = languageNames[lang] || "English";
+
   const systemPrompt = `You are the Artham pricing navigator.
 Your task is to analyze the user's clinical update and adjust their cost breakdown sheet accordingly.
 Below is the patient's current profile:
@@ -53,9 +64,9 @@ You must only use the following item keys for your classification:
 - Therapies: 'chemotherapy', 'radiation', 'hormonal', 'targeted', 'immunotherapy'
 
 Respond in the exact format:
-[REPLY] <empathetic explanation in 1-2 sentences of the personalization changes made> [JSON] {"relevantItems": ["<key1>", "<key2>"], "notNeeded": ["<key3>"], "customNotes": {"<key1>": "<short note>"}}
+[REPLY] <empathetic explanation in 1-2 sentences of the personalization changes made in the ${activeLanguageName} language> [JSON] {"relevantItems": ["<key1>", "<key2>"], "notNeeded": ["<key3>"], "customNotes": {"<key1>": "<short note>"}}
 
-Ensure the JSON is completely valid and uses only keys from the list above. Do not include raw markdown block wrappers (\`\`\`json) for the JSON part.`;
+Ensure the JSON is completely valid and uses only keys from the list above. Do not include raw markdown block wrappers (\`\`\`json) for the JSON part. The [JSON] portion must be in English.`;
 
   const payload = {
     contents: [{
@@ -104,7 +115,64 @@ Ensure the JSON is completely valid and uses only keys from the list above. Do n
   return { reply, parsed };
 };
 
+const chatbotWelcomeMessages: Record<string, { personalized: string; default: string }> = {
+  en: {
+    personalized: "Hello! I am Artham's pricing navigator. Your cost breakdown is currently personalized based on your updates. You can clear overrides using the Reset button at any time.",
+    default: "Hello! I am Artham's pricing navigator. Tell me more about your planned treatments (e.g., surgery type, prescribed therapies) and I will customize the cost breakdown sheet for you."
+  },
+  hi: {
+    personalized: "नमस्ते! मैं अर्थम का मूल्य निर्धारण नेविगेटर हूँ। आपके अपडेट के आधार पर आपका लागत विवरण वर्तमान में व्यक्तिगत है। आप किसी भी समय रीसेट बटन का उपयोग करके अधिलेख साफ़ कर सकते हैं।",
+    default: "नमस्ते! मैं अर्थम का मूल्य निर्धारण नेविगेटर हूँ। मुझे अपने नियोजित उपचारों (जैसे, सर्जरी प्रकार, निर्धारित उपचार) के बारे में अधिक बताएं और मैं आपके लिए लागत विवरण पत्रक को अनुकूलित करूँगा।"
+  },
+  mr: {
+    personalized: "नमस्कार! मी अर्थमचा खर्च मार्गदर्शक आहे. तुमच्या अपडेट्सच्या आधारे तुमचे खर्चाचे तपशील सध्या वैयक्तिकृत केले आहेत. तुम्ही कोणत्याही वेळी रीसेट बटण वापरून बदल रद्द करू शकता.",
+    default: "नमस्कार! मी अर्थमचा खर्च मार्गदर्शक आहे. मला तुमच्या नियोजित उपचारांबद्दल (उदा. शस्त्रक्रियेचा प्रकार, विहित उपचार) अधिक सांगा आणि मी तुमच्यासाठी खर्चाचे तपशील वैयक्तिकृत करेन."
+  },
+  kn: {
+    personalized: "ನಮಸ್ಕಾರ! ನಾನು ಅರ್ಥಮ್ ಅವರ ಬೆಲೆ ಮಾರ್ಗದರ್ಶಿ. ನಿಮ್ಮ ನವೀಕರಣಗಳ ಆಧಾರದ ಮೇಲೆ ನಿಮ್ಮ ವೆಚ್ಚದ ವಿವರಗಳನ್ನು ಪ್ರಸ್ತುತ ವೈಯಕ್ತಿಕಗೊಳಿಸಲಾಗಿದೆ. ನೀವು ಯಾವುದೇ ಸಮಯದಲ್ಲಿ ರಿಸೆಟ್ ಬಟನ್ ಬಳಸಿ ಬದಲಾವಣೆಗಳನ್ನು ತೆರವುಗೊಳಿಸಬಹುದು.",
+    default: "ನಮಸ್ಕಾರ! ನಾನು ಅರ್ಥಮ್ ಅವರ ಬೆಲೆ ಮಾರ್ಗದರ್ಶಿ. ನಿಮ್ಮ ಯೋಜಿತ ಚಿಕಿತ್ಸೆಗಳ ಬಗ್ಗೆ (ಉದಾಹರಣೆಗೆ, ಶಸ್ತ್ರಚಿಕಿತ್ಸೆಯ ಪ್ರಕಾರ, ಸೂಚಿಸಲಾದ ಚಿಕಿತ್ಸೆಗಳು) ನನಗೆ ಇನ್ನಷ್ಟು ತಿಳಿಸಿ ಮತ್ತು ನಾನು ನಿಮಗಾಗಿ ವೆಚ್ಚದ ವಿವರಗಳ ಹಾಳೆಯನ್ನು ಕಸ್ಟಮೈಸ್ ಮಾಡುತ್ತೇನೆ."
+  },
+  bn: {
+    personalized: "হ্যালো! আমি অর্থম-এর মূল্য নির্ধারণ নির্দেশক। আপনার আপডেটের উপর ভিত্তি করে আপনার খরচের বিবরণ বর্তমানে ব্যক্তিগতকৃত করা হয়েছে। আপনি যেকোনো সময় রিসেট বোতাম ব্যবহার করে পরিবর্তনগুলি মুছে ফেলতে পারেন।",
+    default: "হ্যালো! আমি অর্থম-এর মূল্য নির্ধারণ নির্দেশক। আপনার পরিকল্পিত চিকিৎসা সম্পর্কে (যেমন, অস্ত্রোপচারের ধরণ, নির্ধারিত থেরাপি) আমাকে আরও বলুন এবং আমি আপনার জন্য খরচের বিবরণ তালিকাটি কাস্টমাইজ করব।"
+  }
+};
+
+const mockReplies: Record<string, Record<string, string>> = {
+  en: {
+    default: "I've personalized your cost breakdown list by prioritizing and filtering items accordingly.",
+    surgery: "Updated your surgical pathway to focus on a Lumpectomy and Sentinel Lymph Node Biopsy, and marked Mastectomy as not needed.",
+    chemo: "Understood. Chemotherapy cycles and day-care fees have been excluded from the cost estimate sheet.",
+    targeted: "Prioritized targeted antibody therapy (Trastuzumab) on your active maintenance roadmap."
+  },
+  hi: {
+    default: "मैंने तदनुसार वस्तुओं को प्राथमिकता देकर और फ़िल्टर करके आपकी लागत विभाजन सूची को व्यक्तिगत बना दिया है।",
+    surgery: "लम्पेक्टॉमी और सेंटिनल लिम्फ नोड बायोप्सी पर ध्यान केंद्रित करने के लिए आपके सर्जिकल मार्ग को अपडेट किया गया है, और मास्टेक्टॉमी को अपवर्जित चिह्नित किया गया है।",
+    chemo: "समझ गया। कीमोथेरेपी चक्र और डे-केयर शुल्क को लागत अनुमान पत्रक से बाहर रखा गया है।",
+    targeted: "आपके सक्रिय रखरखाव रोडमैप पर लक्षित एंटीबॉडी थेरेपी (ट्रैस्टुजुमाब) को प्राथमिकता दी गई है।"
+  },
+  mr: {
+    default: "मी त्यानुसार गोष्टींना प्राधान्य देऊन आणि फिल्टर करून तुमची खर्च विभागणी सूची वैयक्तिकृत केली आहे.",
+    surgery: "लम्पेक्टॉमी आणि सेंटिनेल लिम्फ नोड बायोप्सीवर लक्ष केंद्रित करण्यासाठी तुमचा शस्त्रक्रिया मार्ग अद्यतनित केला आहे आणि मॅस्टेक्टॉमी वगळले आहे.",
+    chemo: "समजले. केमोथेरपी सायकल आणि डे-केअर फी खर्च अंदाज पत्रकातून वगळण्यात आली आहे.",
+    targeted: "तुमच्या सक्रिय देखभाल रोडमॅपवर लक्ष्यित अँटीबॉडी थेरपी (ट्रॅस्टुझुमॅब) ला प्राधान्य दिले आहे."
+  },
+  kn: {
+    default: "ಅದಕ್ಕೆ ತಕ್ಕಂತೆ ಐಟಂಗಳಿಗೆ ಆದ್ಯತೆ ನೀಡಿ ಫಿಲ್ಟರ್ ಮಾಡುವ ಮೂಲಕ ನಿಮ್ಮ ವೆಚ್ಚದ ವಿವರಗಳನ್ನು ನಾನು ವೈಯಕ್ತಿಕಗೊಳಿಸಿದ್ದೇನೆ.",
+    surgery: "ಲಂಪೆಕ್ಟಮಿ ಮತ್ತು ಸೆಂಟಿನೆಲ್ ಲಿಂಫ್ ನೋಡ್ ಬಯಾಪ್ಸಿ ಮೇಲೆ ಗಮನ ಹರಿಸಲು ನಿಮ್ಮ ಶಸ್ತ್ರಚಿಕಿತ್ಸಾ ಮಾರ್ಗವನ್ನು ನವೀಕರಿಸಲಾಗಿದೆ, ಮತ್ತು ಮ್ಯಾಸ್ಟೆಕ್ಟಮಿಯನ್ನು ಅಗತ್ಯವಿಲ್ಲ ಎಂದು ಗುರುತಿಸಲಾಗಿದೆ.",
+    chemo: "ತಿಳಿದುಕೊಂಡೆ. ಕೀಮೋಥೆರಪಿ ಚಕ್ರಗಳು ಮತ್ತು ಡೇ-ಕೇರ್ ಶುಲ್ಕಗಳನ್ನು ವೆಚ್ಚದ ಅಂದಾಜು ಹಾಳೆಯಿಂದ ಹೊರಗಿಡಲಾಗಿದೆ.",
+    targeted: "ನಿಮ್ಮ ಸಕ್ರಿಯ ನಿರ್ವಹಣಾ ಮಾರ್ಗಸೂಚಿಯಲ್ಲಿ ಉದ್ದೇಶಿತ ಪ್ರತಿಕಾಯ ಚಿಕಿತ್ಸೆಗೆ (ಟ್ರಾಸ್ಟುಜುಮಾಬ್) ಆದ್ಯತೆ ನೀಡಲಾಗಿದೆ."
+  },
+  bn: {
+    default: "আমি সেই অনুযায়ী আইটেমগুলিকে অগ্রাধিকার দিয়ে এবং ফিল্টার করে আপনার খরচের বিবরণ তালিকাটিকে ব্যক্তিগতকৃত করেছি।",
+    surgery: "লাম্পেক্টমি এবং সেন্টিনেল লিম্ফ নোড বায়োপসিতে ফোকাস করার জন্য আপনার অস্ত্রোপচারের পথ আপডেট করা হয়েছে এবং মাস্টেক্টমি প্রয়োজন নেই বলে চিহ্নিত করা হয়েছে।",
+    chemo: "বুঝতে পেরেছি। কেমোথেরাপি চক্র এবং ডে-কেয়ার ফি খরচের অনুমানের তালিকা থেকে বাদ দেওয়া হয়েছে।",
+    targeted: "আপনার সক্রিয় রক্ষণাবেক্ষণ রোডম্যাপে লক্ষ্যযুক্ত অ্যান্টিবডি থেরাপি (ট্রাস্টুজুমাব) অগ্রাধিকার দেওয়া হয়েছে।"
+  }
+};
+
 export default function CostBreakdown() {
+  const { t, language } = useLanguage();
   const [patientState, setPatientState] = useState(() => localStorage.getItem("artham_intake_state") || "");
   const [age, setAge] = useState(() => localStorage.getItem("artham_intake_age") || "");
   const [stage, setStage] = useState(() => localStorage.getItem("artham_intake_stage") || "");
@@ -141,23 +209,28 @@ export default function CostBreakdown() {
   // Mini chatbot states
   const [chatHistory, setChatHistory] = useState<{ role: "bot" | "user"; text: string }[]>(() => {
     const saved = localStorage.getItem("artham_custom_breakdown");
+    const activeWelcome = chatbotWelcomeMessages.en;
     if (saved) {
-      return [
-        {
-          role: "bot",
-          text: "Hello! I am Artham's pricing navigator. Your cost breakdown is currently personalized based on your updates. You can clear overrides using the Reset button at any time."
-        }
-      ];
+      return [{ role: "bot", text: activeWelcome.personalized }];
     }
-    return [
-      {
-        role: "bot",
-        text: "Hello! I am Artham's pricing navigator. Tell me more about your planned treatments (e.g., surgery type, prescribed therapies) and I will customize the cost breakdown sheet for you."
-      }
-    ];
+    return [{ role: "bot", text: activeWelcome.default }];
   });
   const [draftMessage, setDraftMessage] = useState("");
   const [isChatLoading, setIsChatLoading] = useState(false);
+
+  // Sync initial bot message language reactively
+  useEffect(() => {
+    if (chatHistory.length === 1 && chatHistory[0].role === "bot") {
+      const saved = localStorage.getItem("artham_custom_breakdown");
+      const msgMap = chatbotWelcomeMessages[language] || chatbotWelcomeMessages.en;
+      setChatHistory([
+        {
+          role: "bot",
+          text: saved ? msgMap.personalized : msgMap.default
+        }
+      ]);
+    }
+  }, [language]);
 
   useEffect(() => {
     const handleAuthChange = () => {
@@ -207,10 +280,15 @@ export default function CostBreakdown() {
   const resetToDefault = async () => {
     localStorage.removeItem("artham_custom_breakdown");
     setCustomBreakdown(null);
+    const activeWelcome = chatbotWelcomeMessages[language] || chatbotWelcomeMessages.en;
     setChatHistory([
       {
         role: "bot",
-        text: "Reset complete. Cost breakdown is back to standard intake estimates. How can I help you customize it today?"
+        text: language === "en" ? "Reset complete. Cost breakdown is back to standard intake estimates. How can I help you customize it today?" :
+              language === "hi" ? "रीसेट पूरा हुआ। लागत विवरण मानक इनटेक अनुमानों पर वापस आ गया है। आज इसे अनुकूलित करने में मैं आपकी क्या मदद कर सकता हूँ?" :
+              language === "mr" ? "रीसेट पूर्ण झाले. खर्चाचे तपशील मानक इनटेक अंदाजांवर परत आले आहेत. आज हे वैयक्तिकृत करण्यात मी तुमची काय मदत करू शकतो?" :
+              language === "kn" ? "ರಿಸೆಟ್ ಪೂರ್ಣಗೊಂಡಿದೆ. ವೆಚ್ಚದ ವಿವರಗಳು ಸಾಮಾನ್ಯ ಅಂದಾಜಿಗೆ ಮರಳಿವೆ. ಇಂದು ಇದನ್ನು ವೈಯಕ್ತಿಕಗೊಳಿಸಲು ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಬಹುದು?" :
+              "রিসেট সম্পূর্ণ হয়েছে। খরচের বিবরণ সাধারণ অনুমানে ফিরে গেছে। আজ এটি কাস্টমাইজ করতে আমি কীভাবে আপনাকে সাহায্য করতে পারি?"
       }
     ]);
     if (auth.currentUser) {
@@ -252,7 +330,11 @@ export default function CostBreakdown() {
         console.error("AI personalization error:", err);
         setChatHistory(prev => [...prev, { 
           role: "bot", 
-          text: "I ran into an issue personalizing your cost breakdown. Please check your Gemini API key or try again." 
+          text: language === "en" ? "I ran into an issue personalizing your cost breakdown. Please check your Gemini API key or try again." :
+                language === "hi" ? "आपके लागत विवरण को व्यक्तिगत बनाने में समस्या आई। कृपया अपनी जेमिनी एपीआई कुंजी जांचें या पुनः प्रयास करें।" :
+                language === "mr" ? "तुमचे खर्चाचे तपशील वैयक्तिकृत करण्यात अडचण आली. कृपया तुमची जेमिनी एपीआई की तपासा किंवा पुन्हा प्रयत्न करा." :
+                language === "kn" ? "ನಿಮ್ಮ ವೆಚ್ಚದ ವಿವರಗಳನ್ನು ವೈಯಕ್ತಿಕಗೊಳಿಸುವಲ್ಲಿ ತೊಂದರೆಯಾಗಿದೆ. ದಯವಿಟ್ಟು ಜೆಮಿನಿ ಎಪಿಐ ಕೀಲಿಯನ್ನು ಪರಿಶೀಲಿಸಿ ಅಥವಾ ಮತ್ತೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ." :
+                "আপনার খরচের বিবরণ ব্যক্তিগতকৃত করতে সমস্যা হয়েছে। অনুগ্রহ করে আপনার জেমিনি এপিআই কি পরীক্ষা করুন অথবা আবার চেষ্টা করুন।"
         }]);
       } finally {
         setIsChatLoading(false);
@@ -261,7 +343,8 @@ export default function CostBreakdown() {
       // Simulated mock personalization in Demo Mode
       setTimeout(() => {
         const lower = userMessage.toLowerCase();
-        let reply = "I've personalized your cost breakdown list by prioritizing and filtering items accordingly.";
+        const replies = mockReplies[language] || mockReplies.en;
+        let reply = replies.default;
         let parsed = {
           relevantItems: [] as string[],
           notNeeded: [] as string[],
@@ -269,24 +352,24 @@ export default function CostBreakdown() {
         };
 
         if (lower.includes("lumpectomy") || lower.includes("breast save") || lower.includes("partial")) {
-          reply = "Updated your surgical pathway to focus on a Lumpectomy and Sentinel Lymph Node Biopsy, and marked Mastectomy as not needed.";
+          reply = replies.surgery;
           parsed.relevantItems = ["lumpectomy", "slnb"];
           parsed.notNeeded = ["mastectomy", "alnd", "reconstruction"];
           parsed.customNotes = {
-            lumpectomy: "AI Customization: Planned breast-conserving surgery.",
-            slnb: "AI Customization: Sentinel node biopsy indicated."
+            lumpectomy: language === "en" ? "AI Customization: Planned breast-conserving surgery." : "AI: स्तन-संरक्षण सर्जरी की योजना बनाई।",
+            slnb: language === "en" ? "AI Customization: Sentinel node biopsy indicated." : "AI: सेंटिनल नोड बायोप्सी इंगित की गई।"
           };
         } else if (lower.includes("no chemo") || lower.includes("chemotherapy not")) {
-          reply = "Understood. Chemotherapy cycles and day-care fees have been excluded from the cost estimate sheet.";
+          reply = replies.chemo;
           parsed.notNeeded = ["chemotherapy"];
           parsed.customNotes = {
-            chemotherapy: "AI Customization: Excluded per consult."
+            chemotherapy: language === "en" ? "AI Customization: Excluded per consult." : "AI: परामर्श के अनुसार बाहर रखा गया।"
           };
         } else if (lower.includes("targeted") || lower.includes("trastuzumab")) {
-          reply = "Prioritized targeted antibody therapy (Trastuzumab) on your active maintenance roadmap.";
+          reply = replies.targeted;
           parsed.relevantItems = ["targeted"];
           parsed.customNotes = {
-            targeted: "AI Customization: Confirmed targeted protocol."
+            targeted: language === "en" ? "AI Customization: Confirmed targeted protocol." : "AI: लक्षित प्रोटोकॉल की पुष्टि की गई।"
           };
         }
 
@@ -403,9 +486,36 @@ export default function CostBreakdown() {
 
     const { isRelevant, isNotNeeded, note } = getItemCustomDetails(itemKey);
 
+    // Retrieve localized values
+    let localizedTitle = t(`item_${itemKey}_title`) || title;
+    let localizedBody = t(`item_${itemKey}_desc`) || body;
+
+    // Handle special suffix for title
+    if (itemKey === "chemotherapy") {
+      const prefix = t("item_chemotherapy_title") || "Chemotherapy";
+      const parts = title.split(": ");
+      const suffix = parts.length > 1 ? parts[1] : "";
+      localizedTitle = suffix ? `${prefix}: ${suffix}` : prefix;
+    } else if (itemKey === "hormonal") {
+      const prefix = t("item_hormonal_title") || "Hormone Therapy";
+      const parts = title.split(": ");
+      const suffix = parts.length > 1 ? parts[1] : "";
+      localizedTitle = suffix ? `${prefix}: ${suffix}` : prefix;
+    } else if (itemKey === "targeted") {
+      const prefix = t("item_targeted_title") || "Targeted Therapy";
+      const parts = title.split(": ");
+      const suffix = parts.length > 1 ? parts[1] : "";
+      localizedTitle = suffix ? `${prefix}: ${suffix}` : prefix;
+    } else if (itemKey === "immunotherapy") {
+      const prefix = t("item_immunotherapy_title") || "Immunotherapy";
+      const parts = title.split(": ");
+      const suffix = parts.length > 1 ? parts[1] : "";
+      localizedTitle = suffix ? `${prefix}: ${suffix}` : prefix;
+    }
+
     return {
-      title,
-      body,
+      title: localizedTitle,
+      body: localizedBody,
       estimate: formatINR(estimateVal),
       insurance: formatINR(itemInsuranceShare),
       oop: formatINR(itemOop),
@@ -420,8 +530,6 @@ export default function CostBreakdown() {
   const primaryItems: Item[] = [];
   const medicationItems: Item[] = [];
   const hospitalizationItems: Item[] = [];
-
-
 
   if (isIntakeFilled) {
     let chemoCyclesCount = 0;
@@ -594,12 +702,26 @@ export default function CostBreakdown() {
     }
   }
 
+  let localizedSubsidyName = subsidyName;
+  if (subsidyName.includes("PM-JAY")) {
+    localizedSubsidyName = "PM-JAY";
+  } else if (subsidyName.includes("National Illness")) {
+    localizedSubsidyName = "RAN";
+  }
+
   const sortAndFilterItems = (items: Item[]) => {
     return [...items].sort((a, b) => {
       const aVal = a.isHighlighted ? -1 : a.isExcluded ? 1 : 0;
       const bVal = b.isHighlighted ? -1 : b.isExcluded ? 1 : 0;
       return aVal - bVal;
     });
+  };
+
+  const sectionTitleKeys: Record<string, string> = {
+    "Pre-treatment Diagnostics": "cb_sec_diagnostics",
+    "Primary Treatment": "cb_sec_primary",
+    "Medication & Supportive Care": "cb_sec_meds",
+    "Hospitalization & Consultations": "cb_sec_hospital"
   };
 
   const sections: { icon: string; title: string; items: Item[] }[] = [
@@ -625,7 +747,6 @@ export default function CostBreakdown() {
     },
   ].filter(section => section.items.length > 0);
 
-
   return (
     <AppShell>
       <div className="px-margin-mobile md:px-gutter pb-xl pt-md max-w-container-max mx-auto space-y-md animate-fade-in">
@@ -634,15 +755,15 @@ export default function CostBreakdown() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-outline-variant/30 pb-sm gap-md">
           <div>
             <h1 className="font-headline-lg text-headline-lg text-primary font-bold tracking-tight">
-              Personalized Treatment Estimate
+              {t("cb_title")}
             </h1>
             <p className="font-body-sm text-on-surface-variant text-xs mt-1">
-              Personalized calculation in Rupees based on your intake diagnostics and clinical preferences.
+              {t("cb_subtitle")}
             </p>
             {isIntakeFilled && (
               <div className="mt-xs text-on-surface-variant/80 text-[10px] flex items-center gap-xs">
                 <span className="material-symbols-outlined text-[14px] text-primary">verified</span>
-                <span>Calibrated with clinical cost records from Dr. Jay Anam's Breast Cancer Clinic, Mumbai.</span>
+                <span>{t("cb_calibrated")}</span>
               </div>
             )}
           </div>
@@ -652,8 +773,8 @@ export default function CostBreakdown() {
               <span className="material-symbols-outlined">check_circle</span>
             </div>
             <div>
-              <p className="font-label-sm text-[9px] uppercase font-bold text-outline tracking-wider">Reliability Score</p>
-              <p className="font-bold text-secondary text-xs">{isIntakeFilled ? (customBreakdown ? "Custom AI Personal (96%)" : "High (92%)") : "None (0%)"}</p>
+              <p className="font-label-sm text-[9px] uppercase font-bold text-outline tracking-wider">{t("cb_reliability")}</p>
+              <p className="font-bold text-secondary text-xs">{isIntakeFilled ? (customBreakdown ? t("cb_reliability_ai") : t("cb_reliability_high")) : t("cb_reliability_none")}</p>
             </div>
           </div>
         </div>
@@ -662,21 +783,21 @@ export default function CostBreakdown() {
         <div className="bg-surface-container-low border border-outline-variant/40 rounded-2xl p-md flex flex-wrap gap-xs items-center justify-between shadow-sm text-xs text-on-surface-variant font-medium font-body-sm">
           <div className="flex flex-wrap items-center gap-y-2 gap-x-sm">
             <span className="font-bold text-[#B83B5E] flex items-center gap-xs">
-              <span className="material-symbols-outlined text-sm">tune</span> Intake Parameters:
+              <span className="material-symbols-outlined text-sm">tune</span> {t("it_summary")}:
             </span>
-            <span>State: <strong>{patientState || "Pending"}</strong></span>
+            <span>{t("it_state")}: <strong>{patientState || "Pending"}</strong></span>
             <span>•</span>
-            <span>Age: <strong>{age || "Pending"}</strong></span>
+            <span>{t("it_age")}: <strong>{age || "Pending"}</strong></span>
             <span>•</span>
-            <span>Stage: <strong>{stage || "Pending"}</strong></span>
+            <span>{t("it_stage")}: <strong>{stage || "Pending"}</strong></span>
             <span>•</span>
-            <span>Receptors: <strong>{hormoneStatus || "Pending"}</strong></span>
+            <span>{t("it_receptor")}: <strong>{hormoneStatus || "Pending"}</strong></span>
             <span>•</span>
-            <span>Hospital: <strong>{hospitalType ? hospitalType.split(" / ")[0] : "Pending"}</strong></span>
+            <span>{t("it_hospital")}: <strong>{hospitalType ? hospitalType.split(" / ")[0] : "Pending"}</strong></span>
             <span>•</span>
-            <span>Insurance: <strong>{hasInsurance ? (insuranceProvider || "Yes") : "None / Pending"}</strong></span>
+            <span>{t("it_insurance_status")}: <strong>{hasInsurance ? (insuranceProvider || "Yes") : "None / Pending"}</strong></span>
             <span>•</span>
-            <span>Income: <strong>{incomeBracket || "Pending"}</strong></span>
+            <span>{t("it_income")}: <strong>{incomeBracket || "Pending"}</strong></span>
           </div>
           
           <div className="flex items-center gap-sm">
@@ -687,7 +808,7 @@ export default function CostBreakdown() {
               </span>
             )}
             <Link to="/intake" className="text-xs text-[#B83B5E] hover:underline font-bold flex items-center gap-[2px] shrink-0">
-              {isIntakeFilled ? "Edit Parameters" : "Start Intake"} <span className="material-symbols-outlined text-[14px]">{isIntakeFilled ? "edit" : "arrow_forward"}</span>
+              {isIntakeFilled ? t("it_edit_details") : t("db_start")} <span className="material-symbols-outlined text-[14px]">{isIntakeFilled ? "edit" : "arrow_forward"}</span>
             </Link>
           </div>
         </div>
@@ -695,16 +816,16 @@ export default function CostBreakdown() {
         {!isIntakeFilled ? (
           <div className="bg-surface-container-lowest border border-outline-variant/40 rounded-3xl p-xl text-center space-y-md shadow-sm max-w-2xl mx-auto my-lg animate-fade-in">
             <span className="material-symbols-outlined text-[#B83B5E] text-[64px] animate-pulse">payments</span>
-            <h3 className="font-headline-md text-headline-md text-primary font-bold">Treatment Cost Estimate Pending</h3>
+            <h3 className="font-headline-md text-headline-md text-primary font-bold">{t("cb_pending_title")}</h3>
             <p className="font-body-md text-on-surface-variant text-xs leading-relaxed max-w-md mx-auto">
-              We need a few details about your diagnosis, treatment recommendations, and insurance status to calculate your customized cost roadmap and potential out-of-pocket expenses.
+              {t("cb_pending_desc")}
             </p>
             <Link
               to="/intake"
               className="inline-flex items-center gap-xs bg-primary text-on-primary hover:brightness-110 px-lg py-md rounded-2xl font-bold text-xs shadow-md active:scale-95 transition-all"
             >
               <span className="material-symbols-outlined text-sm">assignment</span>
-              Fill Out Intake Form
+              {t("cb_pending_btn")}
             </Link>
           </div>
         ) : (
@@ -714,24 +835,24 @@ export default function CostBreakdown() {
             <div className="lg:col-span-2 space-y-md">
               {/* Summary Cards Panel */}
               <div className={`grid grid-cols-1 md:grid-cols-${subsidyApplied ? '4' : '3'} gap-md`}>
-                <SummaryCard label="Total Estimate" value={formatINR(totalEstimate)} tone="primary" />
+                <SummaryCard label={t("cb_total_est")} value={formatINR(totalEstimate)} tone="primary" />
                 <SummaryCard 
-                  label="Insurance Coverage" 
+                  label={t("cb_insurance_covers")} 
                   value={formatINR(insuranceShare)} 
                   tone="secondary" 
                   pct={totalEstimate > 0 ? Math.round((insuranceShare / totalEstimate) * 100) : 0} 
                 />
                 {subsidyApplied && (
                   <SummaryCard 
-                    label={`Welfare Subsidy`} 
-                    sublabel={subsidyName.split(" (")[0]}
+                    label={t("cb_subsidies_applied")} 
+                    sublabel={localizedSubsidyName}
                     value={formatINR(subsidyAmount)} 
                     tone="primary" 
                     pct={totalEstimate > 0 ? Math.round((subsidyAmount / totalEstimate) * 100) : 0} 
                   />
                 )}
                 <SummaryCard 
-                  label="Net Out-of-Pocket" 
+                  label={t("cb_total_oop")} 
                   value={formatINR(outOfPocket)} 
                   tone={outOfPocket === 0 ? "secondary" : "tertiary"} 
                   pct={totalEstimate > 0 ? Math.round((outOfPocket / totalEstimate) * 100) : 0} 
@@ -743,9 +864,19 @@ export default function CostBreakdown() {
                 <div className="bg-[#F9CBDB]/10 border border-[#F9CBDB]/30 rounded-2xl p-md flex items-start gap-sm">
                   <span className="material-symbols-outlined text-[#B83B5E] text-[20px] mt-0.5">volunteer_activism</span>
                   <div>
-                    <h4 className="text-xs font-bold text-[#B83B5E]">{subsidyName} Applied</h4>
+                    <h4 className="text-xs font-bold text-[#B83B5E]">{subsidyName}</h4>
                     <p className="text-[11px] text-on-surface-variant leading-relaxed mt-0.5">
-                      Your out-of-pocket share has been reduced by <strong>{formatINR(subsidyAmount)}</strong> because of your income classification. Submit your income certificate during the action plan stages to lock in this subsidy.
+                      {language === "en" ? (
+                        <>Your out-of-pocket share has been reduced by <strong>{formatINR(subsidyAmount)}</strong> because of your income classification. Submit your income certificate during the action plan stages to lock in this subsidy.</>
+                      ) : language === "hi" ? (
+                        <>आपकी आय श्रेणी के कारण आपकी जेब से होने वाला खर्च <strong>{formatINR(subsidyAmount)}</strong> कम हो गया है। इस सब्सिडी को लॉक करने के लिए कार्य योजना के चरणों के दौरान अपना आय प्रमाण पत्र जमा करें।</>
+                      ) : language === "mr" ? (
+                        <>तुमच्या उत्पन्न वर्गीकरणामुळे तुमचा स्वतःचा खर्च <strong>{formatINR(subsidyAmount)}</strong> कमी झाला आहे. ही सवलत निश्चित करण्यासाठी कार्य आराखड्याच्या टप्प्यादरम्यान तुमचे उत्पन्न प्रमाणपत्र सादर करा।</>
+                      ) : language === "kn" ? (
+                        <>ನಿಮ್ಮ ಆದಾಯದ ವರ್ಗೀಕರಣದ ಕಾರಣದಿಂದಾಗಿ ನಿಮ್ಮ ಜೇಬಿನಿಂದ ಭರಿಸುವ ವೆಚ್ಚವನ್ನು <strong>{formatINR(subsidyAmount)}</strong> ಕಡಿತಗೊಳಿಸಲಾಗಿದೆ. ಈ ಸಬ್ಸಿಡಿಯನ್ನು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಲು ಕ್ರಿಯಾ ಯೋಜನೆಯ ಹಂತಗಳಲ್ಲಿ ನಿಮ್ಮ ಆದಾಯ ಪ್ರಮಾಣಪತ್ರವನ್ನು ಸಲ್ಲಿಸಿ.</>
+                      ) : (
+                        <>আপনার আয়ের শ্রেণীবিভাগের কারণে আপনার পকেট থেকে খরচের পরিমাণ <strong>{formatINR(subsidyAmount)}</strong> হ্রাস করা হয়েছে। এই ভর্তুকি নিশ্চিত করতে কর্ম পরিকল্পনার পদক্ষেপের সময় আপনার আয়ের শংসাপত্র জমা দিন।</>
+                      )}
                     </p>
                   </div>
                 </div>
@@ -760,7 +891,7 @@ export default function CostBreakdown() {
                       <div className="z-10 w-16 h-16 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-md shrink-0 border border-outline-variant/40">
                         <span className="material-symbols-outlined text-[30px]">{s.icon}</span>
                       </div>
-                      <h3 className="font-headline-sm text-headline-sm text-primary font-bold">{s.title}</h3>
+                      <h3 className="font-headline-sm text-headline-sm text-primary font-bold">{t(sectionTitleKeys[s.title]) || s.title}</h3>
                     </div>
                     <div className="md:ml-20 space-y-sm">
                       {sortAndFilterItems(s.items).map((it) => {
@@ -777,15 +908,15 @@ export default function CostBreakdown() {
                 <div className="absolute top-0 right-0 w-40 h-40 bg-primary-container/30 rounded-full blur-xl pointer-events-none" />
                 
                 <div className="flex-1 z-10 space-y-sm">
-                  <h2 className="font-headline-md text-headline-md font-bold text-primary">Financial Resilience Insight</h2>
+                  <h2 className="font-headline-md text-headline-md font-bold text-primary">{t("cb_resilience_title")}</h2>
                   <p className="font-body-md text-on-surface-variant text-xs leading-relaxed max-w-2xl">
-                    By selecting an empanelled, specialized center, you can save up to <strong>{formatINR(Math.round(totalEstimate * 0.15))}</strong> in hospital beds and ICU fees. Our estimates are verified against local radiology registries and empanelled hospital databases.
+                    {t("cb_resilience_desc")}
                   </p>
                   <Link
                     to="/action-plan"
                     className="inline-flex items-center gap-xs bg-secondary hover:bg-secondary/90 px-md py-sm rounded-xl font-bold text-xs text-on-secondary shadow-md hover:scale-[1.02] active:scale-[0.98] transition-all"
                   >
-                    Review Savings Roadmap
+                    {t("db_action")}
                     <span className="material-symbols-outlined text-sm">arrow_forward</span>
                   </Link>
                 </div>
@@ -797,10 +928,10 @@ export default function CostBreakdown() {
                       className="absolute top-2 w-36 h-36 border-[10px] border-t-secondary border-r-secondary border-l-transparent border-b-transparent rounded-full origin-center transition-all duration-700"
                       style={{ transform: "rotate(45deg)" }}
                     />
-                    <span className="font-headline-sm text-sm text-primary font-bold z-10">Excellent</span>
+                    <span className="font-headline-sm text-sm text-primary font-bold z-10">{t("cb_excellent")}</span>
                   </div>
                   <p className="font-label-sm text-[9px] uppercase font-bold text-outline text-center tracking-wider mt-1">
-                    Network Alignment Index
+                    {t("cb_net_alignment")}
                   </p>
                 </div>
               </div>
@@ -813,8 +944,14 @@ export default function CostBreakdown() {
                 <div className="flex items-center gap-xs">
                   <span className="material-symbols-outlined text-primary text-[20px] active-entity-pulse">auto_awesome</span>
                   <div>
-                    <h3 className="font-headline-sm text-xs font-bold text-primary">AI Pricing Personalizer</h3>
-                    <p className="text-[9px] text-outline font-medium">Dynamically customize cost sheet</p>
+                    <h3 className="font-headline-sm text-xs font-bold text-primary">{t("cb_ai_personalizer_title")}</h3>
+                    <p className="text-[9px] text-outline font-medium">
+                      {language === "en" ? "Dynamically customize cost sheet" :
+                       language === "hi" ? "लागत पत्रक को गतिशील रूप से अनुकूलित करें" :
+                       language === "mr" ? "खर्च पत्रक वैयक्तिकृत करा" :
+                       language === "kn" ? "ವೆಚ್ಚದ ವಿವರಗಳನ್ನು ನವೀಕರಿಸಿ" :
+                       "খরচের বিবরণ তালিকাটি কাস্টমাইজ করুন"}
+                    </p>
                   </div>
                 </div>
                 {customBreakdown && (
@@ -822,7 +959,7 @@ export default function CostBreakdown() {
                     onClick={resetToDefault}
                     className="px-2 py-1 text-[10px] font-bold text-error border border-error-container/30 hover:bg-error-container/10 rounded-lg transition-all"
                   >
-                    Reset Standard
+                    {language === "en" ? "Reset Standard" : language === "hi" ? "मानक रीसेट करें" : language === "mr" ? "मानक रीसेट करा" : language === "kn" ? "ಮರುಹೊಂದಿಸಿ" : "রিসেট করুন"}
                   </button>
                 )}
               </div>
@@ -855,7 +992,7 @@ export default function CostBreakdown() {
               <form onSubmit={handleSendMessage} className="pt-sm border-t border-outline-variant/30 flex gap-xs items-center shrink-0">
                 <input
                   type="text"
-                  placeholder="e.g. Omit chemo cycles..."
+                  placeholder={t("cb_ai_placeholder")}
                   value={draftMessage}
                   onChange={(e) => setDraftMessage(e.target.value)}
                   disabled={isChatLoading}
@@ -909,6 +1046,7 @@ function SummaryCard({
 }
 
 function LineItem({ title, body, estimate, insurance, oop, isExcluded, isHighlighted, customNote }: Item) {
+  const { t } = useLanguage();
   return (
     <div className={`p-md rounded-2xl border transition-all ${
       isExcluded
@@ -926,12 +1064,12 @@ function LineItem({ title, body, estimate, insurance, oop, isExcluded, isHighlig
             {isHighlighted && (
               <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 text-[9px] font-bold uppercase tracking-wider flex items-center gap-[2px]">
                 <span className="material-symbols-outlined text-[10px]">check_circle</span>
-                Confirmed relevant
+                {t("cb_confirmed_relevant")}
               </span>
             )}
             {isExcluded && (
               <span className="px-2 py-0.5 rounded-full bg-outline-variant/40 text-outline border border-outline-variant/40 text-[9px] font-bold uppercase tracking-wider">
-                Excluded (N/A)
+                {t("cb_excluded_badge")}
               </span>
             )}
           </div>
@@ -942,14 +1080,14 @@ function LineItem({ title, body, estimate, insurance, oop, isExcluded, isHighlig
           {customNote && (
             <div className="mt-2 p-1.5 rounded-lg bg-surface-container/60 border border-outline-variant/30 text-[10px] text-on-surface-variant flex items-start gap-xs max-w-lg">
               <span className="material-symbols-outlined text-[12px] text-[#B83B5E] mt-0.5 shrink-0">auto_awesome</span>
-              <span><strong>AI Navigator:</strong> {customNote}</span>
+              <span><strong>{t("cb_ai_personalizer_title")}:</strong> {customNote}</span>
             </div>
           )}
         </div>
         <div className="grid grid-cols-3 gap-md w-full md:w-auto shrink-0 pt-sm md:pt-0 border-t md:border-t-0 border-outline-variant/20">
-          <Cell label="Estimate" value={isExcluded ? "N/A" : estimate} bold />
-          <Cell label="Insurance" value={isExcluded ? "N/A" : insurance} tone="text-secondary" />
-          <Cell label="OOP" value={isExcluded ? "N/A" : oop} tone="text-tertiary" bold />
+          <Cell label={t("cb_cell_estimate")} value={isExcluded ? "N/A" : estimate} bold />
+          <Cell label={t("cb_cell_insurance")} value={isExcluded ? "N/A" : insurance} tone="text-secondary" />
+          <Cell label={t("cb_cell_oop")} value={isExcluded ? "N/A" : oop} tone="text-tertiary" bold />
         </div>
       </div>
     </div>
@@ -966,4 +1104,3 @@ function Cell({ label, value, tone, bold }: { label: string; value: string; tone
     </div>
   );
 }
-

@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { LanguageProvider } from "./components/LanguageContext";
 import LandingPage from "./pages/LandingPage";
 import Intake from "./pages/Intake";
 import MedicalInput from "./pages/MedicalInput";
@@ -10,20 +11,22 @@ import PreventivePlans from "./pages/PreventivePlans";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/intake" element={<Intake />} />
-        <Route path="/medical-input" element={<MedicalInput />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/cost-breakdown" element={<CostBreakdown />} />
-        <Route path="/action-plan" element={<ActionPlan />} />
-        <Route path="/support-plan" element={<Navigate to="/action-plan" replace />} />
-        <Route path="/schemes" element={<Schemes key="schemes" />} />
-        <Route path="/insurances" element={<Schemes key="insurances" />} />
-        <Route path="/preventive-plans" element={<PreventivePlans />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <LanguageProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/intake" element={<Intake />} />
+          <Route path="/medical-input" element={<MedicalInput />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/cost-breakdown" element={<CostBreakdown />} />
+          <Route path="/action-plan" element={<ActionPlan />} />
+          <Route path="/support-plan" element={<Navigate to="/action-plan" replace />} />
+          <Route path="/schemes" element={<Schemes key="schemes" />} />
+          <Route path="/insurances" element={<Schemes key="insurances" />} />
+          <Route path="/preventive-plans" element={<PreventivePlans />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </LanguageProvider>
   );
 }

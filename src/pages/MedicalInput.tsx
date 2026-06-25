@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import AppShell from "../components/AppShell";
 import { auth, saveUserVaultToFirestore, saveUserMessagesToFirestore } from "../firebase";
 import MarkdownRenderer from "../components/MarkdownRenderer";
+import { useLanguage } from "../components/LanguageContext";
 
 export type Msg = { 
   role: "bot" | "user"; 
@@ -57,6 +58,16 @@ const initialVaultFiles: VaultFile[] = [
 
 // Gemini API call helper for Chat
 const queryGeminiChat = async (history: Msg[], apiKey: string): Promise<string> => {
+  const lang = localStorage.getItem("artham_language") || "en";
+  const languageNames: Record<string, string> = {
+    en: "English",
+    hi: "Hindi (हिन्दी)",
+    mr: "Marathi (मराठी)",
+    kn: "Kannada (ಕನ್ನಡ)",
+    bn: "Bengali (বাঙালি)"
+  };
+  const activeLanguageName = languageNames[lang] || "English";
+
   const patientState = localStorage.getItem("artham_intake_state") || "Not specified";
   const age = localStorage.getItem("artham_intake_age") || "Not specified";
   const stage = localStorage.getItem("artham_intake_stage") || "Not specified";
@@ -85,9 +96,10 @@ User Intake Profile (DO NOT reprint or list these parameters back to the user un
 - Household Income: ${incomeBracket}
 
 Be professional, empathetic, clear, and extremely concise. Keep responses highly focused:
+CRITICAL LANGUAGE REQUIREMENT: You MUST speak, explain, and write your entire response in the ${activeLanguageName} language. Respond strictly in the ${activeLanguageName} language.
 1. STRICT CONCISENESS: Limit your response to 100-150 words max. Do not exceed this limit. Bullet points and short paragraphs only.
 2. NO SPIRALING: Answer the user's question directly and stay on point. Avoid general explanations or repeating clinical basic facts unless explicitly asked.
-3. Greeting Behavior: If the user says a greeting (like "Hi" or "Hello"), respond with a single warm sentence greeting them and asking how you can help, without giving a long clinical readout.
+3. Greeting Behavior: If the user says a greeting (like "Hi" or "Hello"), respond with a single warm sentence greeting them in ${activeLanguageName} and asking how you can help, without giving a long clinical readout.
 4. Personalization: Tailor your responses to directly align with the User's Intake Profile. E.g. if their state is Karnataka, focus on Arogya Karnataka. If they are Stage II, mention the clinical stage expectations. If they are HER2 Positive, you can mention targeted therapies like Trastuzumab.
 5. Cost Context: Discuss staging, surgery (lumpectomy, mastectomy), chemotherapy, radiation, and targeted therapy (HER2+), referencing costs in Indian Rupees (₹) and Lakhs.
 6. Scheme & Welfare Integration: Frame suggestions around Indian welfare schemes like Ayushman Bharat (PM-JAY), Rashtriya Arogya Nidhi (RAN), and State Illness Assistance funds.
@@ -134,6 +146,16 @@ Be professional, empathetic, clear, and extremely concise. Keep responses highly
 
 // Gemini API call helper for Multimodal Document Analysis
 const analyzeDocumentWithGemini = async (file: VaultFile, apiKey: string): Promise<string> => {
+  const lang = localStorage.getItem("artham_language") || "en";
+  const languageNames: Record<string, string> = {
+    en: "English",
+    hi: "Hindi (हिन्दी)",
+    mr: "Marathi (मराठी)",
+    kn: "Kannada (ಕನ್ನಡ)",
+    bn: "Bengali (বাঙালি)"
+  };
+  const activeLanguageName = languageNames[lang] || "English";
+
   const patientState = localStorage.getItem("artham_intake_state") || "Not specified";
   const age = localStorage.getItem("artham_intake_age") || "Not specified";
   const stage = localStorage.getItem("artham_intake_stage") || "Not specified";
@@ -161,6 +183,8 @@ const analyzeDocumentWithGemini = async (file: VaultFile, apiKey: string): Promi
   
   const promptText = `You are the Artham clinical audit assistant. 
   Analyze this medical document in the context of the user's clinical profile.
+  
+  CRITICAL: You MUST write your entire analysis and next actions response strictly in the ${activeLanguageName} language.
   
   User Profile: State: ${patientState}, Age: ${age}, Stage: ${stage}, Hormone Status: ${hormoneStatus}, Surgery: ${surgery}, Chemotherapy: ${chemo}, Radiation: ${radiation}, Hospital: ${hospitalType}, Insured: ${insurance}, Income: ${incomeBracket}.
   
@@ -219,6 +243,7 @@ const allSuggestions = [
 ];
 
 export default function MedicalInput() {
+  const { t } = useLanguage();
   const [messages, setMessages] = useState<Msg[]>(() => {
     const saved = localStorage.getItem("artham_chat_messages");
     if (saved) {
@@ -683,7 +708,7 @@ Failed to analyze document: ${errMsg}.
         <header className="px-md py-sm border-b border-outline-variant/40 bg-surface-container-low flex justify-between items-center shrink-0 z-10 shadow-sm">
           <h3 className="font-headline-sm text-headline-sm text-primary flex items-center gap-xs">
             <span className="material-symbols-outlined text-primary text-[22px]">forum</span>
-            Clinical Context Navigator
+            {t("nav_medical")}
           </h3>
           <div className="flex items-center gap-xs">
             {/* Gemini API Status Badge */}
@@ -717,7 +742,7 @@ Failed to analyze document: ${errMsg}.
               title="Clear chat and start new conversation"
             >
               <span className="material-symbols-outlined text-[18px]">add</span>
-              <span>New Chat</span>
+              <span>{t("mi_new_chat")}</span>
             </button>
           </div>
         </header>
@@ -740,13 +765,13 @@ Failed to analyze document: ${errMsg}.
 
               {/* Greeting */}
               <h2 className="font-headline-lg text-2xl md:text-3xl text-on-surface font-semibold tracking-tight text-center mb-2">
-                Good day, Patient Navigator
+                {t("mi_welcome")}
               </h2>
               <h3 className="font-headline-md text-xl md:text-2xl text-on-surface-variant font-medium tracking-tight text-center mb-4">
-                Can I help you with anything?
+                {t("mi_welcome_sub")}
               </h3>
               <p className="text-xs md:text-sm text-outline text-center mb-8 max-w-md">
-                Choose a prompt below or write your own to start chatting with Artham
+                {t("mi_welcome_desc")}
               </p>
 
               {/* Suggestions Grid */}
@@ -853,7 +878,7 @@ Failed to analyze document: ${errMsg}.
                 <div className="flex items-center justify-between border-b border-outline-variant/40 pb-sm mb-sm shrink-0">
                   <h4 className="font-headline-sm text-sm text-primary flex items-center gap-xs">
                     <span className="material-symbols-outlined text-primary text-[20px]">folder_open</span>
-                    Clinical Evidence Vault
+                    {t("mi_evidence")}
                   </h4>
                   <div className="flex items-center gap-xs">
                     <span className="text-[10px] font-bold text-secondary bg-secondary/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -1031,7 +1056,7 @@ Failed to analyze document: ${errMsg}.
                     }
                   }}
                   className="w-full bg-transparent border-0 focus:ring-0 outline-none resize-none font-body-md py-sm text-on-surface min-h-[44px] max-h-[140px] leading-relaxed placeholder-on-surface-variant/70 focus-visible:ring-0 text-sm"
-                  placeholder={selectedUploadFile ? "Ask Artham AI about this document..." : "How can Artham help you today?"}
+                  placeholder={selectedUploadFile ? t("mi_placeholder_doc") : t("mi_placeholder_chat")}
                   rows={1}
                   disabled={isChatLoading}
                   aria-label="Chat input query"

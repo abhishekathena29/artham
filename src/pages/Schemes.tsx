@@ -1,7 +1,7 @@
-/* eslint-disable react-refresh/only-export-components */
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import AppShell from "../components/AppShell";
+import { useLanguage } from "../components/LanguageContext";
 
 type SchemeLink = {
   label: string;
@@ -41,6 +41,8 @@ export type Insurance = {
   contactEmail: string;
   contactPhone: string;
 };
+
+// ... schemes data placeholder for compiler alignment ...
 
 
 const schemes: Scheme[] = [
@@ -2689,6 +2691,7 @@ function getSchemeAttributes(s: Scheme): {
 }
 
 export default function Schemes() {
+  const { t, language } = useLanguage();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedState, setSelectedState] = useState("All India");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -2963,12 +2966,16 @@ export default function Schemes() {
         {/* Header */}
         <div className="mb-lg">
           <h1 className="font-headline-lg text-headline-lg text-on-surface mb-xs">
-            {activeTab === "schemes" ? "Government Schemes" : "General Insurances"}
+            {activeTab === "schemes" ? t("sc_title") : t("sc_tab_insurances")}
           </h1>
           <p className="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">
             {activeTab === "schemes"
-              ? "Empowering cancer patients and their families by providing simple, verified details for central and state government financial aid, NGO grants, and trust programs."
-              : "Empowering cancer patients and their families by providing a comprehensive, verified directory of IRDAI registered public, private, and standalone health insurers in India."}
+              ? t("sc_subtitle")
+              : (language === "en" ? "Empowering cancer patients and their families by providing a comprehensive, verified directory of IRDAI registered public, private, and standalone health insurers in India." :
+                 language === "hi" ? "भारत में आईआरडीएआई पंजीकृत सार्वजनिक, निजी और स्टैंडअलोन स्वास्थ्य बीमाकर्ताओं की सत्यापित निर्देशिका।" :
+                 language === "mr" ? "भारतातील आयआरडीएआई (IRDAI) नोंदणीकृत आरोग्य विमा कंपन्यांची मार्गदर्शिका." :
+                 language === "kn" ? "ಭಾರತದಲ್ಲಿ ಐಆರ್‌ಡಿಎಐ (IRDAI) ನೋಂದಾಯಿತ ಆರೋಗ್ಯ ವಿಮೆಗಾರರ ​​ಪರಿಶೀಲಿಸಿದ ವಿವರಗಳು." :
+                 "ভারতে আইআরডিএআই (IRDAI) নিবন্ধিত স্বাস্থ্য বীমাকারীদের যাচাইকৃত ডিরেক্টরি।")}
           </p>
         </div>
 
@@ -2978,27 +2985,27 @@ export default function Schemes() {
             <div className="flex justify-between items-center mb-sm">
               <h2 className="font-headline-sm text-[18px] md:text-headline-sm text-primary flex items-center gap-xs">
                 <span className="material-symbols-outlined text-primary text-[24px]">explore</span>
-                Smart Scheme Matcher
+                {language === "en" ? "Smart Scheme Matcher" : language === "hi" ? "स्मार्ट योजना मिलानकर्ता" : language === "mr" ? "स्मार्ट योजना मार्गदर्शक" : language === "kn" ? "ಸ್ಮಾರ್ಟ್ ಯೋಜನೆ ಶೋಧಕ" : "স্মার্ট স্কিম ম্যাচিং"}
               </h2>
               <button
                 onClick={() => setShowWizard(!showWizard)}
                 className="text-primary hover:text-primary-container font-label-md text-label-md flex items-center gap-2"
               >
-                {showWizard ? "Minimize Matcher" : "Launch Profile Matcher"}
+                {showWizard ? (language === "en" ? "Minimize Matcher" : language === "hi" ? "छोटा करें" : language === "mr" ? "लहान करा" : language === "kn" ? "ಕುಗ್ಗಿಸು" : "ছোট করুন") : (language === "en" ? "Launch Profile Matcher" : language === "hi" ? "प्रोफ़ाइल मिलानकर्ता शुरू करें" : language === "mr" ? "पात्रता तपासा" : language === "kn" ? "ಪ್ರೊಫೈಲ್ ಶೋಧಕ ಚಾಲನೆಗೊಳಿಸಿ" : "প্রোফাইল ম্যাচিং শুরু করুন")}
                 <span className="material-symbols-outlined">
                   {showWizard ? "expand_less" : "expand_more"}
                 </span>
               </button>
             </div>
             <p className="font-body-md text-body-md text-on-surface-variant max-w-3xl mb-md">
-              Answer a few questions about your profile (Age, State, Gender, Occupation, Income) and we will instantly find all eligible central and state schemes you qualify for.
+              {language === "en" ? "Answer a few questions about your profile (Age, State, Gender, Occupation, Income) and we will instantly find all eligible central and state schemes you qualify for." : language === "hi" ? "अपनी प्रोफ़ाइल (आयु, राज्य, लिंग, व्यवसाय, आय) के बारे में कुछ प्रश्नों के उत्तर दें और हम तुरंत उन सभी पात्र केंद्रीय और राज्य योजनाओं को ढूंढेंगे जिनके लिए आप योग्य हैं।" : language === "mr" ? "तुमच्या प्रोफाइल (वय, राज्य, लिंग, व्यवसाय, उत्पन्न) बद्दल काही प्रश्नांची यादी आणि तुमच्यासाठी पात्र असलेल्या सर्व केंद्रीय आणि राज्य योजना आम्ही शोधू." : language === "kn" ? "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್ (ವಯಸ್ಸು, ರಾಜ್ಯ, ಲಿಂಗ, ವೃತ್ತಿ, ಆದಾಯ) ಬಗ್ಗೆ ಕೆಲವು ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ ಮತ್ತು ನೀವು ಅರ್ಹರಾಗಿರುವ ಎಲ್ಲಾ ಯೋಜನೆಗಳನ್ನು ನಾವು ಹುಡುಕುತ್ತೇವೆ." : "আপনার প্রোফাইল (বয়স, রাজ্য, লিঙ্গ, পেশা, আয়) সম্পর্কে কয়েকটি প্রশ্নের উত্তর দিন এবং আমরা অবিলম্বে আপনার যোগ্য সমস্ত কেন্দ্রীয় ও রাজ্য প্রকল্পগুলি খুঁজে বের করব।"}
             </p>
 
             {showWizard && (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-sm border-t border-outline-variant/40 pt-md mt-xs animate-fade-in">
                 {/* State */}
                 <div className="flex flex-col gap-xs">
-                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">Domicile State</label>
+                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">{t("it_state")}</label>
                   <select
                     value={wizardState}
                     onChange={(e) => setWizardState(e.target.value)}
@@ -3012,7 +3019,7 @@ export default function Schemes() {
 
                 {/* Age */}
                 <div className="flex flex-col gap-xs">
-                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">Age (Years)</label>
+                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">{language === "en" ? "Age (Years)" : language === "hi" ? "आयु (वर्ष)" : language === "mr" ? "वय (वर्षे)" : language === "kn" ? "ವಯಸ್ಸು (ವರ್ಷಗಳು)" : "বয়স (বছর)"}</label>
                   <input
                     type="number"
                     value={wizardAge}
@@ -3026,46 +3033,46 @@ export default function Schemes() {
 
                 {/* Gender */}
                 <div className="flex flex-col gap-xs">
-                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">Gender Focus</label>
+                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">{language === "en" ? "Gender Focus" : language === "hi" ? "लिंग फोकस" : language === "mr" ? "लिंग" : language === "kn" ? "ಲಿಂಗ" : "লিঙ্গ"}</label>
                   <select
                     value={wizardGender}
                     onChange={(e) => setWizardGender(e.target.value)}
                     className="w-full p-2.5 rounded-xl border border-outline-variant bg-surface-bright font-body-sm text-on-surface outline-none cursor-pointer"
                   >
-                    <option value="General / All Genders">All Genders / General</option>
-                    <option value="Female Only">Female focus</option>
+                    <option value="General / All Genders">{language === "en" ? "All Genders / General" : language === "hi" ? "सभी लिंग / सामान्य" : language === "mr" ? "सर्व लिंग / सामान्य" : language === "kn" ? "ಎಲ್ಲಾ ಲಿಂಗಗಳು / ಸಾಮಾನ್ಯ" : "সব লিঙ্গ / সাধারণ"}</option>
+                    <option value="Female Only">{language === "en" ? "Female focus" : language === "hi" ? "महिला फोकस" : language === "mr" ? "महिला विशेष" : language === "kn" ? "ಮಹಿಳಾ ವಿಶೇಷ" : "মহিলা বিশেষ"}</option>
                   </select>
                 </div>
 
                 {/* Occupation */}
                 <div className="flex flex-col gap-xs">
-                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">Occupation</label>
+                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">{language === "en" ? "Occupation" : language === "hi" ? "व्यवसाय" : language === "mr" ? "व्यवसाय" : language === "kn" ? "ವೃತ್ತಿ" : "পেশা"}</label>
                   <select
                     value={wizardProfession}
                     onChange={(e) => setWizardProfession(e.target.value)}
                     className="w-full p-2.5 rounded-xl border border-outline-variant bg-surface-bright font-body-sm text-on-surface outline-none cursor-pointer"
                   >
-                    <option value="General Public">General Public (Any)</option>
-                    <option value="Construction Worker">Construction / BOCW</option>
-                    <option value="Transport Worker">Transport Worker</option>
-                    <option value="Ex-Servicemen / Veterans">Ex-Servicemen / Sainik</option>
-                    <option value="Govt Employee / Pensioner">Govt Employee / Pensioner</option>
-                    <option value="Tea Tribes / Adivasi">Tea Tribes / Adivasi</option>
+                    <option value="General Public">{language === "en" ? "General Public (Any)" : language === "hi" ? "सामान्य जनता (कोई भी)" : language === "mr" ? "सामान्य जनता" : language === "kn" ? "ಸಾಮಾನ್ಯ ಸಾರ್ವಜನಿಕರು" : "সাধারণ জনগণ"}</option>
+                    <option value="Construction Worker">{language === "en" ? "Construction / BOCW" : language === "hi" ? "निर्माण / बीओसीडब्ल्यू" : language === "mr" ? "बांधकाम कामगार" : language === "kn" ? "ಕಟ್ಟಡ ಕಾರ್ಮಿಕರು" : "নির্মাণকর্মী"}</option>
+                    <option value="Transport Worker">{language === "en" ? "Transport Worker" : language === "hi" ? "परिवहन कार्यकर्ता" : language === "mr" ? "परिवहन कामगार" : language === "kn" ? "ಸಾರಿಗೆ ಕಾರ್ಮಿಕರು" : "পরিবহন কর্মী"}</option>
+                    <option value="Ex-Servicemen / Veterans">{language === "en" ? "Ex-Servicemen / Sainik" : language === "hi" ? "पूर्व सैनिक / सैनिक" : language === "mr" ? "माजी सैनिक" : language === "kn" ? "ಮಾಜಿ ಸೈನಿಕರು" : "প্রাক্তন সৈনিক"}</option>
+                    <option value="Govt Employee / Pensioner">{language === "en" ? "Govt Employee / Pensioner" : language === "hi" ? "सरकारी कर्मचारी / पेंशनभोगी" : language === "mr" ? "शासकीय कर्मचारी / निवृत्तीवेतनधारक" : language === "kn" ? "ಸರ್ಕಾರಿ ನೌಕರರು / ಪಿಂಚಣಿದಾರರು" : "সরকারি কর্মচারী / পেনশনভোগী"}</option>
+                    <option value="Tea Tribes / Adivasi">{language === "en" ? "Tea Tribes / Adivasi" : language === "hi" ? "चाय जनजाति / आदिवासी" : language === "mr" ? "चहा जमाती / आदिवासी" : language === "kn" ? "ಚಹಾ ಬುಡಕಟ್ಟುಗಳು" : "চা উপজাতি / আদিবাসী"}</option>
                   </select>
                 </div>
 
                 {/* Income */}
                 <div className="flex flex-col gap-xs">
-                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">Income Ceiling</label>
+                  <label className="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider pl-1">{t("it_income")}</label>
                   <select
                     value={wizardIncome}
                     onChange={(e) => setWizardIncome(e.target.value)}
                     className="w-full p-2.5 rounded-xl border border-outline-variant bg-surface-bright font-body-sm text-on-surface outline-none cursor-pointer"
                   >
-                    <option value="Any Income">General / Any Income</option>
-                    <option value="BPL Only">Below Poverty Line (BPL)</option>
-                    <option value="Under ₹1.5 Lakhs">Low Income (Under 1.5L/yr)</option>
-                    <option value="Under ₹4-6 Lakhs">Middle Income (Under 4-6L/yr)</option>
+                    <option value="Any Income">{language === "en" ? "General / Any Income" : language === "hi" ? "सामान्य / कोई भी आय" : language === "mr" ? "सामान्य / कोणतीही उत्पन्न मर्यादा नाही" : language === "kn" ? "ಸಾಮಾನ್ಯ / ಯಾವುದೇ ಆದಾಯ" : "সাধারণ / যেকোনো আয়"}</option>
+                    <option value="BPL Only">{language === "en" ? "Below Poverty Line (BPL)" : language === "hi" ? "गरीबी रेखा से नीचे (बीपीएल)" : language === "mr" ? "दारिद्र्यरेषेखालील (BPL)" : language === "kn" ? "ದಾರಿದ್ರ್ಯ ರೇಖೆಗಿಂತ ಕೆಳಗೆ (ಬಿಪಿಎಲ್)" : "দারিদ্র্য সীমার নিচে (বিपीএল)"}</option>
+                    <option value="Under ₹1.5 Lakhs">{language === "en" ? "Low Income (Under 1.5L/yr)" : language === "hi" ? "कम आय (1.5L/वर्ष से कम)" : language === "mr" ? "अल्प उत्पन्न (१.५ लाखांपेक्षा कमी/वर्ष)" : language === "kn" ? "ಕಡಿಮೆ ಆದಾಯ (ವಾರ್ಷಿಕ ೧.೫ಲಕ್ಷಕ್ಕಿಂತ ಕಡಿಮೆ)" : "কম আয় (বার্ষিক ১.৫ লাখের কম)"}</option>
+                    <option value="Under ₹4-6 Lakhs">{language === "en" ? "Middle Income (Under 4-6L/yr)" : language === "hi" ? "मध्यम आय (4-6L/वर्ष से कम)" : language === "mr" ? "मध्यम उत्पन्न (४-६ लाखांपेक्षा कमी/वर्ष)" : language === "kn" ? "ಮಧ್ಯಮ ಆದಾಯ (ವಾರ್ಷಿಕ ೪-೬ಲಕ್ಷಕ್ಕಿಂತ ಕಡಿಮೆ)" : "মধ্যম আয় (বার্ষিক ৪-৬ লাখের কম)"}</option>
                   </select>
                 </div>
 
@@ -3079,16 +3086,16 @@ export default function Schemes() {
                       setWizardIncome("Any Income");
                       resetFilters();
                     }}
-                    className="px-md py-2 border border-outline text-outline font-label-md text-label-md rounded-xl hover:bg-surface-container transition-all"
+                    className="px-md py-2 border border-outline text-outline font-label-md text-label-md rounded-xl hover:bg-surface-container transition-all font-bold text-xs"
                   >
-                    Reset Form
+                    {language === "en" ? "Reset Form" : language === "hi" ? "फॉर्म रीसेट करें" : language === "mr" ? "फॉर्म रीसेट करा" : language === "kn" ? "ನಮೂನೆ ಮರುಹೊಂದಿಸಿ" : "ফর্ম রিসেট করুন"}
                   </button>
                   <button
                     onClick={handleApplyWizard}
-                    className="px-lg py-2.5 bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:brightness-110 shadow-md active:scale-95 transition-all flex items-center gap-xs"
+                    className="px-lg py-2.5 bg-primary text-on-primary font-label-md text-label-md rounded-xl hover:brightness-110 shadow-md active:scale-95 transition-all flex items-center gap-xs font-bold text-xs"
                   >
                     <span className="material-symbols-outlined text-[18px]">verified_user</span>
-                    Find My Eligible Schemes
+                    {language === "en" ? "Find My Eligible Schemes" : language === "hi" ? "मेरी पात्र योजनाएं खोजें" : language === "mr" ? "माझ्या पात्र योजना शोधा" : language === "kn" ? "ನನ್ನ ಅರ್ಹ ಯೋಜನೆಗಳನ್ನು ಹುಡುಕಿ" : "আমার যোগ্য প্রকল্প খুঁজুন"}
                   </button>
                 </div>
               </div>
@@ -3108,7 +3115,7 @@ export default function Schemes() {
                 </span>
                 <input
                   className="w-full pl-12 pr-12 py-3 rounded-xl border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest outline-none transition-all font-body-md"
-                  placeholder="Search by scheme name, benefits, keywords..."
+                  placeholder={t("sc_search_placeholder")}
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -3155,7 +3162,7 @@ export default function Schemes() {
                 }`}
               >
                 <span className="material-symbols-outlined text-[18px]">tune</span>
-                Advanced Filters
+                {language === "en" ? "Advanced Filters" : language === "hi" ? "उन्नत फ़िल्टर" : language === "mr" ? "प्रगत फिल्टर" : language === "kn" ? "ಸುಧಾರಿತ ಶೋಧಕಗಳು" : "উন্নত ফিল্টার"}
                 {(selectedAgeGroup !== "Any Age" || selectedProfession !== "Any Profession" || selectedBenefitType !== "Any Benefit" || selectedIncomeLimit !== "Any Income Limit" || selectedCoverageAmount !== "Any Coverage" || selectedGender !== "Any Gender") && (
                   <span className="w-2 h-2 rounded-full bg-secondary-fixed animate-pulse ml-xs" />
                 )}
@@ -3167,7 +3174,7 @@ export default function Schemes() {
                   onClick={resetFilters}
                   className="flex items-center justify-center gap-xs px-md py-3 rounded-xl border border-outline text-outline font-label-md hover:bg-surface-container hover:text-primary transition-all active:scale-[0.98]"
                 >
-                  <span className="material-symbols-outlined text-[18px]">restart_alt</span> Reset
+                  <span className="material-symbols-outlined text-[18px]">restart_alt</span> {language === "en" ? "Reset" : language === "hi" ? "रीसेट" : language === "mr" ? "रीसेट" : language === "kn" ? "ಮರುಹೊಂದಿಸಿ" : "রিসেট"}
                 </button>
               )}
             </div>
@@ -3175,70 +3182,32 @@ export default function Schemes() {
             <div className="flex flex-col lg:flex-row gap-sm items-stretch lg:items-center">
               {/* Insurers Search Input */}
               <div className="relative flex-grow">
-                <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline/80">
-                  search
-                </span>
+                <span className="material-symbols-outlined absolute left-3 text-outline pointer-events-none">search</span>
                 <input
-                  className="w-full pl-12 pr-12 py-3 rounded-xl border border-outline-variant focus:border-primary focus:ring-2 focus:ring-primary/20 bg-surface-container-lowest outline-none transition-all font-body-md"
-                  placeholder="Search general insurers by company, headquarters, primary policies..."
                   type="text"
+                  placeholder={language === "en" ? "Search insurers by name, sector, or HQ..." : language === "hi" ? "नाम, क्षेत्र या मुख्यालय से बीमाकर्ता खोजें..." : language === "mr" ? "नाव, क्षेत्र किंवा मुख्यालयानुसार बीमाकर्ता शोधा..." : language === "kn" ? "ಹೆಸರು, ವಲಯ ಅಥವಾ ಪ್ರಧಾನ ಕಚೇರಿ ಮೂಲಕ ವಿಮೆದಾರರನ್ನು ಹುಡುಕಿ..." : "নাম, সেক্টর বা সদর দপ্তর দিয়ে বীমাকারী খুঁজুন..."}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-md text-on-surface outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-outline hover:text-on-surface p-1 rounded-full hover:bg-surface-container-high transition-all"
-                    aria-label="Clear search"
-                  >
-                    <span className="material-symbols-outlined text-[18px]">close</span>
-                  </button>
-                )}
               </div>
 
-              {/* Insurers Sector select dropdown */}
-              <div className="relative min-w-[220px] flex items-center">
-                <span className="material-symbols-outlined absolute left-4 text-outline/80 z-10 pointer-events-none">
-                  corporate_fare
-                </span>
+              {/* Sector filter dropdown */}
+              <div className="relative shrink-0">
+                <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none text-[18px]">filter_list</span>
                 <select
-                  className="w-full pl-12 pr-8 py-3 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-md text-on-surface outline-none appearance-none cursor-pointer focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  className="pl-10 pr-8 py-3 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-md text-on-surface outline-none appearance-none cursor-pointer focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                   value={selectedSector}
                   onChange={(e) => setSelectedSector(e.target.value)}
                 >
-                  <option value="All">All Insurer Sectors</option>
-                  <option value="Public Sector">Public Sector Insurers</option>
-                  <option value="Private Sector">Private Sector Insurers</option>
-                  <option value="Standalone Health">Standalone Health Insurers</option>
+                  <option value="All">{language === "en" ? "All Sectors" : language === "hi" ? "सभी क्षेत्र" : language === "mr" ? "सर्व क्षेत्रे" : language === "kn" ? "ಎಲ್ಲಾ ವಲಯಗಳು" : "সব সেক্টর"}</option>
+                  <option value="Public Sector">{language === "en" ? "Public Sector" : language === "hi" ? "सार्वजनिक क्षेत्र" : language === "mr" ? "सार्वजनिक क्षेत्र" : language === "kn" ? "ಸಾರ್ವಜನಿಕ ವಲಯ" : "সরকারি সেক্টর"}</option>
+                  <option value="Private Sector">{language === "en" ? "Private Sector" : language === "hi" ? "निजी क्षेत्र" : language === "mr" ? "खाजगी क्षेत्र" : language === "kn" ? "ಖಾಸಗಿ ವಲಯ" : "বেসরকারি সেক্টর"}</option>
+                  <option value="Standalone Health">{language === "en" ? "Standalone Health" : language === "hi" ? "स्टैंडअलोन स्वास्थ्य" : language === "mr" ? "स्वतंत्र आरोग्य" : language === "kn" ? "ಸ್ವತಂತ್ರ ಆರೋಗ್ಯ" : "স্বতন্ত্র স্বাস্থ্য"}</option>
                 </select>
-                <span className="material-symbols-outlined absolute right-3 text-outline pointer-events-none">
-                  expand_more
-                </span>
+                <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none">expand_more</span>
               </div>
-
-              {/* Reset Button */}
-              {(searchQuery || selectedSector !== "All" || sortBy !== "Default") && (
-                <button
-                  onClick={resetFilters}
-                  className="flex items-center justify-center gap-xs px-md py-3 rounded-xl border border-outline text-outline font-label-md hover:bg-surface-container hover:text-primary transition-all active:scale-[0.98]"
-                >
-                  <span className="material-symbols-outlined text-[18px]">restart_alt</span> Reset
-                </button>
-              )}
             </div>
-          )}
-
-          {/* Advanced Collapsible Filter Panel (only under Schemes tab) */}
-          {activeTab === "schemes" && showAdvancedFilters && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-sm mt-sm pt-sm border-t border-outline-variant/60 animate-fade-in">
-              
-              {/* Age Group Filter */}
-              <div className="flex flex-col gap-xs">
-                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none">
-                  Age Suitability
-                </label>
-                <div className="relative flex items-center">
-                  <span className="material-symbols-outlined absolute left-3 text-outline text-[16px] pointer-events-none">
                     face
                   </span>
                   <select
@@ -3246,11 +3215,11 @@ export default function Schemes() {
                     value={selectedAgeGroup}
                     onChange={(e) => setSelectedAgeGroup(e.target.value)}
                   >
-                    <option value="Any Age">Any Age</option>
-                    <option value="Child (0-18)">Child (0-18 yrs)</option>
-                    <option value="Adult (18-60)">Adult (18-60 yrs)</option>
-                    <option value="Senior (60+)">Senior (60+ yrs)</option>
-                    <option value="All Ages">All Ages / Universal</option>
+                    <option value="Any Age">{language === "en" ? "Any Age" : language === "hi" ? "कोई भी आयु" : language === "mr" ? "कोणतेही वय" : language === "kn" ? "ಯಾವುದೇ ವಯಸ್ಸು" : "যেকোনো বয়স"}</option>
+                    <option value="Child (0-18)">{language === "en" ? "Child (0-18 yrs)" : language === "hi" ? "बच्चा (0-18 वर्ष)" : language === "mr" ? "मूल (०-१८ वर्षे)" : language === "kn" ? "ಮಗು (೦-೧೮ ವರ್ಷ)" : "শিশু (০-১৮ বছর)"}</option>
+                    <option value="Adult (18-60)">{language === "en" ? "Adult (18-60 yrs)" : language === "hi" ? "वयस्क (18-60 वर्ष)" : language === "mr" ? "प्रौढ (१८-६० वर्षे)" : language === "kn" ? "ವಯಸ್ಕರು (೧೮-೬೦ ವರ್ಷ)" : "প্রাপ্তবয়স্ক (১৮-৬০ বছর)"}</option>
+                    <option value="Senior (60+)">{language === "en" ? "Senior (60+ yrs)" : language === "hi" ? "वरिष्ठ (60+ वर्ष)" : language === "mr" ? "ज्येष्ठ नागरिक (६०+ वर्षे)" : language === "kn" ? "ಹಿರಿಯರು (೬೦+ ವರ್ಷ)" : "বয়স্ক (৬০+ বছর)"}</option>
+                    <option value="All Ages">{language === "en" ? "All Ages / Universal" : language === "hi" ? "सभी उम्र / सार्वभौमिक" : language === "mr" ? "सर्व वयोगट" : language === "kn" ? "ಎಲ್ಲಾ ವಯಸ್ಸಿನವರಿಗೆ" : "সব বয়স / সার্বজনীন"}</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-2 text-outline pointer-events-none text-[16px]">
                     expand_more
@@ -3260,8 +3229,8 @@ export default function Schemes() {
 
               {/* Profession Filter */}
               <div className="flex flex-col gap-xs">
-                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none">
-                  Target Profession
+                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none font-bold">
+                  {language === "en" ? "Target Profession" : language === "hi" ? "लक्षित व्यवसाय" : language === "mr" ? "लक्षित व्यवसाय" : language === "kn" ? "ಲಕ್ಷಿತ ವೃತ್ತಿ" : "উদ্দিষ্ট পেশা"}
                 </label>
                 <div className="relative flex items-center">
                   <span className="material-symbols-outlined absolute left-3 text-outline text-[16px] pointer-events-none">
@@ -3272,13 +3241,13 @@ export default function Schemes() {
                     value={selectedProfession}
                     onChange={(e) => setSelectedProfession(e.target.value)}
                   >
-                    <option value="Any Profession">Any Profession</option>
-                    <option value="General Public">General Public (Any)</option>
-                    <option value="Construction Worker">Construction / BOCW</option>
-                    <option value="Transport Worker">Transport Worker</option>
-                    <option value="Ex-Servicemen / Veterans">Ex-Servicemen / Sainik</option>
-                    <option value="Govt Employee / Pensioner">Govt Employee / Pensioner</option>
-                    <option value="Tea Tribes / Adivasi">Tea Tribes / Adivasi</option>
+                    <option value="Any Profession">{language === "en" ? "Any Profession" : language === "hi" ? "कोई भी व्यवसाय" : language === "mr" ? "कोणताही व्यवसाय" : language === "kn" ? "ಯಾವುದೇ ವೃತ್ತಿ" : "যেকোনো পেশা"}</option>
+                    <option value="General Public">{language === "en" ? "General Public (Any)" : language === "hi" ? "सामान्य जनता (कोई भी)" : language === "mr" ? "सामान्य जनता" : language === "kn" ? "ಸಾಮಾನ್ಯ ಸಾರ್ವಜನಿಕರು" : "সাধারণ জনগণ"}</option>
+                    <option value="Construction Worker">{language === "en" ? "Construction / BOCW" : language === "hi" ? "निर्माण / बीओसीडब्ल्यू" : language === "mr" ? "बांधकाम कामगार" : language === "kn" ? "ಕಟ್ಟಡ ಕಾರ್ಮಿಕರು" : "নির্মাণকর্মী"}</option>
+                    <option value="Transport Worker">{language === "en" ? "Transport Worker" : language === "hi" ? "परिवहन कार्यकर्ता" : language === "mr" ? "परिवहन कामगार" : language === "kn" ? "ಸಾರಿಗೆ ಕಾರ್ಮಿಕರು" : "পরিবহন কর্মী"}</option>
+                    <option value="Ex-Servicemen / Veterans">{language === "en" ? "Ex-Servicemen / Sainik" : language === "hi" ? "पूर्व सैनिक / सैनिक" : language === "mr" ? "माजी सैनिक" : language === "kn" ? "ಮಾಜಿ ಸೈನಿಕರು" : "প্রাক্তন সৈনিক"}</option>
+                    <option value="Govt Employee / Pensioner">{language === "en" ? "Govt Employee / Pensioner" : language === "hi" ? "सरकारी कर्मचारी / पेंशनभोगी" : language === "mr" ? "शासकीय कर्मचारी / निवृत्तीवेतनधारक" : language === "kn" ? "ಸರ್ಕಾರಿ ನೌಕರರು / ಪಿಂಚಣಿದಾರರು" : "সরকারি কর্মচারী / পেনশনভোগী"}</option>
+                    <option value="Tea Tribes / Adivasi">{language === "en" ? "Tea Tribes / Adivasi" : language === "hi" ? "चाय जनजाति / आदिवासी" : language === "mr" ? "चहा जमाती / आदिवासी" : language === "kn" ? "ಚಹಾ ಬುಡಕಟ್ಟುಗಳು" : "চা উপজাতি / আদিবাসী"}</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-2 text-outline pointer-events-none text-[16px]">
                     expand_more
@@ -3288,8 +3257,8 @@ export default function Schemes() {
 
               {/* Benefit Type Filter */}
               <div className="flex flex-col gap-xs">
-                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none">
-                  Benefit Category
+                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none font-bold">
+                  {language === "en" ? "Benefit Category" : language === "hi" ? "लाभ की श्रेणी" : language === "mr" ? "लाभ प्रकार" : language === "kn" ? "ಪ್ರಯೋಜನದ ವರ್ಗ" : "সুবিধার বিভাগ"}
                 </label>
                 <div className="relative flex items-center">
                   <span className="material-symbols-outlined absolute left-3 text-outline text-[16px] pointer-events-none">
@@ -3300,11 +3269,11 @@ export default function Schemes() {
                     value={selectedBenefitType}
                     onChange={(e) => setSelectedBenefitType(e.target.value)}
                   >
-                    <option value="Any Benefit">Any Benefit Form</option>
-                    <option value="Cashless Treatment">Cashless Treatment</option>
-                    <option value="One-time Financial Grant">One-time Financial Grant</option>
-                    <option value="Monthly Pension">Monthly Pension Support</option>
-                    <option value="Travel Concession">Travel / Transit Concession</option>
+                    <option value="Any Benefit">{language === "en" ? "Any Benefit Form" : language === "hi" ? "लाभ का कोई भी रूप" : language === "mr" ? "कोणतेही लाभ प्रकार" : language === "kn" ? "ಯಾವುದೇ ಪ್ರಯೋಜನ" : "যেকোনো ধরণের সুবিধা"}</option>
+                    <option value="Cashless Treatment">{language === "en" ? "Cashless Treatment" : language === "hi" ? "कैशलेस उपचार" : language === "mr" ? "मोफत/कॅशलेस उपचार" : language === "kn" ? "ನಗದು ರಹಿತ ಚಿಕಿತ್ಸೆ" : "ক্যাশলেস চিকিৎসা"}</option>
+                    <option value="One-time Financial Grant">{language === "en" ? "One-time Financial Grant" : language === "hi" ? "एकमुश्त वित्तीय अनुदान" : language === "mr" ? "एकवेळचे आर्थिक सहाय्य" : language === "kn" ? "ಏಕಕಾಲದ ಆರ್ಥಿಕ ಧನಸಹಾಯ" : "এককালীন আর্থিক অনুদান"}</option>
+                    <option value="Monthly Pension">{language === "en" ? "Monthly Pension Support" : language === "hi" ? "मासिक पेंशन सहायता" : language === "mr" ? "मासिक पेन्शन मदत" : language === "kn" ? "ಮಾಸಿಕ ಪಿಂಚಣಿ ನೆರವು" : "মাসিক পেনশন সহায়তা"}</option>
+                    <option value="Travel Concession">{language === "en" ? "Travel / Transit Concession" : language === "hi" ? "यात्रा / पारगमन रियायत" : language === "mr" ? "प्रवास सवलत" : language === "kn" ? "ಪ್ರಯಾಣ ಸವಲತ್ತು" : "ভ্রমণ / ট্রানজিট ছাড়"}</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-2 text-outline pointer-events-none text-[16px]">
                     expand_more
@@ -3314,8 +3283,8 @@ export default function Schemes() {
 
               {/* Income Limit Filter */}
               <div className="flex flex-col gap-xs">
-                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none">
-                  Financial Criteria
+                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none font-bold">
+                  {language === "en" ? "Financial Criteria" : language === "hi" ? "वित्तीय मानदंड" : language === "mr" ? "उत्पन्न निकष" : language === "kn" ? "ಆರ್ಥಿಕ ಅರ್ಹತೆ" : "আর্থিক মানদণ্ড"}
                 </label>
                 <div className="relative flex items-center">
                   <span className="material-symbols-outlined absolute left-3 text-outline text-[16px] pointer-events-none">
@@ -3326,11 +3295,11 @@ export default function Schemes() {
                     value={selectedIncomeLimit}
                     onChange={(e) => setSelectedIncomeLimit(e.target.value)}
                   >
-                    <option value="Any Income Limit">Any Income Status</option>
-                    <option value="Any Income">Any Income (Universal)</option>
-                    <option value="BPL Only">Below Poverty Line (BPL)</option>
-                    <option value="Under ₹1.5 Lakhs">Under ₹1.5 Lakhs / yr</option>
-                    <option value="Under ₹4-6 Lakhs">Under ₹4-6 Lakhs / yr</option>
+                    <option value="Any Income Limit">{language === "en" ? "Any Income Status" : language === "hi" ? "कोई भी आय स्थिति" : language === "mr" ? "कोणतीही उत्पन्न मर्यादा" : language === "kn" ? "ಯಾವುದೇ ಆದಾಯ ಮಿತಿ" : "যেকোনো আয়ের স্তর"}</option>
+                    <option value="Any Income">{language === "en" ? "Any Income (Universal)" : language === "hi" ? "कोई भी आय (सार्वभौमिक)" : language === "mr" ? "सर्व उत्पन्नाचे गट" : language === "kn" ? "ಯಾವುದೇ ಆದಾಯ (ಸಾರ್ವತ್ರಿಕ)" : "যেকোনো আয় (সার্বজনীন)"}</option>
+                    <option value="BPL Only">{language === "en" ? "Below Poverty Line (BPL)" : language === "hi" ? "गरीबी रेखा से नीचे (बीपीएल)" : language === "mr" ? "दारिद्र्यरेषेखालील (BPL)" : language === "kn" ? "ದಾರಿದ್ರ್ಯ ರೇಖೆಗಿಂತ ಕೆಳಗೆ (ಬಿಪಿಎಲ್)" : "দারিদ্র্য সীমার নিচে (বিপিএল)"}</option>
+                    <option value="Under ₹1.5 Lakhs">{language === "en" ? "Under ₹1.5 Lakhs / yr" : language === "hi" ? "₹1.5 लाख/वर्ष से कम" : language === "mr" ? "१.५ लाखांपेक्षा कमी/वर्ष" : language === "kn" ? "ವಾರ್ಷಿಕ ೧.೫ಲಕ್ಷಕ್ಕಿಂತ ಕಡಿಮೆ" : "বার্ষিক ১.৫ লাখের নিচে"}</option>
+                    <option value="Under ₹4-6 Lakhs">{language === "en" ? "Under ₹4-6 Lakhs / yr" : language === "hi" ? "₹4-6 लाख/वर्ष से कम" : language === "mr" ? "४-६ लाखांपेक्षा कमी/वर्ष" : language === "kn" ? "ವಾರ್ಷಿಕ ೪-೬ಲಕ್ಷಕ್ಕಿಂತ ಕಡಿಮೆ" : "বার্ষিক ৪-৬ লাখের নিচে"}</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-2 text-outline pointer-events-none text-[16px]">
                     expand_more
@@ -3340,8 +3309,8 @@ export default function Schemes() {
 
               {/* Treatment Coverage Filter */}
               <div className="flex flex-col gap-xs">
-                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none">
-                  Treatment Coverage
+                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none font-bold">
+                  {language === "en" ? "Treatment Coverage" : language === "hi" ? "उपचार कवरेज" : language === "mr" ? "उपचार विमा छत्र" : language === "kn" ? "ಚಿಕಿತ್ಸಾ ರಕ್ಷಣೆ ಮೊತ್ತ" : "চিকিৎসা কভারেজ"}
                 </label>
                 <div className="relative flex items-center">
                   <span className="material-symbols-outlined absolute left-3 text-outline text-[16px] pointer-events-none">
@@ -3352,12 +3321,12 @@ export default function Schemes() {
                     value={selectedCoverageAmount}
                     onChange={(e) => setSelectedCoverageAmount(e.target.value)}
                   >
-                    <option value="Any Coverage">Any Coverage</option>
-                    <option value="Up to ₹1 Lakh">Up to ₹1 Lakh</option>
-                    <option value="₹1 Lakh - ₹5 Lakhs">₹1 Lakh - ₹5 Lakhs</option>
-                    <option value="Above ₹5 Lakhs">Above ₹5 Lakhs</option>
-                    <option value="Monthly Pension Support">Monthly Pension</option>
-                    <option value="Travel Concessions / Other">Concessions / Other</option>
+                    <option value="Any Coverage">{language === "en" ? "Any Coverage" : language === "hi" ? "कोई भी कवरेज" : language === "mr" ? "कोणतीही रक्कम" : language === "kn" ? "ಯಾವುದೇ ಮೊತ್ತ" : "যেকোনো কভারেজ"}</option>
+                    <option value="Up to ₹1 Lakh">{language === "en" ? "Up to ₹1 Lakh" : language === "hi" ? "₹1 लाख तक" : language === "mr" ? "१ लाखांपर्यंत" : language === "kn" ? "₹೧ ಲಕ್ಷದವರೆಗೆ" : "১ লক্ষ পর্যন্ত"}</option>
+                    <option value="₹1 Lakh - ₹5 Lakhs">{language === "en" ? "₹1 Lakh - ₹5 Lakhs" : language === "hi" ? "₹1 लाख - ₹5 लाख" : language === "mr" ? "१ ते ५ लाख" : language === "kn" ? "₹೧ ರಿಂದ ೫ ಲಕ್ಷ" : "১ লক্ষ - ৫ লক্ষ"}</option>
+                    <option value="Above ₹5 Lakhs">{language === "en" ? "Above ₹5 Lakhs" : language === "hi" ? "₹5 लाख से ऊपर" : language === "mr" ? "५ लाखांपेक्षा जास्त" : language === "kn" ? "₹೫ ಲಕ್ಷಕ್ಕೂ ಹೆಚ್ಚು" : "৫ লক্ষের উপরে"}</option>
+                    <option value="Monthly Pension Support">{language === "en" ? "Monthly Pension" : language === "hi" ? "मासिक पेंशन" : language === "mr" ? "मासिक पेन्शन" : language === "kn" ? "ಮಾಸಿಕ ಪಿಂಚಣಿ" : "মাসিক পেনশন"}</option>
+                    <option value="Travel Concessions / Other">{language === "en" ? "Concessions / Other" : language === "hi" ? "रियायतें / अन्य" : language === "mr" ? "सवलती / इतर" : language === "kn" ? "ಸವಲತ್ತುಗಳು / ಇತರೆ" : "ছাড় / অন্যান্য"}</option>
                   </select>
                   <span className="material-symbols-outlined absolute right-2 text-outline pointer-events-none text-[16px]">
                     expand_more
@@ -3367,6 +3336,93 @@ export default function Schemes() {
 
               {/* Gender focus Filter */}
               <div className="flex flex-col gap-xs">
+                <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none font-bold">
+                  {language === "en" ? "Gender Focus" : language === "hi" ? "लिंग फोकस" : language === "mr" ? "लिंग" : language === "kn" ? "ಲಿಂಗ" : "লিঙ্গ"}
+                </label>
+                <div className="relative flex items-center">
+                  <span className="material-symbols-outlined absolute left-3 text-outline text-[16px] pointer-events-none">
+                    wc
+                  </span>
+                  <select
+                    className="w-full pl-8 pr-7 py-2 rounded-xl border border-outline-variant bg-surface-container-lowest font-body-sm text-[12px] text-on-surface outline-none appearance-none cursor-pointer focus:border-primary focus:ring-1 focus:ring-primary/20"
+                    value={selectedGender}
+                    onChange={(e) => setSelectedGender(e.target.value)}
+                  >
+                    <option value="Any Gender">{language === "en" ? "Any Gender" : language === "hi" ? "कोई भी लिंग" : language === "mr" ? "कोणतेही लिंग" : language === "kn" ? "ಯಾವುದೇ ಲಿಂಗ" : "যেকোনো লিঙ্গ"}</option>
+                    <option value="Female Only">{language === "en" ? "Female Only" : language === "hi" ? "केवल महिला" : language === "mr" ? "केवळ महिला" : language === "kn" ? "ಮಹಿಳೆಯರು ಮಾತ್ರ" : "শুধুমাত্র মহিলা"}</option>
+                    <option value="General / All Genders">{language === "en" ? "General / All Genders" : language === "hi" ? "सामान्य / सभी लिंग" : language === "mr" ? "सर्व लिंग / सामान्य" : language === "kn" ? "ಎಲ್ಲಾ ಲಿಂಗಗಳು / ಸಾಮಾನ್ಯ" : "সব লিঙ্গ / সাধারণ"}</option>
+                  </select>
+                  <span className="material-symbols-outlined absolute right-2 text-outline pointer-events-none text-[16px]">
+                    expand_more
+                  </span>
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* Active Filter Tags (only under schemes tab) */}
+          {activeTab === "schemes" && (selectedAgeGroup !== "Any Age" || selectedProfession !== "Any Profession" || selectedBenefitType !== "Any Benefit" || selectedIncomeLimit !== "Any Income Limit" || selectedCoverageAmount !== "Any Coverage" || selectedGender !== "Any Gender") && (
+            <div className="flex flex-wrap gap-xs mt-sm pt-xs border-t border-outline-variant/40 animate-fade-in font-bold text-xs">
+              <span className="text-[11px] font-bold text-outline uppercase tracking-wider flex items-center pr-xs select-none font-bold">
+                {language === "en" ? "Active Criteria:" : language === "hi" ? "सक्रिय मानदंड:" : language === "mr" ? "सक्रिय निकष:" : language === "kn" ? "ಸಕ್ರಿಯ ಶೋಧಕಗಳು:" : "সक्रिय মানদণ্ড:"}
+              </span>
+              
+              {selectedAgeGroup !== "Any Age" && (
+                <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-secondary/10 text-secondary rounded-lg text-[12px] font-semibold">
+                  <span>{language === "en" ? "Age" : language === "hi" ? "आयु" : language === "mr" ? "वय" : language === "kn" ? "ವಯಸ್ಸು" : "বয়স"}: {selectedAgeGroup}</span>
+                  <button onClick={() => setSelectedAgeGroup("Any Age")} className="hover:bg-secondary/20 rounded-full p-0.5 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[12px] font-bold">close</span>
+                  </button>
+                </span>
+              )}
+
+              {selectedProfession !== "Any Profession" && (
+                <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-secondary/10 text-secondary rounded-lg text-[12px] font-semibold">
+                  <span>{language === "en" ? "Occupation" : language === "hi" ? "व्यवसाय" : language === "mr" ? "व्यवसाय" : language === "kn" ? "ವೃತ್ತಿ" : "পেশা"}: {selectedProfession}</span>
+                  <button onClick={() => setSelectedProfession("Any Profession")} className="hover:bg-secondary/20 rounded-full p-0.5 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[12px] font-bold">close</span>
+                  </button>
+                </span>
+              )}
+
+              {selectedBenefitType !== "Any Benefit" && (
+                <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-secondary/10 text-secondary rounded-lg text-[12px] font-semibold">
+                  <span>{language === "en" ? "Benefit" : language === "hi" ? "लाभ" : language === "mr" ? "लाभ" : language === "kn" ? "ಪ್ರಯೋಜನ" : "সুবিধা"}: {selectedBenefitType}</span>
+                  <button onClick={() => setSelectedBenefitType("Any Benefit")} className="hover:bg-secondary/20 rounded-full p-0.5 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[12px] font-bold">close</span>
+                  </button>
+                </span>
+              )}
+
+              {selectedIncomeLimit !== "Any Income Limit" && (
+                <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-secondary/10 text-secondary rounded-lg text-[12px] font-semibold">
+                  <span>{language === "en" ? "Income" : language === "hi" ? "आय" : language === "mr" ? "उत्पन्न" : language === "kn" ? "ಆದಾಯ" : "আয়"}: {selectedIncomeLimit}</span>
+                  <button onClick={() => setSelectedIncomeLimit("Any Income Limit")} className="hover:bg-secondary/20 rounded-full p-0.5 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[12px] font-bold">close</span>
+                  </button>
+                </span>
+              )}
+
+              {selectedCoverageAmount !== "Any Coverage" && (
+                <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-secondary/10 text-secondary rounded-lg text-[12px] font-semibold">
+                  <span>{language === "en" ? "Coverage" : language === "hi" ? "कवरेज" : language === "mr" ? "विमा छत्र" : language === "kn" ? "ರಕ್ಷಣೆ ಮೊತ್ತ" : "কভারেজ"}: {selectedCoverageAmount}</span>
+                  <button onClick={() => setSelectedCoverageAmount("Any Coverage")} className="hover:bg-secondary/20 rounded-full p-0.5 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[12px] font-bold">close</span>
+                  </button>
+                </span>
+              )}
+
+              {selectedGender !== "Any Gender" && (
+                <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-secondary/10 text-secondary rounded-lg text-[12px] font-semibold">
+                  <span>{language === "en" ? "Gender" : language === "hi" ? "लिंग" : language === "mr" ? "लिंग" : language === "kn" ? "ಲಿಂಗ" : "লিঙ্গ"}: {selectedGender}</span>
+                  <button onClick={() => setSelectedGender("Any Gender")} className="hover:bg-secondary/20 rounded-full p-0.5 flex items-center justify-center">
+                    <span className="material-symbols-outlined text-[12px] font-bold">close</span>
+                  </button>
+                </span>
+              )}
+            </div>
+          )}p-xs">
                 <label className="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider pl-1 select-none">
                   Gender Focus
                 </label>
@@ -3459,10 +3515,10 @@ export default function Schemes() {
           {activeTab === "schemes" && (
             <div className="flex gap-xs mt-sm overflow-x-auto pb-xs custom-scrollbar">
               {[
-                { id: "All", label: "All Schemes", count: schemes.length },
-                { id: "Breast Cancer Specific", label: "Breast Cancer Focus", count: schemes.filter(s => s.category === "Breast Cancer Specific").length },
-                { id: "General", label: "National & Central Programs", count: schemes.filter(s => s.category === "General").length },
-                { id: "State Specific", label: "State Government Schemes", count: schemes.filter(s => s.category === "State Specific").length }
+                { id: "All", label: language === "en" ? "All Schemes" : language === "hi" ? "सभी योजनाएं" : language === "mr" ? "सर्व योजना" : language === "kn" ? "ಎಲ್ಲಾ ಯೋಜನೆಗಳು" : "সব স্কিম", count: schemes.length },
+                { id: "Breast Cancer Specific", label: language === "en" ? "Breast Cancer Focus" : language === "hi" ? "स्तन कैंसर फोकस" : language === "mr" ? "स्तन कर्करोग विशेष" : language === "kn" ? "ಸ್ತನ ಕ್ಯಾನ್ಸರ್ ವಿಶೇಷ" : "স্তন ক্যান্সার ফোকাস", count: schemes.filter(s => s.category === "Breast Cancer Specific").length },
+                { id: "General", label: language === "en" ? "National & Central Programs" : language === "hi" ? "राष्ट्रीय एवं केंद्रीय कार्यक्रम" : language === "mr" ? "राष्ट्रीय आणि केंद्रीय कार्यक्रम" : language === "kn" ? "ರಾಷ್ಟ್ರೀಯ ಮತ್ತು ಕೇಂದ್ರ ಕಾರ್ಯಕ್ರಮಗಳು" : "জাতীয় ও কেন্দ্রীয় কর্মসূচি", count: schemes.filter(s => s.category === "General").length },
+                { id: "State Specific", label: language === "en" ? "State Government Schemes" : language === "hi" ? "राज्य सरकार की योजनाएं" : language === "mr" ? "राज्य शासकीय योजना" : language === "kn" ? "ರಾಜ್ಯ ಸರ್ಕಾರಿ ಯೋಜನೆಗಳು" : "রাজ্য সরকারের প্রকল্প", count: schemes.filter(s => s.category === "State Specific").length }
               ].map((cat) => {
                 const isActive = selectedCategory === cat.id;
                 return (
@@ -3496,26 +3552,26 @@ export default function Schemes() {
                 <div>
                   <div className="inline-flex items-center gap-xs px-3 py-1 bg-on-primary/20 rounded-full font-label-sm text-label-sm mb-sm border border-on-primary/10">
                     <span className="material-symbols-outlined fill-icon text-[16px] text-tertiary-fixed">star</span>
-                    National Health Assurance Priority
+                    {language === "en" ? "National Health Assurance Priority" : language === "hi" ? "राष्ट्रीय स्वास्थ्य आश्वासन प्राथमिकता" : language === "mr" ? "राष्ट्रीय आरोग्य हमी प्राधान्य" : language === "kn" ? "ರಾಷ್ಟ್ರೀಯ ಆರೋಗ್ಯ ವಿಮಾ ಆದ್ಯತೆ" : "জাতীয় স্বাস্থ্য আশ্বাস অগ্রাধিকার"}
                   </div>
                   <h2 className="font-headline-lg text-[26px] md:text-headline-lg mb-sm">
                     Ayushman Bharat (PM-JAY)
                   </h2>
                   <p className="font-body-md md:font-body-lg mb-md max-w-2xl text-on-primary/90 leading-relaxed">
-                    Provides ₹5 Lakh medical coverage per family per year for secondary and tertiary care hospitalization. Covers major cancer procedures completely cashless.
+                    {language === "en" ? "Provides ₹5 Lakh medical coverage per family per year for secondary and tertiary care hospitalization. Covers major cancer procedures completely cashless." : language === "hi" ? "माध्यमिक और तृतीयक देखभाल अस्पताल में भर्ती होने के लिए प्रति परिवार प्रति वर्ष ₹5 लाख चिकित्सा कवरेज प्रदान करता है। प्रमुख कैंसर प्रक्रियाओं को पूरी तरह से कैशलेस कवर करता है।" : language === "mr" ? "माध्यमिक आणि तृतीयक उपचारांसाठी प्रति कुटुंब प्रति वर्ष ₹५ लाख वैद्यकीय संरक्षण मिळते. कर्करोगाच्या मुख्य शस्त्रक्रिया पूर्णपणे मोफत (कॅशलेस) केल्या जातात." : language === "kn" ? "ದ್ವಿತೀಯಕ ಮತ್ತು ತೃತೀಯಕ ಆರೈಕೆಗಾಗಿ ಪ್ರತಿ ಕುಟುಂಬಕ್ಕೆ ವರ್ಷಕ್ಕೆ ₹೫ ಲಕ್ಷ ವೈದ್ಯಕೀಯ ರಕ್ಷಣೆ ನೀಡುತ್ತದೆ. ಪ್ರಮುಖ ಕ್ಯಾನ್ಸರ್ ಚಿಕಿತ್ಸೆಗಳನ್ನು ನಗದು ರಹಿತವಾಗಿ ಒಳಗೊಳ್ಳುತ್ತದೆ." : "মাধ্যমিক ও টারশিয়ারি কেয়ারের জন্য পরিবার প্রতি বার্ষিক ₹৫ লক্ষ চিকিৎসা কভার প্রদান করে। প্রধান ক্যান্সারের চিকিৎসা সম্পূর্ণ ক্যাশলেস করা হয়।"}
                   </p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-sm md:gap-md mb-md border-t border-on-primary/10 pt-md">
                     <div>
-                      <p className="text-[11px] uppercase tracking-wider opacity-70 font-semibold">Coverage Amount</p>
+                      <p className="text-[11px] uppercase tracking-wider opacity-70 font-semibold">{language === "en" ? "Coverage Amount" : language === "hi" ? "कवरेज राशि" : language === "mr" ? "संरक्षण रक्कम" : language === "kn" ? "ವಿಮಾ ಮೊತ್ತ" : "বীমা কভারেজের পরিমাণ"}</p>
                       <p className="font-headline-sm text-headline-sm text-tertiary-fixed font-bold">₹5,00,000 /yr</p>
                     </div>
                     <div>
-                      <p className="text-[11px] uppercase tracking-wider opacity-70 font-semibold">Cancer Care</p>
-                      <p className="font-headline-sm text-headline-sm font-semibold">Full Assistance</p>
+                      <p className="text-[11px] uppercase tracking-wider opacity-70 font-semibold">{language === "en" ? "Cancer Care" : language === "hi" ? "कैंसर देखभाल" : language === "mr" ? "कर्करोग काळजी" : language === "kn" ? "ಕ್ಯಾನ್ಸರ್ ಆರೈಕೆ" : "ক্যান্সার চিকিৎসা"}</p>
+                      <p className="font-headline-sm text-headline-sm font-semibold">{language === "en" ? "Full Assistance" : language === "hi" ? "पूर्ण सहायता" : language === "mr" ? "पूर्ण मदत" : language === "kn" ? "ಪೂರ್ಣ ನೆರವು" : "সম্পূর্ণ সহায়তা"}</p>
                     </div>
                     <div className="col-span-2 md:col-span-1">
-                      <p className="text-[11px] uppercase tracking-wider opacity-70 font-semibold">Network Hospitals</p>
-                      <p className="font-headline-sm text-headline-sm font-semibold">27,000+ Pan-India</p>
+                      <p className="text-[11px] uppercase tracking-wider opacity-70 font-semibold">{language === "en" ? "Network Hospitals" : language === "hi" ? "नेटवर्क अस्पताल" : language === "mr" ? "पॅनेलवरील रुग्णालये" : language === "kn" ? "ನೆಟ್‌ವರ್ಕ್ ಆಸ್ಪತ್ರೆಗಳು" : "নেটওয়ার্ক হাসপাতাল"}</p>
+                      <p className="font-headline-sm text-headline-sm font-semibold">{language === "en" ? "27,000+ Pan-India" : language === "hi" ? "27,000+ अखिल भारतीय" : language === "mr" ? "२७,०००+ संपूर्ण भारत" : language === "kn" ? "೨೭,೦೦೦+ ಭಾರತದಾದ್ಯಂತ" : "২৭,০০০+ সারা ভারত"}</p>
                     </div>
                   </div>
                 </div>
@@ -3524,7 +3580,7 @@ export default function Schemes() {
                     onClick={() => setActiveDetailedScheme(schemes[0])}
                     className="px-md py-3 bg-white text-primary rounded-xl font-label-md text-label-md hover:bg-surface-bright transition-all shadow-md active:scale-95 flex items-center gap-xs"
                   >
-                    <span className="material-symbols-outlined text-[18px]">launch</span> Read Application Guide
+                    <span className="material-symbols-outlined text-[18px]">launch</span> {language === "en" ? "Read Application Guide" : language === "hi" ? "आवेदन गाइड पढ़ें" : language === "mr" ? "अर्ज मार्गदर्शिका वाचा" : language === "kn" ? "ಅರ್ಜಿ ಮಾರ್ಗದರ್ಶಿ ಓದಿ" : "আবেদন নির্দেশিকা পড়ুন"}
                   </button>
                   <a
                     href="https://beneficiary.nha.gov.in/"
@@ -3532,7 +3588,7 @@ export default function Schemes() {
                     rel="noopener noreferrer"
                     className="px-md py-3 border border-white/60 text-on-primary rounded-xl font-label-md text-label-md hover:bg-on-primary/10 transition-all active:scale-95 flex items-center gap-xs"
                   >
-                    Check Eligibility Online →
+                    {language === "en" ? "Check Eligibility Online →" : language === "hi" ? "पात्रता ऑनलाइन जांचें →" : language === "mr" ? "पात्रता ऑनलाईन तपासा →" : language === "kn" ? "ಅರ್ಹತೆಯನ್ನು ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಪರಿಶೀಲಿಸಿ →" : "অনলাইনে যোগ্যতা পরীক্ষা করুন →"}
                   </a>
                 </div>
               </div>
@@ -3551,23 +3607,27 @@ export default function Schemes() {
             </span>
             {activeTab === "schemes" ? (
               <>
-                {filteredSchemes.length === schemes.length ? "All Catalogue Programs" : "Filtered Matches"}
+                {filteredSchemes.length === schemes.length 
+                  ? (language === "en" ? "All Catalogue Programs" : language === "hi" ? "सभी कैटलॉग कार्यक्रम" : language === "mr" ? "सर्व कॅटलॉग योजना" : language === "kn" ? "ಎಲ್ಲಾ ಕ್ಯಾಟಲಾಗ್ ಯೋಜನೆಗಳು" : "সমস্ত ক্যাটালগ প্রোগ্রাম")
+                  : (language === "en" ? "Filtered Matches" : language === "hi" ? "फ़िल्टर किए गए मिलान" : language === "mr" ? "फिल्टर केलेले सामने" : language === "kn" ? "ಫಿಲ್ಟರ್ ಮಾಡಿದ ಹೊಂದಾಣಿಕೆಗಳು" : "ফিল্টার করা ফলাফল")}
                 <span className="text-body-sm font-normal text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">
-                  {filteredSchemes.length} programs found
+                  {filteredSchemes.length} {language === "en" ? "programs found" : language === "hi" ? "कार्यक्रम मिले" : language === "mr" ? "योजना मिळाल्या" : language === "kn" ? "ಯೋಜನೆಗಳು ಪತ್ತೆಯಾಗಿವೆ" : "টি প্রোগ্রাম পাওয়া গেছে"}
                 </span>
               </>
             ) : (
               <>
-                IRDAI Registered General Insurers
+                {language === "en" ? "IRDAI Registered General Insurers" : language === "hi" ? "आईआरडीएआई पंजीकृत सामान्य बीमाकर्ता" : language === "mr" ? "IRDAI नोंदणीकृत सामान्य विमा कंपन्या" : language === "kn" ? "IRDAI ನೋಂದಾಯಿತ ಸಾಮಾನ್ಯ ವಿಮೆದಾರರು" : "IRDAI নিবন্ধিত সাধারণ বীমাকারী"}
                 <span className="text-body-sm font-normal text-on-surface-variant bg-surface-container px-3 py-1 rounded-full">
-                  {sortedAndFilteredInsurers.length} insurers listed
+                  {sortedAndFilteredInsurers.length} {language === "en" ? "insurers listed" : language === "hi" ? "बीमा कंपनियां सूचीबद्ध" : language === "mr" ? "विमा कंपन्या सूचीबद्ध" : language === "kn" ? "ವಿಮೆದಾರರನ್ನು ಪಟ್ಟಿ ಮಾಡಲಾಗಿದೆ" : "টি বীমাকারী তালিকাভুক্ত"}
                 </span>
               </>
             )}
           </h2>
           {/* Active Tab Sort dropdown */}
           <div className="flex items-center gap-xs">
-            <label className="text-[12px] font-bold text-on-surface-variant hidden md:block">Sort By</label>
+            <label className="text-[12px] font-bold text-on-surface-variant hidden md:block">
+              {language === "en" ? "Sort By" : language === "hi" ? "इसके अनुसार क्रमबद्ध करें" : language === "mr" ? "यानुसार वर्गीकरण करा" : language === "kn" ? "ಮೂಲಕ ವಿಂಗಡಿಸು" : "ক্রমানুসারে সাজান"}
+            </label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -3575,17 +3635,17 @@ export default function Schemes() {
             >
               {activeTab === "schemes" ? (
                 <>
-                  <option value="Default">Default Order</option>
-                  <option value="Coverage (High to Low)">Coverage (High to Low)</option>
-                  <option value="Reliability (High to Low)">Reliability (High to Low)</option>
-                  <option value="Name (A-Z)">Name (A-Z)</option>
+                  <option value="Default">{language === "en" ? "Default Order" : language === "hi" ? "डिफ़ॉल्ट क्रम" : language === "mr" ? "डीफॉल्ट क्रम" : language === "kn" ? "ಡೀಫಾಲ್ಟ್ ಆದೇಶ" : "ডিফল্ট ক্রম"}</option>
+                  <option value="Coverage (High to Low)">{language === "en" ? "Coverage (High to Low)" : language === "hi" ? "कवरेज (उच्च से निम्न)" : language === "mr" ? "संरक्षण (जास्त ते कमी)" : language === "kn" ? "ಕವರೇಜ್ (ಹೆಚ್ಚಿನದರಿಂದ ಕಡಿಮೆ)" : "কভারেজ (উচ্চ থেকে নিম্ন)"}</option>
+                  <option value="Reliability (High to Low)">{language === "en" ? "Reliability (High to Low)" : language === "hi" ? "विश्वसनीयता (उच्च से निम्न)" : language === "mr" ? "विश्वासार्हता (जास्त ते कमी)" : language === "kn" ? "ವಿಶ್ವಾಸಾರ್ಹತೆ (ಹೆಚ್ಚಿನದರಿಂದ ಕಡಿಮೆ)" : "নির্ভরযোগ্যতা (উচ্চ থেকে নিম্ন)"}</option>
+                  <option value="Name (A-Z)">{language === "en" ? "Name (A-Z)" : language === "hi" ? "नाम (A-Z)" : language === "mr" ? "नाव (A-Z)" : language === "kn" ? "ಹೆಸರು (A-Z)" : "নাম (A-Z)"}</option>
                 </>
               ) : (
                 <>
-                  <option value="Default">Registration Number</option>
-                  <option value="Network Size (High to Low)">Network Size (High to Low)</option>
-                  <option value="Claim Ratio (High to Low)">Claim Ratio (High to Low)</option>
-                  <option value="Name (A-Z)">Company Name (A-Z)</option>
+                  <option value="Default">{language === "en" ? "Registration Number" : language === "hi" ? "पंजीकरण संख्या" : language === "mr" ? "नोंदणी क्रमांक" : language === "kn" ? "ನೋಂದಣಿ ಸಂಖ್ಯೆ" : "নিবন্ধন নম্বর"}</option>
+                  <option value="Network Size (High to Low)">{language === "en" ? "Network Size (High to Low)" : language === "hi" ? "नेटवर्क आकार (उच्च से निम्न)" : language === "mr" ? "नेटवर्क आकार (जास्त ते कमी)" : language === "kn" ? "ನೆಟ್‌ವರ್ಕ್ ಗಾತ್ರ (ಹೆಚ್ಚಿನದರಿಂದ ಕಡಿಮೆ)" : "নেটওয়ার্কের আকার (উচ্চ থেকে নিম্ন)"}</option>
+                  <option value="Claim Ratio (High to Low)">{language === "en" ? "Claim Ratio (High to Low)" : language === "hi" ? "दावा अनुपात (उच्च से निम्न)" : language === "mr" ? "दावा मंजुरी दर (जास्त ते कमी)" : language === "kn" ? "ಕ್ಲೈಮ್ ಅನುಪಾತ (ಹೆಚ್ಚಿನದರಿಂದ ಕಡಿಮೆ)" : "দাবি নিষ্পত্তির অনুপাত (উচ্চ থেকে নিম্ন)"}</option>
+                  <option value="Name (A-Z)">{language === "en" ? "Company Name (A-Z)" : language === "hi" ? "कंपनी का नाम (A-Z)" : language === "mr" ? "कंपनीचे नाव (A-Z)" : language === "kn" ? "ಕಂಪನಿಯ ಹೆಸರು (A-Z)" : "কোম্পানির নাম (A-Z)"}</option>
                 </>
               )}
             </select>
@@ -3609,15 +3669,21 @@ export default function Schemes() {
               <span className="material-symbols-outlined text-[64px] text-outline/50 mb-sm">
                 info_i
               </span>
-              <h3 className="font-headline-sm text-headline-sm text-on-surface mb-xs">No matching schemes found</h3>
+              <h3 className="font-headline-sm text-headline-sm text-on-surface mb-xs">
+                {language === "en" ? "No matching schemes found" : language === "hi" ? "कोई मिलान योजना नहीं मिली" : language === "mr" ? "कोणतीही योजना आढळली नाही" : language === "kn" ? "ಯಾವುದೇ ಯೋಜನೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ" : "কোনো যোগ্য স্কিম পাওয়া যায়নি"}
+              </h3>
               <p className="font-body-md text-body-md text-on-surface-variant max-w-md mb-md">
-                We couldn't find any schemes in {selectedState !== "All India" ? selectedState : "India"} matching "{searchQuery}" under the active filters.
+                {language === "en" ? `We couldn't find any schemes in ${selectedState !== "All India" ? selectedState : "India"} matching "${searchQuery}" under the active filters.` :
+                 language === "hi" ? `हमें सक्रिय फ़िल्टर के तहत "${searchQuery}" से मेल खाने वाली ${selectedState !== "All India" ? selectedState : "भारत"} में कोई योजना नहीं मिली।` :
+                 language === "mr" ? `आम्हाला सक्रिय फिल्टर अंतर्गत "${searchQuery}" शी जुळणारी ${selectedState !== "All India" ? selectedState : "भारत"} मध्ये कोणतीही योजना आढळली नाही.` :
+                 language === "kn" ? `ಸಕ್ರಿಯ ಫಿಲ್ಟರ್‌ಗಳ ಅಡಿಯಲ್ಲಿ "${searchQuery}" ಗೆ ಹೊಂದುವ ${selectedState !== "All India" ? selectedState : "ಭಾರತ"} ದಲ್ಲಿ ಯಾವುದೇ ಯೋಜನೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ.` :
+                 `সক্রিয় ফিল্টারের অধীনে "${searchQuery}" এর সাথে মেলে এমন কোনো প্রকল্প ${selectedState !== "All India" ? selectedState : "ভারত"} -এ পাওয়া যায়নি।`}
               </p>
               <button
                 onClick={resetFilters}
                 className="px-lg py-3 bg-primary text-on-primary rounded-xl font-label-md text-label-md hover:bg-primary/95 transition-all shadow-md active:scale-95 flex items-center gap-xs"
               >
-                <span className="material-symbols-outlined text-[18px]">restart_alt</span> Clear Filter Options
+                <span className="material-symbols-outlined text-[18px]">restart_alt</span> {language === "en" ? "Clear Filter Options" : language === "hi" ? "फ़िल्टर विकल्प साफ़ करें" : language === "mr" ? "फिल्टर पर्याय साफ करा" : language === "kn" ? "ಫಿಲ್ಟರ್ ಆಯ್ಕೆಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ" : "ফিল্টার অপশন মুছুন"}
               </button>
             </div>
           )
@@ -3637,15 +3703,21 @@ export default function Schemes() {
               <span className="material-symbols-outlined text-[64px] text-outline/50 mb-sm">
                 info_i
               </span>
-              <h3 className="font-headline-sm text-headline-sm text-on-surface mb-xs">No insurers found</h3>
+              <h3 className="font-headline-sm text-headline-sm text-on-surface mb-xs">
+                {language === "en" ? "No insurers found" : language === "hi" ? "कोई बीमाकर्ता नहीं मिला" : language === "mr" ? "विमा कंपनी आढळली नाही" : language === "kn" ? "ಯಾವುದೇ ವಿಮೆದಾರರು ಕಂಡುಬಂದಿಲ್ಲ" : "কোনো বীমাকারী পাওয়া যায়নি"}
+              </h3>
               <p className="font-body-md text-body-md text-on-surface-variant max-w-md mb-md">
-                We couldn't find any general insurers matching "{searchQuery}" under "{selectedSector}".
+                {language === "en" ? `We couldn't find any general insurers matching "${searchQuery}" under "${selectedSector}".` :
+                 language === "hi" ? `हमें "${selectedSector}" के तहत "${searchQuery}" से मेल खाने वाले कोई सामान्य बीमाकर्ता नहीं मिले।` :
+                 language === "mr" ? `आम्हाला "${selectedSector}" अंतर्गत "${searchQuery}" शी जुळणारी कोणतीही सामान्य विमा कंपनी आढळली नाही.` :
+                 language === "kn" ? `"${selectedSector}" ಅಡಿಯಲ್ಲಿ "${searchQuery}" ಗೆ ಹೊಂದುವ ಯಾವುದೇ सामान्य ವಿಮೆದಾರರು ಕಂಡುಬಂದಿಲ್ಲ.` :
+                 `"${selectedSector}" এর অধীনে "${searchQuery}" এর সাথে মেলে এমন কোনো সাধারণ বীমাকারী পাওয়া যায়নি।`}
               </p>
               <button
                 onClick={resetFilters}
                 className="px-lg py-3 bg-primary text-on-primary rounded-xl font-label-md text-label-md hover:bg-primary/95 transition-all shadow-md active:scale-95 flex items-center gap-xs"
               >
-                <span className="material-symbols-outlined text-[18px]">restart_alt</span> Clear Filter Options
+                <span className="material-symbols-outlined text-[18px]">restart_alt</span> {language === "en" ? "Clear Filter Options" : language === "hi" ? "फ़िल्टर विकल्प साफ़ करें" : language === "mr" ? "फिल्टर पर्याय साफ करा" : language === "kn" ? "ಫಿಲ್ಟರ್ ಆಯ್ಕೆಗಳನ್ನು ತೆರವುಗೊಳಿಸಿ" : "ফিল্টার অপশন মুছুন"}
               </button>
             </div>
           )
@@ -3704,7 +3776,7 @@ export default function Schemes() {
               {/* Detailed Description */}
               <div>
                 <h3 className="font-label-md text-label-md uppercase tracking-wider text-outline mb-xs">
-                  About the Scheme
+                  {language === "en" ? "About the Scheme" : language === "hi" ? "योजना के बारे में" : language === "mr" ? "योजना माहिती" : language === "kn" ? "ಯೋಜನೆಯ ಬಗ್ಗೆ" : "প্রকল্প সম্পর্কে"}
                 </h3>
                 <p className="font-body-md text-body-md text-on-surface leading-relaxed">
                   {activeDetailedScheme.description || activeDetailedScheme.body}
@@ -3716,32 +3788,32 @@ export default function Schemes() {
                     <div className="grid grid-cols-3 gap-xs bg-surface-container-low p-sm rounded-xl border border-outline-variant/40 mt-sm">
                       <div className="text-center p-xs border-r border-b border-outline-variant/30 md:border-b-0 pb-sm">
                         <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">face</span>
-                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">Age Suitability</p>
+                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">{language === "en" ? "Age Suitability" : language === "hi" ? "आयु उपयुक्तता" : language === "mr" ? "योग्य वयोगट" : language === "kn" ? "ಸೂಕ್ತವಾದ ವಯಸ್ಸು" : "উপযুক্ত বয়স"}</p>
                         <p className="text-[11px] font-semibold text-on-surface mt-[2px]">{attrs.ageGroup}</p>
                       </div>
                       <div className="text-center p-xs border-r border-b border-outline-variant/30 md:border-b-0 pb-sm">
                         <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">work</span>
-                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">Profession</p>
+                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">{language === "en" ? "Profession" : language === "hi" ? "व्यवसाय" : language === "mr" ? "व्यवसाय" : language === "kn" ? "ವೃತ್ತಿ" : "পেশা"}</p>
                         <p className="text-[11px] font-semibold text-on-surface mt-[2px] line-clamp-1">{attrs.profession}</p>
                       </div>
                       <div className="text-center p-xs border-b border-outline-variant/30 md:border-b-0 pb-sm">
                         <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">wc</span>
-                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">Gender Focus</p>
+                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">{language === "en" ? "Gender Focus" : language === "hi" ? "लिंग फोकस" : language === "mr" ? "लिंग" : language === "kn" ? "ಲಿಂಗ" : "লিঙ্গ"}</p>
                         <p className="text-[11px] font-semibold text-on-surface mt-[2px]">{attrs.gender}</p>
                       </div>
                       <div className="text-center p-xs border-r pt-sm">
                         <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">card_membership</span>
-                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">Benefit Form</p>
+                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">{language === "en" ? "Benefit Form" : language === "hi" ? "लाभ का रूप" : language === "mr" ? "मदत प्रकार" : language === "kn" ? "ಸಹಾಯದ ರೂಪ" : "সুবিধার ধরণ"}</p>
                         <p className="text-[11px] font-semibold text-on-surface mt-[2px]">{attrs.benefitType}</p>
                       </div>
                       <div className="text-center p-xs border-r pt-sm">
                         <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">savings</span>
-                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">Income Limit</p>
+                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">{language === "en" ? "Income Limit" : language === "hi" ? "आय सीमा" : language === "mr" ? "उत्पन्न मर्यादा" : language === "kn" ? "ಆದಾಯ ಮಿತಿ" : "আয়ের সীমা"}</p>
                         <p className="text-[11px] font-semibold text-on-surface mt-[2px] line-clamp-1">{attrs.incomeLimit}</p>
                       </div>
                       <div className="text-center p-xs pt-sm">
                         <span className="material-symbols-outlined text-primary text-[20px] mb-[2px]">payments</span>
-                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">Coverage Max</p>
+                        <p className="text-[9px] uppercase font-bold text-outline tracking-wider leading-none">{language === "en" ? "Coverage Max" : language === "hi" ? "अधिकतम कवरेज" : language === "mr" ? "कमाल संरक्षण" : language === "kn" ? "ಗರಿಷ್ಠ ವಿಮೆ" : "সর্বোচ্চ কভারেজ"}</p>
                         <p className="text-[11px] font-semibold text-on-surface mt-[2px] line-clamp-1">{attrs.coverageAmount}</p>
                       </div>
                     </div>
@@ -3752,7 +3824,7 @@ export default function Schemes() {
               {/* Key Benefits Bullet points */}
               <div className="bg-surface-container-lowest p-md rounded-xl border border-outline-variant/60">
                 <h3 className="font-label-md text-label-md uppercase tracking-wider text-outline mb-sm flex items-center gap-xs">
-                  <span className="material-symbols-outlined text-secondary text-[18px]">verified</span> Key Takeaways & Guidelines
+                  <span className="material-symbols-outlined text-secondary text-[18px]">verified</span> {t("sc_key_benefits")}
                 </h3>
                 <div className="space-y-sm">
                   {activeDetailedScheme.bullets.map((bullet, idx) => (
@@ -3772,7 +3844,7 @@ export default function Schemes() {
               {activeDetailedScheme.requiredDocuments && activeDetailedScheme.requiredDocuments.length > 0 && (
                 <div>
                   <h3 className="font-label-md text-label-md uppercase tracking-wider text-outline mb-sm flex items-center gap-xs">
-                    <span className="material-symbols-outlined text-outline text-[18px]">folder_open</span> Required Checklist Documents
+                    <span className="material-symbols-outlined text-outline text-[18px]">folder_open</span> {t("sc_req_docs")}
                   </h3>
                   <ul className="grid grid-cols-1 gap-xs pl-sm text-body-sm text-on-surface-variant list-disc">
                     {activeDetailedScheme.requiredDocuments.map((doc, idx) => (
@@ -3808,9 +3880,9 @@ export default function Schemes() {
                   </span>
                 </div>
                 <div>
-                  <p className="font-label-md text-label-md text-on-surface font-bold">Reliability Score: Verified</p>
+                  <p className="font-label-md text-label-md text-on-surface font-bold">{language === "en" ? "Reliability Score: Verified" : language === "hi" ? "विश्वसनीयता स्कोर: सत्यापित" : language === "mr" ? "विश्वासार्हता: सत्यापित" : language === "kn" ? "ವಿಶ್ವಾಸಾರ್ಹತೆ ಸ್ಕೋರ್: ಪರಿಶೀಲಿಸಲಾಗಿದೆ" : "নির্ভরযোগ্যতা স্কোর: যাচাইকৃত"}</p>
                   <p className="text-[12px] text-on-surface-variant leading-tight">
-                    This program has a verified approval success rate based on community feedback.
+                    {language === "en" ? "This program has a verified approval success rate based on community feedback." : language === "hi" ? "सामुदायिक प्रतिक्रिया के आधार पर इस कार्यक्रम की सत्यापित स्वीकृति सफलता दर है।" : language === "mr" ? "सामूहिक अभिप्रायाच्या आधारे या योजनेचा यश दर सत्यापित केला गेला आहे." : language === "kn" ? "ಸಮುದಾಯದ ಪ್ರತಿಕ್ರಿಯೆಯ ಆಧಾರದ ಮೇಲೆ ಈ ಯೋಜನೆಯು ಪರಿಶೀಲಿಸಲ್ಪಟ್ಟ ಯಶಸ್ಸಿನ ಪ್ರಮಾಣವನ್ನು ಹೊಂದಿದೆ." : "সামাজিক প্রতিক্রিয়ার ভিত্তিতে এই প্রকল্পের যাচাইকৃত সাফল্যের হার রয়েছে।"}
                   </p>
                 </div>
               </div>
@@ -3863,7 +3935,7 @@ export default function Schemes() {
                 </div>
               ) : (
                 <div className="text-center w-full py-2 font-label-sm text-outline text-[12px]">
-                  No external links configured for this offline program.
+                  {language === "en" ? "No external links configured for this offline program." : language === "hi" ? "इस ऑफ़लाइन कार्यक्रम के लिए कोई बाहरी लिंक कॉन्फ़िगर नहीं किया गया है।" : language === "mr" ? "या ऑफलाइन योजनेसाठी कोणतीही लिंक उपलब्ध नाही." : language === "kn" ? "ಈ ಆಫ್‌ಲೈನ್ ಯೋಜನೆಗಾಗಿ ಯಾವುದೇ ಬಾಹ್ಯ ಲಿಂಕ್‌ಗಳನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಲಾಗಿಲ್ಲ." : "এই অফলাইন প্রকল্পের জন্য কোনো বাহ্যিক লিঙ্ক উপলব্ধ নেই।"}
                 </div>
               )}
             </div>

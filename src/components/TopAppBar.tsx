@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, syncUserFirestoreData } from "../firebase";
 import AuthModal from "./AuthModal";
+import { useLanguage } from "./LanguageContext";
+import type { Language } from "../utils/translations";
 
 export default function TopAppBar() {
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -125,6 +127,8 @@ export default function TopAppBar() {
     }
   };
 
+  const { language, setLanguage } = useLanguage();
+
   return (
     <header className="flex justify-between items-center px-md py-sm w-full fixed top-0 z-50 bg-surface border-b border-outline-variant shadow-sm h-16">
       <Link to="/" className="flex items-center gap-sm">
@@ -134,7 +138,11 @@ export default function TopAppBar() {
       </Link>
       <div className="flex items-center gap-md">
         <div className="relative flex items-center">
-          <select className="appearance-none bg-transparent border-none pr-8 pl-2 py-1 text-label-md font-label-md text-on-surface-variant hover:text-primary cursor-pointer outline-none transition-colors">
+          <select 
+            value={language}
+            onChange={(e) => setLanguage(e.target.value as Language)}
+            className="appearance-none bg-transparent border-none pr-8 pl-2 py-1 text-label-md font-label-md text-on-surface-variant hover:text-primary cursor-pointer outline-none transition-colors"
+          >
             <option value="en">English</option>
             <option value="hi">हिन्दी (Hindi)</option>
             <option value="mr">मराठी (Marathi)</option>

@@ -2,10 +2,17 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AppShell from "../components/AppShell";
 import { auth, saveUserIntakeToFirestore } from "../firebase";
-
-const stepLabels = ["Demographics", "Diagnosis", "Treatments", "Finance"];
+import { useLanguage } from "../components/LanguageContext";
 
 export default function Intake() {
+  const { t, language } = useLanguage();
+  const stepLabels = [
+    t("it_step_demographics"),
+    t("it_step_diagnosis"),
+    t("it_step_treatments"),
+    t("it_step_finance")
+  ];
+
   const [step, setStep] = useState<number>(() => {
     const saved = localStorage.getItem("artham_intake_step");
     return saved ? Number(saved) : 1;
@@ -106,7 +113,7 @@ export default function Intake() {
   }, [patientState, age, stage, hormoneStatus, surgery, chemo, radiation, hospitalType, hasInsurance, insuranceProvider, incomeBracket, step]);
 
   const handleResetProfile = () => {
-    if (window.confirm("Are you sure you want to clear your intake profile data? This will restart onboarding.")) {
+    if (window.confirm(t("it_reset_confirm"))) {
       setPatientState("");
       setAge("");
       setStage("");
@@ -201,6 +208,56 @@ export default function Intake() {
     window.dispatchEvent(new CustomEvent("auth-change"));
   };
 
+  const getLocalValue = (field: string, value: string) => {
+    if (!value || value === "Not specified") return t("it_not_specified");
+    if (field === "state") {
+      const stateTranslations: Record<string, Record<string, string>> = {
+        en: { Karnataka: "Karnataka", Maharashtra: "Maharashtra", Delhi: "Delhi", "Tamil Nadu": "Tamil Nadu", "West Bengal": "West Bengal", Kerala: "Kerala", Gujarat: "Gujarat", Telangana: "Telangana", "Andhra Pradesh": "Andhra Pradesh", "Uttar Pradesh": "Uttar Pradesh", Rajasthan: "Rajasthan", Odisha: "Odisha", Haryana: "Haryana", Punjab: "Punjab", Assam: "Assam", Other: "Other State" },
+        hi: { Karnataka: "कर्नाटक", Maharashtra: "महाराष्ट्र", Delhi: "दिल्ली", "Tamil Nadu": "तमिलनाडु", "West Bengal": "पश्चिम बंगाल", Kerala: "केरल", Gujarat: "गुजरात", Telangana: "तेलंगाना", "Andhra Pradesh": "आंध्र प्रदेश", "Uttar Pradesh": "उत्तर प्रदेश", Rajasthan: "राजस्थान", Odisha: "ओडिशा", Haryana: "हरियाणा", Punjab: "पंजाब", Assam: "असम", Other: "अन्य राज्य" },
+        mr: { Karnataka: "कर्नाटक", Maharashtra: "महाराष्ट्र", Delhi: "दिल्ली", "Tamil Nadu": "तमिळनाडू", "West Bengal": "पश्चिम बंगाल", Kerala: "केरल", Gujarat: "गुजरात", Telangana: "तेलंगणा", "Andhra Pradesh": "आंध्र प्रदेश", "Uttar Pradesh": "उत्तर प्रदेश", Rajasthan: "राजस्थान", Odisha: "ओडिशा", Haryana: "हरियाणा", Punjab: "पंजाब", Assam: "आसाम", Other: "इतर राज्य" },
+        kn: { Karnataka: "ಕರ್ನಾಟಕ", Maharashtra: "ಮಹಾರಾಷ್ಟ್ರ", Delhi: "ದೆಹಲಿ", "Tamil Nadu": "ತಮಿಳುನಾಡು", "West Bengal": "ಪಶ್ಚಿಮ ಬಂಗಾಳ", Kerala: "ಕೇರಳ", Gujarat: "ಗುಜರಾತ್", Telangana: "ತೆಲಂಗಾಣ", "Andhra Pradesh": "ಆಂಧ್ರಪ್ರದೇಶ", "Uttar Pradesh": "ಉತ್ತರ ಪ್ರದೇಶ", Rajasthan: "ರಾಜಸ್ಥಾನ", Odisha: "ಒಡಿಸ್ಸಾ", Haryana: "ಹರಿಯಾಣ", Punjab: "ಪಂಜಾಬ್", Assam: "ಅಸ್ಸಾಂ", Other: "ಇತರ ರಾಜ್ಯ" },
+        bn: { Karnataka: "কর্ণাটক", Maharashtra: "মহারাষ্ট্র", Delhi: "দিল্লি", "Tamil Nadu": "তামিলনাড়ু", "West Bengal": "পশ্চিমবঙ্গ", Kerala: "কেরালা", Gujarat: "গুজরাট", Telangana: "তেলেঙ্গানা", "Andhra Pradesh": "অন্ধ্রপ্রদেশ", "Uttar Pradesh": "উত্তরপ্রদেশ", Rajasthan: "রাজস্থান", Odisha: "ওড়িশা", Haryana: "হরিয়ানা", Punjab: "পাঞ্জাব", Assam: "আসাম", Other: "অন্যান্য রাজ্য" }
+      };
+      const langDict = stateTranslations[language] || stateTranslations["en"];
+      return langDict[value] || value;
+    }
+    if (field === "stage") {
+      if (value === "Stage I") return t("it_stage_i");
+      if (value === "Stage II") return t("it_stage_ii");
+      if (value === "Stage III") return t("it_stage_iii");
+      if (value === "Stage IV") return t("it_stage_iv");
+      if (value === "Unsure") return t("it_stage_unsure");
+    }
+    if (field === "receptor") {
+      if (value === "HER2 Positive") return t("it_receptor_her2");
+      if (value === "Triple Negative") return t("it_receptor_tn");
+      if (value === "ER+/PR+ Positive") return t("it_receptor_erpr");
+      if (value === "Unsure") return t("it_receptor_unsure");
+    }
+    if (field === "yesno") {
+      if (value === "Yes") return t("it_yes");
+      if (value === "No") return t("it_no");
+      if (value === "Unsure") return t("it_unsure");
+    }
+    if (field === "hospital") {
+      if (value === "Government / Public Hospital") return t("it_hospital_gov");
+      if (value === "Private Medical Center") return t("it_hospital_priv");
+      if (value === "Premium Corporate Hospital") return t("it_hospital_prem");
+      if (value === "I'm Unsure") return t("it_hospital_unsure");
+    }
+    if (field === "insurance") {
+      if (value === "Insured") return t("it_insured");
+      if (value === "Not Insured") return t("it_not_insured");
+    }
+    if (field === "income") {
+      if (value === "Below ₹2,50,000") return t("it_income_below_2_5");
+      if (value === "₹2,50,000 – ₹5,00,000") return t("it_income_2_5_to_5");
+      if (value === "₹5,00,000 – ₹10,00,000") return t("it_income_5_to_10");
+      if (value === "Above ₹10,00,000") return t("it_income_above_10");
+    }
+    return value;
+  };
+
   const goNext = () => {
     if (step < 4) {
       setStep(step + 1);
@@ -258,14 +315,14 @@ export default function Intake() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-sm">
               <div>
                 <h1 className="font-headline-lg text-headline-lg text-primary font-bold tracking-tight">
-                  Your Intake Profile Summary
+                  {t("it_summary_title")}
                 </h1>
                 <p className="font-body-md text-on-surface-variant text-xs font-normal">
-                  Onboarding complete! Your details are saved. Click **Edit Profile** to toggle edit mode for minor adjustments.
+                  {t("it_summary_subtitle")}
                 </p>
               </div>
               <span className="px-sm py-1 bg-secondary-container text-on-secondary-container text-xs font-bold rounded-full uppercase tracking-wider border border-secondary-container">
-                Onboarding Saved
+                {t("it_onboarding_saved")}
               </span>
             </div>
           </header>
@@ -274,7 +331,7 @@ export default function Intake() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
             
             {/* Age Card */}
-            <SummaryCard icon="calendar_month" label="Patient Age" value={age || "Not specified"} isEditing={isEditingSummary}>
+            <SummaryCard icon="calendar_month" label={t("it_age")} value={age || t("it_not_specified")} isEditing={isEditingSummary}>
               <input
                 type="number"
                 value={age}
@@ -284,128 +341,128 @@ export default function Intake() {
             </SummaryCard>
 
             {/* State Card */}
-            <SummaryCard icon="map" label="Indian State" value={patientState || "Not specified"} isEditing={isEditingSummary}>
+            <SummaryCard icon="map" label={t("it_state")} value={getLocalValue("state", patientState)} isEditing={isEditingSummary}>
               <select
                 value={patientState}
                 onChange={(e) => handleSummaryFieldChange("state", e.target.value)}
                 className="w-full bg-transparent border-b border-outline-variant/60 focus:border-primary py-1 outline-none text-xs font-bold text-on-surface cursor-pointer"
               >
-                <option value="">Select State</option>
-                <option value="Karnataka">Karnataka</option>
-                <option value="Maharashtra">Maharashtra</option>
-                <option value="Delhi">Delhi</option>
-                <option value="Tamil Nadu">Tamil Nadu</option>
-                <option value="West Bengal">West Bengal</option>
-                <option value="Kerala">Kerala</option>
-                <option value="Gujarat">Gujarat</option>
-                <option value="Telangana">Telangana</option>
-                <option value="Andhra Pradesh">Andhra Pradesh</option>
-                <option value="Uttar Pradesh">Uttar Pradesh</option>
-                <option value="Rajasthan">Rajasthan</option>
-                <option value="Odisha">Odisha</option>
-                <option value="Other">Other State</option>
+                <option value="">{t("it_select_state")}</option>
+                <option value="Karnataka">{getLocalValue("state", "Karnataka")}</option>
+                <option value="Maharashtra">{getLocalValue("state", "Maharashtra")}</option>
+                <option value="Delhi">{getLocalValue("state", "Delhi")}</option>
+                <option value="Tamil Nadu">{getLocalValue("state", "Tamil Nadu")}</option>
+                <option value="West Bengal">{getLocalValue("state", "West Bengal")}</option>
+                <option value="Kerala">{getLocalValue("state", "Kerala")}</option>
+                <option value="Gujarat">{getLocalValue("state", "Gujarat")}</option>
+                <option value="Telangana">{getLocalValue("state", "Telangana")}</option>
+                <option value="Andhra Pradesh">{getLocalValue("state", "Andhra Pradesh")}</option>
+                <option value="Uttar Pradesh">{getLocalValue("state", "Uttar Pradesh")}</option>
+                <option value="Rajasthan">{getLocalValue("state", "Rajasthan")}</option>
+                <option value="Odisha">{getLocalValue("state", "Odisha")}</option>
+                <option value="Other">{getLocalValue("state", "Other")}</option>
               </select>
             </SummaryCard>
 
             {/* Cancer Stage Card */}
-            <SummaryCard icon="biotech" label="Cancer Stage" value={stage || "Not specified"} isEditing={isEditingSummary}>
+            <SummaryCard icon="biotech" label={t("it_stage")} value={getLocalValue("stage", stage)} isEditing={isEditingSummary}>
               <select
                 value={stage}
                 onChange={(e) => handleSummaryFieldChange("stage", e.target.value)}
                 className="w-full bg-transparent border-b border-outline-variant/60 focus:border-primary py-1 outline-none text-xs font-bold text-on-surface cursor-pointer"
               >
-                <option value="">Select Stage</option>
-                <option value="Stage I">Stage I (Early local)</option>
-                <option value="Stage II">Stage II (Invasive local)</option>
-                <option value="Stage III">Stage III (Locally advanced)</option>
-                <option value="Stage IV">Stage IV (Metastatic)</option>
-                <option value="Unsure">Unsure / Stage pending</option>
+                <option value="">{t("it_stage_select")}</option>
+                <option value="Stage I">{getLocalValue("stage", "Stage I")}</option>
+                <option value="Stage II">{getLocalValue("stage", "Stage II")}</option>
+                <option value="Stage III">{getLocalValue("stage", "Stage III")}</option>
+                <option value="Stage IV">{getLocalValue("stage", "Stage IV")}</option>
+                <option value="Unsure">{getLocalValue("stage", "Unsure")}</option>
               </select>
             </SummaryCard>
 
             {/* Hormone Status Card */}
-            <SummaryCard icon="clinical_notes" label="Receptor / Hormone Status" value={hormoneStatus || "Not specified"} isEditing={isEditingSummary}>
+            <SummaryCard icon="clinical_notes" label={t("it_receptor")} value={getLocalValue("receptor", hormoneStatus)} isEditing={isEditingSummary}>
               <select
                 value={hormoneStatus}
                 onChange={(e) => handleSummaryFieldChange("hormone_status", e.target.value)}
                 className="w-full bg-transparent border-b border-outline-variant/60 focus:border-primary py-1 outline-none text-xs font-bold text-on-surface cursor-pointer"
               >
-                <option value="">Select receptor status</option>
-                <option value="HER2 Positive">HER2 Positive (requires targeted therapy)</option>
-                <option value="Triple Negative">Triple Negative (highly chemo-responsive)</option>
-                <option value="ER+/PR+ Positive">ER+/PR+ Positive (hormone responsive)</option>
-                <option value="Unsure">Unsure / Receptor pending</option>
+                <option value="">{t("it_select_receptor")}</option>
+                <option value="HER2 Positive">{getLocalValue("receptor", "HER2 Positive")}</option>
+                <option value="Triple Negative">{getLocalValue("receptor", "Triple Negative")}</option>
+                <option value="ER+/PR+ Positive">{getLocalValue("receptor", "ER+/PR+ Positive")}</option>
+                <option value="Unsure">{getLocalValue("receptor", "Unsure")}</option>
               </select>
             </SummaryCard>
 
             {/* Surgery Card */}
-            <SummaryCard icon="medical_services" label="Surgery Indicated" value={surgery} isEditing={isEditingSummary}>
+            <SummaryCard icon="medical_services" label={t("it_surgery")} value={getLocalValue("yesno", surgery)} isEditing={isEditingSummary}>
               <select
                 value={surgery}
                 onChange={(e) => handleSummaryFieldChange("surgery", e.target.value)}
                 className="w-full bg-transparent border-b border-outline-variant/60 focus:border-primary py-1 outline-none text-xs font-bold text-on-surface cursor-pointer"
               >
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="Unsure">Unsure</option>
+                <option value="Yes">{t("it_yes")}</option>
+                <option value="No">{t("it_no")}</option>
+                <option value="Unsure">{t("it_unsure")}</option>
               </select>
             </SummaryCard>
 
             {/* Chemo Card */}
-            <SummaryCard icon="medication" label="Chemo Indicated" value={chemo} isEditing={isEditingSummary}>
+            <SummaryCard icon="medication" label={t("it_chemo")} value={getLocalValue("yesno", chemo)} isEditing={isEditingSummary}>
               <select
                 value={chemo}
                 onChange={(e) => handleSummaryFieldChange("chemo", e.target.value)}
                 className="w-full bg-transparent border-b border-outline-variant/60 focus:border-primary py-1 outline-none text-xs font-bold text-on-surface cursor-pointer"
               >
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="Unsure">Unsure</option>
+                <option value="Yes">{t("it_yes")}</option>
+                <option value="No">{t("it_no")}</option>
+                <option value="Unsure">{t("it_unsure")}</option>
               </select>
             </SummaryCard>
 
             {/* Radiation Card */}
-            <SummaryCard icon="bolt" label="Radiation Indicated" value={radiation} isEditing={isEditingSummary}>
+            <SummaryCard icon="bolt" label={t("it_radiation")} value={getLocalValue("yesno", radiation)} isEditing={isEditingSummary}>
               <select
                 value={radiation}
                 onChange={(e) => handleSummaryFieldChange("radiation", e.target.value)}
                 className="w-full bg-transparent border-b border-outline-variant/60 focus:border-primary py-1 outline-none text-xs font-bold text-on-surface cursor-pointer"
               >
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="Unsure">Unsure</option>
+                <option value="Yes">{t("it_yes")}</option>
+                <option value="No">{t("it_no")}</option>
+                <option value="Unsure">{t("it_unsure")}</option>
               </select>
             </SummaryCard>
 
             {/* Hospital Preference Card */}
-            <SummaryCard icon="home_health" label="Hospital Preference" value={hospitalType} isEditing={isEditingSummary}>
+            <SummaryCard icon="home_health" label={t("it_hospital")} value={getLocalValue("hospital", hospitalType)} isEditing={isEditingSummary}>
               <select
                 value={hospitalType}
                 onChange={(e) => handleSummaryFieldChange("hospital_type", e.target.value)}
                 className="w-full bg-transparent border-b border-outline-variant/60 focus:border-primary py-1 outline-none text-xs font-bold text-on-surface cursor-pointer"
               >
-                <option value="Government / Public Hospital">Government / Public Hospital</option>
-                <option value="Private Medical Center">Private Medical Center</option>
-                <option value="Premium Corporate Hospital">Premium Corporate Hospital</option>
-                <option value="I'm Unsure">I'm Unsure</option>
+                <option value="Government / Public Hospital">{getLocalValue("hospital", "Government / Public Hospital")}</option>
+                <option value="Private Medical Center">{getLocalValue("hospital", "Private Medical Center")}</option>
+                <option value="Premium Corporate Hospital">{getLocalValue("hospital", "Premium Corporate Hospital")}</option>
+                <option value="I'm Unsure">{getLocalValue("hospital", "I'm Unsure")}</option>
               </select>
             </SummaryCard>
 
             {/* Insurance Card */}
-            <SummaryCard icon="shield" label="Insurance Status" value={hasInsurance ? "Insured" : "Not Insured"} isEditing={isEditingSummary}>
+            <SummaryCard icon="shield" label={t("it_insurance_status")} value={hasInsurance ? t("it_insured") : t("it_not_insured")} isEditing={isEditingSummary}>
               <select
                 value={hasInsurance ? "Insured" : "Not Insured"}
                 onChange={(e) => handleSummaryFieldChange("has_insurance", e.target.value === "Insured")}
                 className="w-full bg-transparent border-b border-outline-variant/60 focus:border-primary py-1 outline-none text-xs font-bold text-on-surface cursor-pointer"
               >
-                <option value="Insured">Insured</option>
-                <option value="Not Insured">Not Insured</option>
+                <option value="Insured">{t("it_insured")}</option>
+                <option value="Not Insured">{t("it_not_insured")}</option>
               </select>
             </SummaryCard>
 
             {/* Insurance Provider Card (conditional) */}
             {hasInsurance && (
-              <SummaryCard icon="verified_user" label="Insurance Provider" value={insuranceProvider || "Not specified"} isEditing={isEditingSummary}>
+              <SummaryCard icon="verified_user" label={t("it_insurance_provider_q")} value={insuranceProvider || t("it_not_specified")} isEditing={isEditingSummary}>
                 <input
                   type="text"
                   value={insuranceProvider}
@@ -417,17 +474,17 @@ export default function Intake() {
             )}
 
             {/* Household Income Card */}
-            <SummaryCard icon="payments" label="Household Annual Income" value={incomeBracket || "Not specified"} isEditing={isEditingSummary}>
+            <SummaryCard icon="payments" label={t("it_income")} value={getLocalValue("income", incomeBracket)} isEditing={isEditingSummary}>
               <select
                 value={incomeBracket}
                 onChange={(e) => handleSummaryFieldChange("income_bracket", e.target.value)}
                 className="w-full bg-transparent border-b border-outline-variant/60 focus:border-primary py-1 outline-none text-xs font-bold text-on-surface cursor-pointer"
               >
-                <option value="">Select income bracket</option>
-                <option value="Below ₹2,50,000">Below ₹2,50,000</option>
-                <option value="₹2,50,000 – ₹5,00,000">₹2,50,000 – ₹5,00,000</option>
-                <option value="₹5,00,000 – ₹10,00,000">₹5,00,000 – ₹10,00,000</option>
-                <option value="Above ₹10,00,000">Above ₹10,00,000</option>
+                <option value="">{t("it_income_select")}</option>
+                <option value="Below ₹2,50,000">{getLocalValue("income", "Below ₹2,50,000")}</option>
+                <option value="₹2,50,000 – ₹5,0,000">{getLocalValue("income", "₹2,50,000 – ₹5,00,000")}</option>
+                <option value="₹5,0,000 – ₹10,0,000">{getLocalValue("income", "₹5,00,000 – ₹10,00,000")}</option>
+                <option value="Above ₹10,0,000">{getLocalValue("income", "Above ₹10,00,000")}</option>
               </select>
             </SummaryCard>
 
@@ -442,7 +499,7 @@ export default function Intake() {
                   className="px-md py-sm bg-primary text-on-primary rounded-xl text-xs font-bold hover:brightness-110 active:scale-95 transition-all flex items-center gap-xs shadow-md animate-fade-in"
                 >
                   <span className="material-symbols-outlined text-[16px]">check</span>
-                  Save Changes
+                  {t("it_save_changes")}
                 </button>
               ) : (
                 <button
@@ -450,7 +507,7 @@ export default function Intake() {
                   className="px-md py-sm bg-secondary text-on-secondary rounded-xl text-xs font-bold hover:brightness-110 active:scale-95 transition-all flex items-center gap-xs shadow-md animate-fade-in"
                 >
                   <span className="material-symbols-outlined text-[16px]">edit</span>
-                  Edit Profile Summary
+                  {t("it_edit_summary")}
                 </button>
               )}
               <button
@@ -458,7 +515,7 @@ export default function Intake() {
                 className="px-md py-sm border border-outline-variant hover:bg-surface-container rounded-xl text-xs font-bold text-outline hover:text-error transition-all active:scale-95 flex items-center gap-xs"
               >
                 <span className="material-symbols-outlined text-[16px]">restart_alt</span>
-                Clear Profile & Restart
+                {t("it_reset")}
               </button>
             </div>
 
@@ -468,13 +525,13 @@ export default function Intake() {
                 className="flex-1 sm:flex-none px-lg py-sm border border-primary text-primary rounded-xl text-xs font-bold hover:bg-primary/5 active:scale-95 transition-all flex justify-center items-center gap-xs"
               >
                 <span className="material-symbols-outlined text-[16px]">dashboard</span>
-                Financial Dashboard
+                {t("nav_dashboard")}
               </button>
               <button
                 onClick={() => nav("/medical-input")}
                 className="flex-1 sm:flex-none px-lg py-sm bg-primary text-on-primary rounded-xl text-xs font-bold hover:brightness-110 active:scale-95 transition-all flex justify-center items-center gap-xs shadow-md"
               >
-                <span>Proceed to Medical Input Chatbot</span>
+                <span>{t("it_proceed")}</span>
                 <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
               </button>
             </div>
@@ -491,10 +548,10 @@ export default function Intake() {
         {/* Header Block */}
         <header className="mb-md border-b border-outline-variant/40 pb-sm">
           <h1 className="font-headline-lg text-headline-lg text-primary font-bold tracking-tight">
-            Patient Financial Intake
+            {t("it_title")}
           </h1>
           <p className="font-body-md text-on-surface-variant text-xs font-normal">
-            Complete the form to unlock personalized government schemes, insurance coverage estimates, and treatment pricing worksheets.
+            {t("it_subtitle")}
           </p>
         </header>
 
@@ -503,9 +560,9 @@ export default function Intake() {
             <div className="flex gap-sm items-start">
               <span className="material-symbols-outlined text-primary text-[24px] mt-0.5">security</span>
               <div>
-                <p className="font-bold text-xs text-primary uppercase tracking-wider">Save Your Medical Profile (Optional)</p>
+                <p className="font-bold text-xs text-primary uppercase tracking-wider">{t("it_save_profile_opt")}</p>
                 <p className="text-xs text-on-surface-variant leading-relaxed">
-                  You are currently filling the intake as a Guest. Log in or create a free account to back up this data securely and retrieve it later.
+                  {t("it_guest_banner_desc")}
                 </p>
               </div>
             </div>
@@ -513,7 +570,7 @@ export default function Intake() {
               onClick={() => window.dispatchEvent(new CustomEvent("open-auth"))}
               className="px-4 py-2 bg-primary text-on-primary hover:brightness-110 text-xs font-bold rounded-xl active:scale-95 transition-all shadow-md shrink-0"
             >
-              Sign Up / Log In
+              {t("it_signup_login")}
             </button>
           </div>
         )}
@@ -571,12 +628,12 @@ export default function Intake() {
             <div className="flex-1">
               {step === 1 && (
                 <Section
-                  title="Tell us about yourself"
-                  subtitle="Basic demographics help determine age-specific coverage and state welfare subsidies."
+                  title={t("it_s1_title")}
+                  subtitle={t("it_s1_subtitle")}
                   icon="person"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
-                    <Field label="Age" hint="Age impacts screening frequencies and welfare criteria.">
+                    <Field label={t("it_age")} hint={t("it_age_hint")}>
                       <input
                         className="w-full px-md py-sm border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-body-md text-body-md text-xs"
                         placeholder="e.g. 45"
@@ -585,154 +642,151 @@ export default function Intake() {
                         onChange={(e) => setAge(e.target.value)}
                       />
                     </Field>
-                    <Field label="Indian State" hint="Determines matching state-level healthcare packages.">
+                    <Field label={t("it_state")} hint={t("it_state_hint")}>
                       <select
                         value={patientState}
                         onChange={(e) => setPatientState(e.target.value)}
                         className="w-full px-md py-sm border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-body-md text-body-md text-xs bg-white"
                       >
-                        <option value="">Select State</option>
-                        <option value="Karnataka">Karnataka</option>
-                        <option value="Maharashtra">Maharashtra</option>
-                        <option value="Delhi">Delhi</option>
-                        <option value="Tamil Nadu">Tamil Nadu</option>
-                        <option value="West Bengal">West Bengal</option>
-                        <option value="Kerala">Kerala</option>
-                        <option value="Gujarat">Gujarat</option>
-                        <option value="Telangana">Telangana</option>
-                        <option value="Andhra Pradesh">Andhra Pradesh</option>
-                        <option value="Uttar Pradesh">Uttar Pradesh</option>
-                        <option value="Rajasthan">Rajasthan</option>
-                        <option value="Odisha">Odisha</option>
-                        <option value="Haryana">Haryana</option>
-                        <option value="Punjab">Punjab</option>
-                        <option value="Assam">Assam</option>
-                        <option value="Other">Other State</option>
+                        <option value="">{t("it_select_state")}</option>
+                        <option value="Karnataka">{getLocalValue("state", "Karnataka")}</option>
+                        <option value="Maharashtra">{getLocalValue("state", "Maharashtra")}</option>
+                        <option value="Delhi">{getLocalValue("state", "Delhi")}</option>
+                        <option value="Tamil Nadu">{getLocalValue("state", "Tamil Nadu")}</option>
+                        <option value="West Bengal">{getLocalValue("state", "West Bengal")}</option>
+                        <option value="Kerala">{getLocalValue("state", "Kerala")}</option>
+                        <option value="Gujarat">{getLocalValue("state", "Gujarat")}</option>
+                        <option value="Telangana">{getLocalValue("state", "Telangana")}</option>
+                        <option value="Andhra Pradesh">{getLocalValue("state", "Andhra Pradesh")}</option>
+                        <option value="Uttar Pradesh">{getLocalValue("state", "Uttar Pradesh")}</option>
+                        <option value="Rajasthan">{getLocalValue("state", "Rajasthan")}</option>
+                        <option value="Odisha">{getLocalValue("state", "Odisha")}</option>
+                        <option value="Other">{getLocalValue("state", "Other")}</option>
                       </select>
                     </Field>
                   </div>
-                  <FooterBar onNext={goNext} nextLabel="Save & Continue" />
+                  <FooterBar onNext={goNext} nextLabel={t("it_save_continue")} backLabel={t("it_dont_know")} />
                 </Section>
               )}
 
               {step === 2 && (
                 <Section
-                  title="Clinical & Diagnostics Profile"
-                  subtitle="Specify staging details to estimate medical complexity and pathway costs."
+                  title={t("it_s2_title")}
+                  subtitle={t("it_s2_subtitle")}
                   icon="biotech"
                 >
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
-                    <Field label="Cancer Stage" hint="Helps establish the primary clinical treatment workflow.">
+                    <Field label={t("it_stage")} hint={t("it_stage_hint")}>
                       <select
                         value={stage}
                         onChange={(e) => setStage(e.target.value)}
                         className="w-full px-md py-sm border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-body-md text-body-md text-xs bg-white"
                       >
-                        <option value="">Select Stage</option>
-                        <option value="Stage I">Stage I (Early local)</option>
-                        <option value="Stage II">Stage II (Invasive local)</option>
-                        <option value="Stage III">Stage III (Locally advanced)</option>
-                        <option value="Stage IV">Stage IV (Metastatic)</option>
-                        <option value="Unsure">Unsure / Stage pending</option>
+                        <option value="">{t("it_stage_select")}</option>
+                        <option value="Stage I">{getLocalValue("stage", "Stage I")}</option>
+                        <option value="Stage II">{getLocalValue("stage", "Stage II")}</option>
+                        <option value="Stage III">{getLocalValue("stage", "Stage III")}</option>
+                        <option value="Stage IV">{getLocalValue("stage", "Stage IV")}</option>
+                        <option value="Unsure">{getLocalValue("stage", "Unsure")}</option>
                       </select>
                     </Field>
-                    <Field label="HER2 / Triple Negative / ER-PR Status" hint="Hormone receptors govern specialized drug regimens.">
+                    <Field label={t("it_receptor")} hint={t("it_receptor_hint")}>
                       <select
                         value={hormoneStatus}
                         onChange={(e) => setHormoneStatus(e.target.value)}
                         className="w-full px-md py-sm border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-body-md text-body-md text-xs bg-white"
                       >
-                        <option value="">Select receptor status</option>
-                        <option value="HER2 Positive">HER2 Positive (requires targeted therapy)</option>
-                        <option value="Triple Negative">Triple Negative (highly chemo-responsive)</option>
-                        <option value="ER+/PR+ Positive">ER+/PR+ Positive (hormone responsive)</option>
-                        <option value="Unsure">Unsure / Receptor pending</option>
+                        <option value="">{t("it_select_receptor")}</option>
+                        <option value="HER2 Positive">{getLocalValue("receptor", "HER2 Positive")}</option>
+                        <option value="Triple Negative">{getLocalValue("receptor", "Triple Negative")}</option>
+                        <option value="ER+/PR+ Positive">{getLocalValue("receptor", "ER+/PR+ Positive")}</option>
+                        <option value="Unsure">{getLocalValue("receptor", "Unsure")}</option>
                       </select>
                     </Field>
                   </div>
-                  <FooterBar onPrev={goPrev} onNext={goNext} nextLabel="Save & Continue" />
+                  <FooterBar onPrev={goPrev} onNext={goNext} nextLabel={t("it_save_continue")} backText={t("it_back")} />
                 </Section>
               )}
 
               {step === 3 && (
                 <Section
-                  title="Treatment Pathway Recommendations"
-                  subtitle="Select the primary oncology phases recommended by your clinical team."
+                  title={t("it_s3_title")}
+                  subtitle={t("it_s3_subtitle")}
                   icon="clinical_notes"
                 >
                   <div className="space-y-md">
-                    <Field label="Surgery Recommended?">
+                    <Field label={t("it_surgery_q")}>
                       <select
                         value={surgery}
                         onChange={(e) => setSurgery(e.target.value)}
                         className="w-full px-md py-sm border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-body-md text-body-md text-xs bg-white"
                       >
-                        <option value="Yes">Yes (Lumpectomy or Mastectomy planned)</option>
-                        <option value="No">No / Not recommended</option>
-                        <option value="Unsure">Unsure / To be decided</option>
+                        <option value="Yes">{getLocalValue("yesno", "Yes")}</option>
+                        <option value="No">{getLocalValue("yesno", "No")}</option>
+                        <option value="Unsure">{getLocalValue("yesno", "Unsure")}</option>
                       </select>
                     </Field>
-                    <Field label="Chemotherapy Recommended?">
+                    <Field label={t("it_chemo_q")}>
                       <select
                         value={chemo}
                         onChange={(e) => setChemo(e.target.value)}
                         className="w-full px-md py-sm border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-body-md text-body-md text-xs bg-white"
                       >
-                        <option value="Yes">Yes (Systemic infusion rounds prescribed)</option>
-                        <option value="No">No / Not recommended</option>
-                        <option value="Unsure">Unsure / To be decided</option>
+                        <option value="Yes">{getLocalValue("yesno", "Yes")}</option>
+                        <option value="No">{getLocalValue("yesno", "No")}</option>
+                        <option value="Unsure">{getLocalValue("yesno", "Unsure")}</option>
                       </select>
                     </Field>
-                    <Field label="Radiation Recommended?">
+                    <Field label={t("it_radiation_q")}>
                       <select
                         value={radiation}
                         onChange={(e) => setRadiation(e.target.value)}
                         className="w-full px-md py-sm border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-body-md text-body-md text-xs bg-white"
                       >
-                        <option value="Yes">Yes (Post-surgical radiation indicated)</option>
-                        <option value="No">No / Not recommended</option>
-                        <option value="Unsure">Unsure / To be decided</option>
+                        <option value="Yes">{getLocalValue("yesno", "Yes")}</option>
+                        <option value="No">{getLocalValue("yesno", "No")}</option>
+                        <option value="Unsure">{getLocalValue("yesno", "Unsure")}</option>
                       </select>
                     </Field>
                   </div>
-                  <FooterBar onPrev={goPrev} onNext={goNext} nextLabel="Save & Continue" />
+                  <FooterBar onPrev={goPrev} onNext={goNext} nextLabel={t("it_save_continue")} backText={t("it_back")} />
                 </Section>
               )}
 
               {step === 4 && (
                 <Section
-                  title="Hospital Preference & Insurance"
-                  subtitle="Verify financial brackets to identify subsidies, room caps, and cash-free programs."
+                  title={t("it_s4_title")}
+                  subtitle={t("it_s4_subtitle")}
                   icon="payments"
                 >
                   <div className="space-y-md">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
-                      <Field label="Hospital classification">
+                      <Field label={t("it_hospital_class")}>
                         <select
                           value={hospitalType}
                           onChange={(e) => setHospitalType(e.target.value)}
                           className="w-full px-md py-sm border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-body-md text-body-md text-xs bg-white"
                         >
-                          <option value="Government / Public Hospital">Government / Public Hospital (subsidized)</option>
-                          <option value="Private Medical Center">Private Medical Center (moderate corporate network)</option>
-                          <option value="Premium Corporate Hospital">Premium Corporate Hospital (high-end multi-specialty)</option>
-                          <option value="I'm Unsure">I'm Unsure (uses private averages)</option>
+                          <option value="Government / Public Hospital">{getLocalValue("hospital", "Government / Public Hospital")}</option>
+                          <option value="Private Medical Center">{getLocalValue("hospital", "Private Medical Center")}</option>
+                          <option value="Premium Corporate Hospital">{getLocalValue("hospital", "Premium Corporate Hospital")}</option>
+                          <option value="I'm Unsure">{getLocalValue("hospital", "I'm Unsure")}</option>
                         </select>
                       </Field>
-                      <Field label="Insurance status">
+                      <Field label={t("it_insurance_status")}>
                         <select
                           value={hasInsurance ? "Insured" : "Not Insured"}
                           onChange={(e) => setHasInsurance(e.target.value === "Insured")}
                           className="w-full px-md py-sm border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-body-md text-body-md text-xs bg-white"
                         >
-                          <option value="Insured">Insured (policy details active)</option>
-                          <option value="Not Insured">Not Insured (self-paying / cash only)</option>
+                          <option value="Insured">{t("it_insured_active")}</option>
+                          <option value="Not Insured">{t("it_not_insured_cash")}</option>
                         </select>
                       </Field>
                     </div>
 
                     {hasInsurance && (
-                      <Field label="Insurance Provider & Plan Name" hint="Helps cap room limits and co-pays (e.g. Star Health, Niva Bupa).">
+                      <Field label={t("it_insurance_provider_q")} hint={t("it_insurance_provider_hint")}>
                         <input
                           className="w-full px-md py-sm border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-body-md text-body-md text-xs"
                           placeholder="e.g. Star Health Assure Plan"
@@ -743,21 +797,21 @@ export default function Intake() {
                       </Field>
                     )}
 
-                    <Field label="Approximate Household Annual Income" hint="Welfare programs like PM-JAY and RAN prioritize lower-income brackets.">
+                    <Field label={t("it_income_q")} hint={t("it_income_hint")}>
                       <select
                         value={incomeBracket}
                         onChange={(e) => setIncomeBracket(e.target.value)}
                         className="w-full px-md py-sm border border-outline-variant rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all font-body-md text-body-md text-xs bg-white"
                       >
-                        <option value="">Select income bracket</option>
-                        <option value="Below ₹2,50,000">Below ₹2,50,000</option>
-                        <option value="₹2,50,000 – ₹5,00,000">₹2,50,000 – ₹5,00,000</option>
-                        <option value="₹5,00,000 – ₹10,00,000">₹5,00,000 – ₹10,00,000</option>
-                        <option value="Above ₹10,00,000">Above ₹10,00,000</option>
+                        <option value="">{t("it_income_select")}</option>
+                        <option value="Below ₹2,50,000">{getLocalValue("income", "Below ₹2,50,000")}</option>
+                        <option value="₹2,50,000 – ₹5,0,000">{getLocalValue("income", "₹2,50,000 – ₹5,00,000")}</option>
+                        <option value="₹5,0,000 – ₹10,0,000">{getLocalValue("income", "₹5,00,000 – ₹10,00,000")}</option>
+                        <option value="Above ₹10,0,000">{getLocalValue("income", "Above ₹10,00,000")}</option>
                       </select>
                     </Field>
                   </div>
-                  <FooterBar onPrev={goPrev} onNext={goNext} nextLabel="Complete Onboarding" />
+                  <FooterBar onPrev={goPrev} onNext={goNext} nextLabel={t("it_complete_onboarding")} backText={t("it_back")} />
                 </Section>
               )}
             </div>
@@ -770,7 +824,7 @@ export default function Intake() {
             {/* Live Reliability Meter */}
             <div className="bg-surface-container-low border border-outline-variant/60 rounded-3xl p-md shadow-sm text-center space-y-sm">
               <h4 className="font-label-md text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                Intake Accuracy Index
+                {t("it_accuracy")}
               </h4>
               
               {(() => {
@@ -816,14 +870,14 @@ export default function Intake() {
                     </svg>
                     <div className="absolute bottom-0 left-0 right-0 text-center flex flex-col items-center justify-end">
                       <span className="font-headline-md text-md text-primary font-bold leading-none">{stepAccuracy}%</span>
-                      <p className="text-[9px] text-outline font-semibold uppercase tracking-wider mt-1">Reliability Score</p>
+                      <p className="text-[9px] text-outline font-semibold uppercase tracking-wider mt-1">{t("it_reliability")}</p>
                     </div>
                   </div>
                 );
               })()}
               
               <p className="font-body-sm text-[10px] text-on-surface-variant leading-relaxed px-sm pt-xs">
-                Accuracy increases as you fill in key parameters. Completed profiles average a 92% reliability rate.
+                {t("it_accuracy_desc")}
               </p>
             </div>
 
@@ -832,51 +886,51 @@ export default function Intake() {
               <div className="space-y-sm">
                 <h4 className="font-label-md text-xs font-bold text-primary flex items-center gap-xs">
                   <span className="material-symbols-outlined text-[16px] text-secondary">assignment_ind</span>
-                  Live Profile summary
+                  {t("it_summary")}
                 </h4>
                 
                 <div className="divide-y divide-outline-variant/20">
                   <div className="py-2 flex justify-between items-center text-[11px]">
-                    <span className="text-on-surface-variant font-medium">State</span>
-                    <span className="font-bold text-on-surface">{patientState || "Not specified"}</span>
+                    <span className="text-on-surface-variant font-medium">{t("it_state")}</span>
+                    <span className="font-bold text-on-surface">{getLocalValue("state", patientState)}</span>
                   </div>
                   <div className="py-2 flex justify-between items-center text-[11px]">
-                    <span className="text-on-surface-variant font-medium">Age</span>
-                    <span className="font-bold text-on-surface">{age || "Not specified"}</span>
+                    <span className="text-on-surface-variant font-medium">{t("it_age")}</span>
+                    <span className="font-bold text-on-surface">{age || t("it_not_specified")}</span>
                   </div>
                   <div className="py-2 flex justify-between items-center text-[11px]">
-                    <span className="text-on-surface-variant font-medium">Cancer Stage</span>
-                    <span className="font-bold text-on-surface">{stage || "Not specified"}</span>
+                    <span className="text-on-surface-variant font-medium">{t("it_stage")}</span>
+                    <span className="font-bold text-on-surface">{getLocalValue("stage", stage)}</span>
                   </div>
                   <div className="py-2 flex justify-between items-center text-[11px]">
-                    <span className="text-on-surface-variant font-medium">Receptor Status</span>
-                    <span className="font-bold text-on-surface truncate max-w-[150px]" title={hormoneStatus}>{hormoneStatus || "Not specified"}</span>
+                    <span className="text-on-surface-variant font-medium">{t("it_receptor")}</span>
+                    <span className="font-bold text-on-surface truncate max-w-[150px]" title={hormoneStatus}>{getLocalValue("receptor", hormoneStatus)}</span>
                   </div>
                   <div className="py-2 flex justify-between items-center text-[11px]">
-                    <span className="text-on-surface-variant font-medium">Surgery Indicated</span>
-                    <span className="font-bold text-on-surface">{surgery}</span>
+                    <span className="text-on-surface-variant font-medium">{t("it_surgery")}</span>
+                    <span className="font-bold text-on-surface">{getLocalValue("yesno", surgery)}</span>
                   </div>
                   <div className="py-2 flex justify-between items-center text-[11px]">
-                    <span className="text-on-surface-variant font-medium">Chemo Indicated</span>
-                    <span className="font-bold text-on-surface">{chemo}</span>
+                    <span className="text-on-surface-variant font-medium">{t("it_chemo")}</span>
+                    <span className="font-bold text-on-surface">{getLocalValue("yesno", chemo)}</span>
                   </div>
                   <div className="py-2 flex justify-between items-center text-[11px]">
-                    <span className="text-on-surface-variant font-medium">Radiation Indicated</span>
-                    <span className="font-bold text-on-surface">{radiation}</span>
+                    <span className="text-on-surface-variant font-medium">{t("it_radiation")}</span>
+                    <span className="font-bold text-on-surface">{getLocalValue("yesno", radiation)}</span>
                   </div>
                   <div className="py-2 flex justify-between items-center text-[11px]">
-                    <span className="text-on-surface-variant font-medium">Hospital preference</span>
-                    <span className="font-bold text-on-surface truncate max-w-[150px]" title={hospitalType}>{hospitalType}</span>
+                    <span className="text-on-surface-variant font-medium">{t("it_hospital")}</span>
+                    <span className="font-bold text-on-surface truncate max-w-[150px]" title={hospitalType}>{getLocalValue("hospital", hospitalType)}</span>
                   </div>
                   <div className="py-2 flex justify-between items-center text-[11px]">
-                    <span className="text-on-surface-variant font-medium">Insurance status</span>
+                    <span className="text-on-surface-variant font-medium">{t("it_insurance_status")}</span>
                     <span className="font-bold text-on-surface truncate max-w-[150px]">
-                      {hasInsurance ? (insuranceProvider || "Provider pending") : "No Health Insurance"}
+                      {hasInsurance ? (insuranceProvider || t("it_insured")) : t("it_not_insured")}
                     </span>
                   </div>
                   <div className="py-2 flex justify-between items-center text-[11px]">
-                    <span className="text-on-surface-variant font-medium">Household Income</span>
-                    <span className="font-bold text-on-surface">{incomeBracket || "Not specified"}</span>
+                    <span className="text-on-surface-variant font-medium">{t("it_income")}</span>
+                    <span className="font-bold text-on-surface">{getLocalValue("income", incomeBracket)}</span>
                   </div>
                 </div>
               </div>
@@ -891,20 +945,20 @@ export default function Intake() {
                     className="flex-1 py-1.5 border border-outline-variant hover:bg-surface-container-high rounded-xl text-[10px] font-bold text-primary active:scale-95 transition-all flex items-center justify-center gap-xs"
                   >
                     <span className="material-symbols-outlined text-[14px]">edit</span>
-                    Edit Details
+                    {t("it_edit_details")}
                   </button>
                   <button
                     onClick={handleResetProfile}
                     className="flex-1 py-1.5 border border-error/30 hover:bg-error/5 text-error rounded-xl text-[10px] font-bold active:scale-95 transition-all flex items-center justify-center gap-xs"
                   >
                     <span className="material-symbols-outlined text-[14px]">restart_alt</span>
-                    Reset Profile
+                    {t("it_reset")}
                   </button>
                 </div>
 
                 <div className="text-[9px] text-outline font-bold uppercase tracking-wider flex items-center gap-xs pt-xs">
                   <span className={`h-2 w-2 rounded-full ${step === 4 ? "bg-secondary" : "bg-primary animate-pulse"}`} />
-                  {step === 4 ? "Profile Ready for Analysis" : `Filling Section ${step} of 4`}
+                  {step === 4 ? t("it_ready_analysis") : `${t("it_filling_section")} ${step} ${t("it_section_of")}`}
                 </div>
               </div>
             </div>
@@ -965,19 +1019,23 @@ function FooterBar({
   onPrev,
   onNext,
   nextLabel,
+  backLabel,
+  backText,
 }: {
   onPrev?: () => void;
   onNext: () => void;
   nextLabel: string;
+  backLabel?: string;
+  backText?: string;
 }) {
   return (
     <div className="mt-lg pt-md border-t border-outline-variant flex justify-between items-center">
       {onPrev ? (
         <button onClick={onPrev} className="text-on-surface-variant font-label-md text-label-md hover:underline">
-          Back
+          {backText || "Back"}
         </button>
       ) : (
-        <button className="text-secondary font-label-md text-label-md hover:underline">I don't know</button>
+        <button className="text-secondary font-label-md text-label-md hover:underline">{backLabel || "I don't know"}</button>
       )}
       <button
         onClick={onNext}
