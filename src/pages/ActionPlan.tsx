@@ -880,7 +880,7 @@ export default function ActionPlan() {
         {/* Dashboard Grid */}
         {!isIntakeFilled ? (
           <div className="bg-surface-container-lowest border border-outline-variant/40 rounded-3xl p-xl text-center space-y-md shadow-sm max-w-2xl mx-auto my-lg animate-fade-in">
-            <span className="material-symbols-outlined text-[#B83B5E] text-[64px] animate-pulse">route</span>
+            <span className="material-symbols-outlined text-[#4c3a69] text-[64px] animate-pulse">route</span>
             <h3 className="font-headline-md text-headline-md text-primary font-bold">{t("ap_pending_title")}</h3>
             <p className="font-body-md text-on-surface-variant text-xs leading-relaxed max-w-md mx-auto">
               {t("ap_pending_desc")}
@@ -973,7 +973,7 @@ export default function ActionPlan() {
                               {step.body}
                             </p>
                             {step.hint && !step.completed && (
-                              <div className="mt-xs p-xs bg-[#F9CBDB]/10 border border-[#F9CBDB]/20 text-[#B83B5E] text-[9px] font-bold rounded-lg inline-flex items-center gap-xs">
+                              <div className="mt-xs p-xs bg-[#e7def3]/10 border border-[#e7def3]/20 text-[#4c3a69] text-[9px] font-bold rounded-lg inline-flex items-center gap-xs">
                                 <span className="material-symbols-outlined text-[12px]">info</span>
                                 {step.hint}
                               </div>
@@ -997,7 +997,7 @@ export default function ActionPlan() {
                               isReady
                                 ? "bg-secondary-container/10 border-secondary/30"
                                 : doc.status === "warning"
-                                ? "bg-[#F9CBDB]/5 border-[#F9CBDB]/25"
+                                ? "bg-[#e7def3]/5 border-[#e7def3]/25"
                                 : "bg-surface-container-low border-outline-variant"
                             }`}
                           >
@@ -1007,7 +1007,7 @@ export default function ActionPlan() {
                                   isReady
                                     ? "text-secondary font-bold"
                                     : doc.status === "warning"
-                                    ? "text-[#B83B5E]"
+                                    ? "text-[#4c3a69]"
                                     : "text-outline"
                                 }`}
                               >
@@ -1032,7 +1032,7 @@ export default function ActionPlan() {
                     </div>
                     <button
                       onClick={addCustomDoc}
-                      className="w-full border-2 border-dashed border-outline-variant py-md rounded-2xl text-on-surface-variant font-bold text-xs flex items-center justify-center gap-xs hover:border-[#B83B5E] hover:text-[#B83B5E] transition-all bg-surface-container-lowest"
+                      className="w-full border-2 border-dashed border-outline-variant py-md rounded-2xl text-on-surface-variant font-bold text-xs flex items-center justify-center gap-xs hover:border-[#4c3a69] hover:text-[#4c3a69] transition-all bg-surface-container-lowest"
                     >
                       <span className="material-symbols-outlined text-[18px]">add_circle</span>
                       {language === "en" ? "Add Custom Document" : language === "hi" ? "कस्टम दस्तावेज जोड़ें" : language === "mr" ? "सानुकूल दस्तऐवज जोडा" : language === "kn" ? "ಕಸ್ಟಮ್ ದಾಖಲೆ ಸೇರಿಸಿ" : "কাস্টম নথি যোগ করুন"}
@@ -1062,7 +1062,7 @@ export default function ActionPlan() {
                         </span>
                         
                         <div className="flex items-center gap-sm text-[10px] font-semibold">
-                          <span className="text-[#B83B5E] bg-[#F9CBDB]/10 border border-[#F9CBDB]/30 px-xs py-[2px] rounded-lg">
+                          <span className="text-[#4c3a69] bg-[#e7def3]/10 border border-[#e7def3]/30 px-xs py-[2px] rounded-lg">
                             {language === "en" ? "Score" : language === "hi" ? "सटीकता" : language === "mr" ? "गुण" : language === "kn" ? "ಅಂಕ" : "স্কোর"}: {scheme.matchScore}%
                           </span>
                           <span className="text-secondary bg-secondary-container/10 border border-secondary/20 px-xs py-[2px] rounded-lg">
@@ -1198,7 +1198,7 @@ export default function ActionPlan() {
                 })}
 
                 {/* Lower grid (Generics & PMBJP Advice) */}
-                <div className="p-md bg-[#F9CBDB]/10 border border-[#F9CBDB]/30 rounded-2xl space-y-xs animate-fade-in">
+                <div className="p-md bg-[#e7def3]/10 border border-[#e7def3]/30 rounded-2xl space-y-xs animate-fade-in">
                   <h4 className="font-label-md text-primary font-bold flex items-center gap-xs text-xs">
                     <span className="material-symbols-outlined text-primary text-[20px]">lightbulb</span>
                     {language === "en" ? "Recommendation" : language === "hi" ? "सिफारिश" : language === "mr" ? "शिफारस" : language === "kn" ? "ಶಿಫಾರಸು" : "সুপারিশ"}
@@ -1250,16 +1250,16 @@ export default function ActionPlan() {
 
                 <div className="grid grid-cols-2 gap-2 mt-xs">
                   {[
-                    { id: "state", icon: "map", label: t("it_state"), value: patientState ? getLocalValue("state", patientState) : null, color: "text-[#0284c7] bg-[#f0f9ff]" },
-                    { id: "age", icon: "calendar_month", label: t("it_age"), value: age || null, color: "text-[#7c3aed] bg-[#f5f3ff]" },
-                    { id: "stage", icon: "biotech", label: t("it_stage"), value: stage ? getLocalValue("stage", stage) : null, color: "text-[#0d9488] bg-[#f0fdfa]" },
-                    { id: "receptor", icon: "science", label: t("it_receptor"), value: hormoneStatus ? getLocalValue("receptor", hormoneStatus) : null, color: "text-[#e11d48] bg-[#fff1f2]" },
-                    { id: "surgery", icon: "medical_services", label: t("it_surgery"), value: surgery ? getLocalValue("yesno", surgery) : null, color: "text-[#d97706] bg-[#fffbeb]" },
-                    { id: "chemo", icon: "medication", label: t("it_chemo"), value: chemo ? getLocalValue("yesno", chemo) : null, color: "text-[#4f46e5] bg-[#eef2ff]" },
-                    { id: "radiation", icon: "bolt", label: t("it_radiation"), value: radiation ? getLocalValue("yesno", radiation) : null, color: "text-[#ea580c] bg-[#fff7ed]" },
-                    { id: "hospital", icon: "home_health", label: t("it_hospital"), value: hospitalType ? getLocalValue("hospital", hospitalType) : null, color: "text-[#0891b2] bg-[#ecfeff]" },
-                    { id: "insurance", icon: "shield", label: t("it_insurance_status"), value: insurance ? getLocalValue("insurance", insurance) : null, color: "text-[#16a34a] bg-[#f0fdf4]" },
-                    { id: "income", icon: "payments", label: t("it_income"), value: incomeBracket ? getLocalValue("income", incomeBracket) : null, color: "text-[#65a30d] bg-[#f7fee7]" }
+                    { id: "state", icon: "map", label: t("it_state"), value: patientState ? getLocalValue("state", patientState) : null, color: "text-[#4c3a69] bg-[#e7def3]" },
+                    { id: "age", icon: "calendar_month", label: t("it_age"), value: age || null, color: "text-[#7458a6] bg-[#ece3f6]" },
+                    { id: "stage", icon: "biotech", label: t("it_stage"), value: stage ? getLocalValue("stage", stage) : null, color: "text-secondary bg-secondary-container/40" },
+                    { id: "receptor", icon: "science", label: t("it_receptor"), value: hormoneStatus ? getLocalValue("receptor", hormoneStatus) : null, color: "text-[#9478c4] bg-[#efe8f8]" },
+                    { id: "surgery", icon: "medical_services", label: t("it_surgery"), value: surgery ? getLocalValue("yesno", surgery) : null, color: "text-[#4c3a69] bg-[#e7def3]" },
+                    { id: "chemo", icon: "medication", label: t("it_chemo"), value: chemo ? getLocalValue("yesno", chemo) : null, color: "text-[#7458a6] bg-[#ece3f6]" },
+                    { id: "radiation", icon: "bolt", label: t("it_radiation"), value: radiation ? getLocalValue("yesno", radiation) : null, color: "text-[#9478c4] bg-[#efe8f8]" },
+                    { id: "hospital", icon: "home_health", label: t("it_hospital"), value: hospitalType ? getLocalValue("hospital", hospitalType) : null, color: "text-[#4c3a69] bg-[#e7def3]" },
+                    { id: "insurance", icon: "shield", label: t("it_insurance_status"), value: insurance ? getLocalValue("insurance", insurance) : null, color: "text-[#7458a6] bg-[#ece3f6]" },
+                    { id: "income", icon: "payments", label: t("it_income"), value: incomeBracket ? getLocalValue("income", incomeBracket) : null, color: "text-[#9478c4] bg-[#efe8f8]" }
                   ].map((item) => {
                     const isPending = !item.value || item.value === t("it_not_specified") || item.value === "Pending";
                     const pendingText = language === "en" ? "Pending" : language === "hi" ? "लंबित" : language === "mr" ? "प्रलंबित" : language === "kn" ? "ಬಾಕಿ ಇದೆ" : "বাকি আছে";

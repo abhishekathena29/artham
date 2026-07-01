@@ -482,7 +482,7 @@ export default function PreventivePlans() {
       {/* Fixed Local Sidebar - Styled exactly like the global SideNav of Start Your Journey */}
       <aside className="hidden md:flex flex-col h-[calc(100vh-64px)] py-lg w-64 fixed left-0 top-16 bg-surface-container-low shadow-md z-40 overflow-y-auto custom-scrollbar">
         <div className="px-md mb-lg">
-          <h2 className="font-headline-sm text-headline-sm text-[#B83B5E] font-bold">{localT("prev_care")}</h2>
+          <h2 className="font-headline-sm text-headline-sm text-[#4c3a69] font-bold">{localT("prev_care")}</h2>
           <p className="font-label-sm text-label-sm text-on-surface-variant">{localT("awareness")}</p>
         </div>
         <nav className="flex-1 space-y-1">
@@ -495,9 +495,9 @@ export default function PreventivePlans() {
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id as "guidelines" | "costs" | "schemes" | "insurers")}
-              className={`w-full flex items-center gap-sm px-4 py-3 font-label-md text-label-md transition-transform duration-150 text-left focus-visible:ring-2 focus-visible:ring-[#B83B5E] outline-none ${
+              className={`w-full flex items-center gap-sm px-4 py-3 font-label-md text-label-md transition-transform duration-150 text-left focus-visible:ring-2 focus-visible:ring-[#4c3a69] outline-none ${
                 activeTab === item.id
-                  ? "text-[#B83B5E] font-bold border-r-4 border-[#B83B5E] bg-[#F9CBDB]/10"
+                  ? "text-[#4c3a69] font-bold border-r-4 border-[#4c3a69] bg-[#e7def3]/10"
                   : "text-on-surface-variant hover:bg-surface-container-high"
               }`}
             >
@@ -512,10 +512,10 @@ export default function PreventivePlans() {
       <div className="max-w-container-max mx-auto p-md lg:p-lg space-y-lg md:ml-64">
         
         {/* Header Block - Rose/Pink Gradient Theme */}
-        <header className="bg-gradient-to-r from-[#F9CBDB]/30 via-[#F9CBDB]/10 to-surface-container-low border border-[#F9CBDB]/40 rounded-3xl p-md md:p-lg flex flex-col md:flex-row justify-between items-center gap-md shadow-sm relative overflow-hidden shrink-0">
-          <div className="absolute inset-0 -z-10 bg-radial-gradient from-[#F9CBDB]/15 to-transparent opacity-40 blur-2xl" />
+        <header className="bg-gradient-to-r from-[#e7def3]/30 via-[#e7def3]/10 to-surface-container-low border border-[#e7def3]/40 rounded-3xl p-md md:p-lg flex flex-col md:flex-row justify-between items-center gap-md shadow-sm relative overflow-hidden shrink-0">
+          <div className="absolute inset-0 -z-10 bg-radial-gradient from-[#e7def3]/15 to-transparent opacity-40 blur-2xl" />
           <div className="max-w-2xl space-y-xs">
-            <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-[#F9CBDB]/20 text-[#B83B5E] border border-[#F9CBDB]/40 text-[10px] font-bold rounded-full uppercase tracking-wider">
+            <span className="inline-flex items-center gap-xs px-2.5 py-1 bg-[#e7def3]/20 text-[#4c3a69] border border-[#e7def3]/40 text-[10px] font-bold rounded-full uppercase tracking-wider">
               <span className="material-symbols-outlined text-[12px] active-entity-pulse">health_and_safety</span>
               {localT("prevention")}
             </span>
@@ -527,7 +527,7 @@ export default function PreventivePlans() {
             </p>
           </div>
           <div className="bg-surface-bright border border-outline-variant rounded-2xl p-sm shadow-sm shrink-0 flex items-center gap-sm">
-            <div className="w-10 h-10 rounded-full bg-[#F9CBDB]/20 text-[#B83B5E] flex items-center justify-center border border-[#F9CBDB]/30">
+            <div className="w-10 h-10 rounded-full bg-[#e7def3]/20 text-[#4c3a69] flex items-center justify-center border border-[#e7def3]/30">
               <span className="material-symbols-outlined text-[20px]">verified</span>
             </div>
             <div>
@@ -548,9 +548,9 @@ export default function PreventivePlans() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as "guidelines" | "costs" | "schemes" | "insurers")}
-              className={`px-3 py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-xs focus-visible:ring-2 focus-visible:ring-[#B83B5E] ${
+              className={`px-3 py-2 rounded-xl text-xs font-bold transition-all shrink-0 flex items-center gap-xs focus-visible:ring-2 focus-visible:ring-[#4c3a69] ${
                 activeTab === tab.id
-                  ? "bg-[#F9CBDB]/30 text-[#B83B5E] border border-[#F9CBDB]/50"
+                  ? "bg-[#e7def3]/30 text-[#4c3a69] border border-[#e7def3]/50"
                   : "bg-surface-container border border-outline-variant/40 text-on-surface-variant"
               }`}
             >
@@ -581,10 +581,10 @@ export default function PreventivePlans() {
                       <button
                         key={g.ageGroup}
                         onClick={() => setSelectedAgeGroup(g.ageGroup)}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[#B83B5E] ${
+                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all active:scale-[0.97] focus-visible:ring-2 focus-visible:ring-[#4c3a69] ${
                           selectedAgeGroup === g.ageGroup
-                            ? "bg-[#B83B5E] text-white shadow-md"
-                            : "bg-surface-container hover:bg-surface-container-high border border-outline-variant/40 text-on-surface-variant hover:text-on-surface hover:border-[#F9CBDB]"
+                            ? "bg-[#4c3a69] text-white shadow-md"
+                            : "bg-surface-container hover:bg-surface-container-high border border-outline-variant/40 text-on-surface-variant hover:text-on-surface hover:border-[#e7def3]"
                         }`}
                       >
                         {ageGroupLabels[language]?.[g.ageGroup] || g.ageGroup}
@@ -593,8 +593,8 @@ export default function PreventivePlans() {
                   </div>
 
                   {/* Age Summary & Advice */}
-                  <div className="bg-[#F9CBDB]/10 border border-[#F9CBDB]/30 rounded-2xl p-md mb-md animate-fade-in">
-                    <h4 className="font-label-md text-[#B83B5E] font-bold flex items-center gap-xs text-xs">
+                  <div className="bg-[#e7def3]/10 border border-[#e7def3]/30 rounded-2xl p-md mb-md animate-fade-in">
+                    <h4 className="font-label-md text-[#4c3a69] font-bold flex items-center gap-xs text-xs">
                       <span className="material-symbols-outlined text-sm">lightbulb</span>
                       {localT("clinical_overview")} {ageGroupLabels[language]?.[selectedAgeGroup] || selectedAgeGroup}
                     </h4>
@@ -610,7 +610,7 @@ export default function PreventivePlans() {
                       if (!testDetail) return null;
 
                       const toneClass = {
-                        primary: "bg-[#B83B5E]/10 text-[#B83B5E] border border-[#B83B5E]/20",
+                        primary: "bg-[#4c3a69]/10 text-[#4c3a69] border border-[#4c3a69]/20",
                         secondary: "bg-secondary/10 text-secondary border border-secondary/20",
                         tertiary: "bg-tertiary/10 text-tertiary border border-tertiary/20",
                         outline: "bg-surface-container-high text-on-surface-variant border border-outline-variant"
@@ -619,7 +619,7 @@ export default function PreventivePlans() {
                       return (
                         <div 
                           key={rec.testId}
-                          className="p-md bg-surface-container-low border border-outline-variant/50 rounded-2xl flex flex-col sm:flex-row justify-between items-start gap-md hover:border-[#F9CBDB]/80 transition-all shadow-sm animate-fade-in"
+                          className="p-md bg-surface-container-low border border-outline-variant/50 rounded-2xl flex flex-col sm:flex-row justify-between items-start gap-md hover:border-[#e7def3]/80 transition-all shadow-sm animate-fade-in"
                         >
                           <div className="space-y-xs max-w-xl">
                             <div className="flex items-center gap-xs flex-wrap">
@@ -653,7 +653,7 @@ export default function PreventivePlans() {
                 
                 <div className="pt-md border-t border-outline-variant/30 flex justify-between items-center shrink-0">
                   <span className="text-[11px] font-bold text-outline uppercase tracking-wider flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#B83B5E] animate-pulse" />
+                    <span className="h-2 w-2 rounded-full bg-[#4c3a69] animate-pulse" />
                     {localT("updated_standards")}
                   </span>
                 </div>
@@ -668,7 +668,7 @@ export default function PreventivePlans() {
                   {/* Header */}
                   <div className="border-b border-outline-variant/40 pb-sm">
                     <h2 className="font-headline-sm text-headline-sm text-primary flex items-center gap-xs">
-                      <span className="material-symbols-outlined text-[#B83B5E] text-[24px]">payments</span>
+                      <span className="material-symbols-outlined text-[#4c3a69] text-[24px]">payments</span>
                       {localT("costs")}
                     </h2>
                     <p className="text-body-sm text-on-surface-variant mt-1 text-xs font-normal">
@@ -697,7 +697,7 @@ export default function PreventivePlans() {
                               setSelectedArea(match.tier);
                             }
                           }}
-                          className="w-full p-2.5 pl-10 rounded-xl border border-outline-variant bg-surface-bright font-body-sm text-on-surface outline-none focus:ring-2 focus:ring-[#B83B5E] focus:border-[#B83B5E] text-xs transition-all placeholder-outline/50"
+                          className="w-full p-2.5 pl-10 rounded-xl border border-outline-variant bg-surface-bright font-body-sm text-on-surface outline-none focus:ring-2 focus:ring-[#4c3a69] focus:border-[#4c3a69] text-xs transition-all placeholder-outline/50"
                           placeholder={localT("search_city_placeholder")}
                         />
                       </div>
@@ -706,7 +706,7 @@ export default function PreventivePlans() {
                         if (match) {
                           if (match.isMatched) {
                             return (
-                              <p className="text-[11px] font-bold text-[#B83B5E] flex items-center gap-1 mt-1">
+                              <p className="text-[11px] font-bold text-[#4c3a69] flex items-center gap-1 mt-1">
                                 <span className="material-symbols-outlined text-[13px]">verified</span>
                                 "{match.name}" {localT("matched_as")} {match.tier === "tier1" ? localT("metro_rates") : localT("tier_2")}
                               </p>
@@ -743,7 +743,7 @@ export default function PreventivePlans() {
                             }}
                             className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
                               selectedArea === tier.key
-                                ? "bg-[#B83B5E] text-white shadow-sm"
+                                ? "bg-[#4c3a69] text-white shadow-sm"
                                 : "text-on-surface-variant hover:text-on-surface hover:bg-surface-container"
                             }`}
                           >
@@ -759,8 +759,8 @@ export default function PreventivePlans() {
                     
                     {/* Left Column: Pricing Sheet */}
                     <div className="lg:col-span-7 flex flex-col">
-                      <div className="flex-1 space-y-sm bg-surface-container-low p-md md:p-lg rounded-2xl border border-[#F9CBDB]/20 shadow-sm relative overflow-hidden flex flex-col justify-between">
-                        <div className="absolute top-0 right-0 w-24 h-24 bg-[#F9CBDB]/15 rounded-full blur-xl pointer-events-none" />
+                      <div className="flex-1 space-y-sm bg-surface-container-low p-md md:p-lg rounded-2xl border border-[#e7def3]/20 shadow-sm relative overflow-hidden flex flex-col justify-between">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-[#e7def3]/15 rounded-full blur-xl pointer-events-none" />
                         
                         <div>
                           <div className="flex justify-between items-center pb-sm border-b border-outline-variant/30 mb-sm">
@@ -772,7 +772,7 @@ export default function PreventivePlans() {
                                 {activeCostMap.name}
                               </h3>
                             </div>
-                            <span className="text-[10px] font-bold text-[#B83B5E] uppercase bg-[#F9CBDB]/30 px-2.5 py-0.5 rounded-full border border-[#F9CBDB]/40">
+                            <span className="text-[10px] font-bold text-[#4c3a69] uppercase bg-[#e7def3]/30 px-2.5 py-0.5 rounded-full border border-[#e7def3]/40">
                               {selectedArea === "tier1" ? localT("metro_rates") : selectedArea === "tier2" ? localT("tier_2") : localT("rural")}
                             </span>
                           </div>
@@ -781,12 +781,12 @@ export default function PreventivePlans() {
                             {tests.map((test) => {
                               const testPrice = activeCostMap[test.id as keyof typeof activeCostMap] || "₹0";
                               return (
-                                <div key={test.id} className="flex justify-between items-center py-2.5 first:pt-1 last:pb-1 hover:bg-[#F9CBDB]/5 transition-colors px-1 rounded-lg">
+                                <div key={test.id} className="flex justify-between items-center py-2.5 first:pt-1 last:pb-1 hover:bg-[#e7def3]/5 transition-colors px-1 rounded-lg">
                                   <div className="max-w-[70%]">
                                     <p className="font-label-md text-on-surface font-bold text-xs leading-none">{test.name}</p>
                                     <p className="text-[10px] text-on-surface-variant leading-none mt-1.5">{test.purpose.split(".")[0]}.</p>
                                   </div>
-                                  <span className={`font-bold text-sm shrink-0 ${testPrice.includes("Free") || testPrice.includes("विनामूल्य") || testPrice.includes("निःशुल्क") || testPrice.includes("ಉಚಿತ") || testPrice.includes("বিনামূল্য") ? "text-secondary font-extrabold" : "text-[#B83B5E]"}`}>
+                                  <span className={`font-bold text-sm shrink-0 ${testPrice.includes("Free") || testPrice.includes("विनामूल्य") || testPrice.includes("निःशुल्क") || testPrice.includes("ಉಚಿತ") || testPrice.includes("বিনামূল্য") ? "text-secondary font-extrabold" : "text-[#4c3a69]"}`}>
                                     {testPrice}
                                   </span>
                                 </div>
@@ -797,7 +797,7 @@ export default function PreventivePlans() {
 
                         <div className="pt-sm border-t border-outline-variant/30 text-[10px] text-outline flex items-center justify-between">
                           <span>{localT("estimates_derived")}</span>
-                          <span className="font-bold text-[#B83B5E] uppercase tracking-wider">{localT("inr_rates")}</span>
+                          <span className="font-bold text-[#4c3a69] uppercase tracking-wider">{localT("inr_rates")}</span>
                         </div>
                       </div>
                     </div>
@@ -810,7 +810,7 @@ export default function PreventivePlans() {
                         <div className="space-y-sm">
                           <div>
                             <h4 className="font-label-md text-primary font-bold flex items-center gap-xs text-xs">
-                              <span className="material-symbols-outlined text-[#B83B5E] text-[18px]">map</span>
+                              <span className="material-symbols-outlined text-[#4c3a69] text-[18px]">map</span>
                               {localT("cities_in_tier")}
                             </h4>
                             <p className="text-[11px] text-on-surface-variant mt-1 leading-relaxed">
@@ -826,7 +826,7 @@ export default function PreventivePlans() {
                                   key={city} 
                                   className={`px-2.5 py-1 text-[10px] font-bold rounded-lg border transition-all ${
                                     isMatched
-                                      ? "bg-[#B83B5E] text-white border-[#B83B5E] scale-105 shadow-sm"
+                                      ? "bg-[#4c3a69] text-white border-[#4c3a69] scale-105 shadow-sm"
                                       : "bg-surface-bright text-on-surface border-outline-variant/60"
                                   }`}
                                 >
@@ -838,8 +838,8 @@ export default function PreventivePlans() {
                         </div>
 
                         {selectedArea !== "tier3" && (
-                          <div className="mt-md bg-[#F9CBDB]/10 border border-[#F9CBDB]/30 rounded-xl p-xs flex items-center gap-sm">
-                            <span className="material-symbols-outlined text-[#B83B5E] text-lg pl-1">volunteer_activism</span>
+                          <div className="mt-md bg-[#e7def3]/10 border border-[#e7def3]/30 rounded-xl p-xs flex items-center gap-sm">
+                            <span className="material-symbols-outlined text-[#4c3a69] text-lg pl-1">volunteer_activism</span>
                             <p className="text-[10px] text-on-surface-variant leading-tight">
                               {localT("travel_savings")}
                             </p>
@@ -857,8 +857,8 @@ export default function PreventivePlans() {
                         <div className="space-y-xs">
                           {/* Meter items */}
                           {[
-                            { label: language === "hi" ? "टियर 1 (मेट्रो)" : language === "mr" ? "टियर १ (मेट्रो)" : language === "kn" ? "ಟಯರ್ 1 (ಮೆಟ್ರೋ)" : language === "bn" ? "টিয়ার ১ (মেট্রো)" : "Tier 1 (Metro)", scale: "100%", style: "w-full bg-[#B83B5E]" },
-                            { label: language === "hi" ? "टियर 2 शहर" : language === "mr" ? "टियर २ शहरे" : language === "kn" ? "ಟಯರ್ 2 ನಗರಗಳು" : language === "bn" ? "টিয়ার ২ শহর" : "Tier 2 Cities", scale: "70%", style: "w-[70%] bg-[#B83B5E]/70" },
+                            { label: language === "hi" ? "टियर 1 (मेट्रो)" : language === "mr" ? "टियर १ (मेट्रो)" : language === "kn" ? "ಟಯರ್ 1 (ಮೆಟ್ರೋ)" : language === "bn" ? "টিয়ার ১ (মেট্রো)" : "Tier 1 (Metro)", scale: "100%", style: "w-full bg-[#4c3a69]" },
+                            { label: language === "hi" ? "टियर 2 शहर" : language === "mr" ? "टियर २ शहरे" : language === "kn" ? "ಟಯರ್ 2 ನಗರಗಳು" : language === "bn" ? "টিয়ার ২ শহর" : "Tier 2 Cities", scale: "70%", style: "w-[70%] bg-[#4c3a69]/70" },
                             { label: language === "hi" ? "टियर 3 / ग्रामीण" : language === "mr" ? "टियर ३ / ग्रामीण" : language === "kn" ? "ಟಯರ್ 3 / ಗ್ರಾಮೀಣ" : language === "bn" ? "টিয়ার ৩ / গ্রামীণ" : "Tier 3 / Rural", scale: "40%", style: "w-[40%] bg-secondary" }
                           ].map((item) => (
                             <div key={item.label} className="space-y-[2px]">
@@ -903,15 +903,15 @@ export default function PreventivePlans() {
                   {schemes.map((scheme) => (
                     <div 
                       key={scheme.title}
-                      className="p-md bg-surface-container-low border border-outline-variant/50 rounded-2xl hover:border-[#F9CBDB]/50 transition-all flex flex-col justify-between gap-sm shadow-sm"
+                      className="p-md bg-surface-container-low border border-outline-variant/50 rounded-2xl hover:border-[#e7def3]/50 transition-all flex flex-col justify-between gap-sm shadow-sm"
                     >
                       <div className="space-y-sm">
-                        <div className="flex items-center gap-xs text-[#B83B5E] font-bold">
+                        <div className="flex items-center gap-xs text-[#4c3a69] font-bold">
                           <span className="material-symbols-outlined text-[20px]">{scheme.icon}</span>
                           <h4 className="font-headline-sm text-[15px] font-bold leading-tight">{scheme.title}</h4>
                         </div>
                         <div>
-                          <span className="text-[9px] font-bold text-[#B83B5E] uppercase bg-[#F9CBDB]/35 px-2 py-0.5 rounded-full tracking-wider border border-[#F9CBDB]">
+                          <span className="text-[9px] font-bold text-[#4c3a69] uppercase bg-[#e7def3]/35 px-2 py-0.5 rounded-full tracking-wider border border-[#e7def3]">
                             {scheme.coverage}
                           </span>
                         </div>
@@ -949,7 +949,7 @@ export default function PreventivePlans() {
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full p-2.5 pl-10 rounded-xl border border-outline-variant bg-surface-container-low font-body-sm text-on-surface outline-none focus:ring-2 focus:ring-[#B83B5E] focus:border-[#B83B5E] text-xs"
+                      className="w-full p-2.5 pl-10 rounded-xl border border-outline-variant bg-surface-container-low font-body-sm text-on-surface outline-none focus:ring-2 focus:ring-[#4c3a69] focus:border-[#4c3a69] text-xs"
                       placeholder={localT("search_insurers")}
                     />
                   </div>
@@ -961,7 +961,7 @@ export default function PreventivePlans() {
                     filteredInsurers.map((insurer) => (
                       <div 
                         key={insurer.name}
-                        className="p-md bg-surface-container-low border border-outline-variant/60 rounded-2xl shadow-sm hover:border-[#F9CBDB] transition-all flex flex-col justify-between group"
+                        className="p-md bg-surface-container-low border border-outline-variant/60 rounded-2xl shadow-sm hover:border-[#e7def3] transition-all flex flex-col justify-between group"
                       >
                         <div className="space-y-sm">
                           {/* Header: Name, sector, reliability */}
@@ -974,14 +974,14 @@ export default function PreventivePlans() {
                                 {insurer.sector} • Reg No. {insurer.regNumber}
                               </p>
                             </div>
-                            <span className="px-2 py-0.5 bg-[#F9CBDB]/20 text-[#B83B5E] border border-[#F9CBDB]/30 text-[9px] font-bold rounded-full whitespace-nowrap shrink-0">
+                            <span className="px-2 py-0.5 bg-[#e7def3]/20 text-[#4c3a69] border border-[#e7def3]/30 text-[9px] font-bold rounded-full whitespace-nowrap shrink-0">
                               {insurer.reliability}% {localT("reliability")}
                             </span>
                           </div>
 
                           {/* Policy panel */}
-                          <div className="bg-[#F9CBDB]/10 p-xs rounded-xl border border-[#F9CBDB]/30">
-                            <div className="flex items-center gap-xs text-[#B83B5E] font-bold text-xs p-1">
+                          <div className="bg-[#e7def3]/10 p-xs rounded-xl border border-[#e7def3]/30">
+                            <div className="flex items-center gap-xs text-[#4c3a69] font-bold text-xs p-1">
                               <span className="material-symbols-outlined text-sm">shield</span>
                               <span className="truncate">{insurer.primaryPolicy}</span>
                             </div>
@@ -1011,7 +1011,7 @@ export default function PreventivePlans() {
                             href={insurer.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[10px] text-[#B83B5E] hover:text-[#A12E50] font-bold flex items-center gap-[2px]"
+                            className="text-[10px] text-[#4c3a69] hover:text-[#3b2d52] font-bold flex items-center gap-[2px]"
                           >
                             {localT("visit_website")}
                             <span className="material-symbols-outlined text-[11px]">open_in_new</span>
@@ -1030,7 +1030,7 @@ export default function PreventivePlans() {
                             {insurer.contactEmail && (
                               <a
                                 href={`mailto:${insurer.contactEmail}`}
-                                className="w-7 h-7 rounded-lg bg-surface-container-highest hover:bg-surface-container flex items-center justify-center text-[#B83B5E] transition-colors border border-[#F9CBDB]/40"
+                                className="w-7 h-7 rounded-lg bg-surface-container-highest hover:bg-surface-container flex items-center justify-center text-[#4c3a69] transition-colors border border-[#e7def3]/40"
                                 title={`Email CMD Office: ${insurer.contactEmail}`}
                               >
                                 <span className="material-symbols-outlined text-sm">mail</span>

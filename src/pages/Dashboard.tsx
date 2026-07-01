@@ -865,7 +865,7 @@ export default function Dashboard() {
       <div className="dash-mono p-md md:p-lg max-w-container-max mx-auto space-y-md">
         
         {/* Clean metadata header (title · status · label-value metadata row) */}
-        <section className="bg-surface rounded-xl border border-outline-variant p-5 md:p-6">
+        <section className="bg-surface rounded-3xl border border-outline-variant/70 tonal-card-shadow p-6 md:p-8">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="min-w-0">
               <p className="text-xs font-medium text-on-surface-variant mb-1.5">{t("db_title")}</p>
@@ -929,7 +929,7 @@ export default function Dashboard() {
           <div className="lg:col-span-5 space-y-md">
             
             {/* AI Cost Calculator Assistant chatbot widget */}
-            <div className="bg-surface rounded-xl border border-outline-variant overflow-hidden flex flex-col h-[450px]">
+            <div className="bg-surface rounded-3xl border border-outline-variant/70 tonal-card-shadow overflow-hidden flex flex-col h-[450px]">
               <div className="px-md py-sm border-b border-outline-variant flex justify-between items-center shrink-0">
                 <div className="flex items-center gap-xs">
                   <span className="material-symbols-outlined text-primary text-[20px]">calculate</span>
@@ -1048,7 +1048,7 @@ export default function Dashboard() {
 
             {/* Extracted Diagnosis & Next Steps card */}
             {(extractedDiagnosis || extractedNextSteps) && (
-              <div className="bg-surface border border-outline-variant rounded-xl p-md space-y-xs animate-fade-in">
+              <div className="bg-surface border border-outline-variant/70 tonal-card-shadow rounded-2xl p-md space-y-xs animate-fade-in">
                 <div className="flex items-center gap-xs">
                   <span className="material-symbols-outlined text-secondary text-[20px] font-bold">clinical_notes</span>
                   <h3 className="font-label-md text-xs font-bold text-secondary uppercase tracking-wider">AI Clinical Cost Context</h3>

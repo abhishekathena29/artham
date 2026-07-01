@@ -1,11 +1,10 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useLanguage } from "./LanguageContext";
 
 export default function SideNav() {
   const { t } = useLanguage();
-  const { pathname } = useLocation();
-  // On the (black & white) dashboard, the active item is shaded black; teal elsewhere.
-  const activeClass = pathname === "/dashboard" ? "text-white bg-on-surface font-semibold" : "text-primary font-semibold bg-primary/10";
+  // Active item: warm coral pill across every page for a cohesive accent.
+  const activeClass = "text-on-primary bg-primary font-semibold shadow-sm";
 
   const items = [
     { to: "/intake", label: t("nav_intake"), icon: "assignment" },
@@ -29,7 +28,7 @@ export default function SideNav() {
             key={item.to}
             to={item.to}
             className={({ isActive }) =>
-              `flex items-center gap-sm px-3 py-2.5 rounded-lg font-label-md text-label-md transition-colors duration-150 ${
+              `flex items-center gap-sm px-3 py-2.5 rounded-full font-label-md text-label-md transition-all duration-150 ${
                 isActive
                   ? activeClass
                   : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
@@ -46,7 +45,7 @@ export default function SideNav() {
         ))}
       </nav>
       <div className="px-md mt-auto pt-md space-y-sm">
-        <button className="w-full bg-primary text-on-primary py-2.5 rounded-lg font-label-md text-label-md hover:brightness-110 transition-all flex items-center justify-center gap-xs shadow-sm">
+        <button className="w-full bg-primary text-on-primary py-2.5 rounded-full font-label-md text-label-md hover:brightness-110 transition-all flex items-center justify-center gap-xs shadow-sm">
           <span className="material-symbols-outlined text-[18px]">download</span>
           {t("nav_download")}
         </button>

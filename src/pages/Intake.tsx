@@ -871,14 +871,14 @@ export default function Intake() {
                       <path
                         d="M 10 45 A 40 40 0 0 1 90 45"
                         fill="none"
-                        stroke="#dce9ff"
+                        stroke="#e6e0f1"
                         strokeWidth="10"
                         strokeLinecap="round"
                       />
                       <path
                         d="M 10 45 A 40 40 0 0 1 90 45"
                         fill="none"
-                        stroke="#006a68"
+                        stroke="#4c3a69"
                         strokeWidth="10"
                         strokeLinecap="round"
                         strokeDasharray="125.66"
@@ -909,16 +909,16 @@ export default function Intake() {
                 
                 <div className="grid grid-cols-2 gap-2 mt-xs">
                   {[
-                    { id: "state", icon: "map", label: t("it_state"), value: patientState ? getLocalValue("state", patientState) : null, color: "text-[#0284c7] bg-[#f0f9ff]" },
-                    { id: "age", icon: "calendar_month", label: t("it_age"), value: age || null, color: "text-[#7c3aed] bg-[#f5f3ff]" },
-                    { id: "stage", icon: "biotech", label: t("it_stage"), value: stage ? getLocalValue("stage", stage) : null, color: "text-[#0d9488] bg-[#f0fdfa]" },
-                    { id: "receptor", icon: "science", label: t("it_receptor"), value: hormoneStatus ? getLocalValue("receptor", hormoneStatus) : null, color: "text-[#e11d48] bg-[#fff1f2]" },
-                    { id: "surgery", icon: "medical_services", label: t("it_surgery"), value: surgery ? getLocalValue("yesno", surgery) : null, color: "text-[#d97706] bg-[#fffbeb]" },
-                    { id: "chemo", icon: "medication", label: t("it_chemo"), value: chemo ? getLocalValue("yesno", chemo) : null, color: "text-[#4f46e5] bg-[#eef2ff]" },
-                    { id: "radiation", icon: "bolt", label: t("it_radiation"), value: radiation ? getLocalValue("yesno", radiation) : null, color: "text-[#ea580c] bg-[#fff7ed]" },
-                    { id: "hospital", icon: "home_health", label: t("it_hospital"), value: hospitalType ? getLocalValue("hospital", hospitalType) : null, color: "text-[#0891b2] bg-[#ecfeff]" },
-                    { id: "insurance", icon: "shield", label: t("it_insurance_status"), value: hasInsurance !== undefined ? (hasInsurance ? (insuranceProvider || t("it_insured")) : t("it_not_insured")) : null, color: "text-[#16a34a] bg-[#f0fdf4]" },
-                    { id: "income", icon: "payments", label: t("it_income"), value: incomeBracket ? getLocalValue("income", incomeBracket) : null, color: "text-[#65a30d] bg-[#f7fee7]" }
+                    { id: "state", icon: "map", label: t("it_state"), value: patientState ? getLocalValue("state", patientState) : null, color: "text-[#4c3a69] bg-[#e7def3]" },
+                    { id: "age", icon: "calendar_month", label: t("it_age"), value: age || null, color: "text-[#7458a6] bg-[#ece3f6]" },
+                    { id: "stage", icon: "biotech", label: t("it_stage"), value: stage ? getLocalValue("stage", stage) : null, color: "text-secondary bg-secondary-container/40" },
+                    { id: "receptor", icon: "science", label: t("it_receptor"), value: hormoneStatus ? getLocalValue("receptor", hormoneStatus) : null, color: "text-[#9478c4] bg-[#efe8f8]" },
+                    { id: "surgery", icon: "medical_services", label: t("it_surgery"), value: surgery ? getLocalValue("yesno", surgery) : null, color: "text-[#4c3a69] bg-[#e7def3]" },
+                    { id: "chemo", icon: "medication", label: t("it_chemo"), value: chemo ? getLocalValue("yesno", chemo) : null, color: "text-[#7458a6] bg-[#ece3f6]" },
+                    { id: "radiation", icon: "bolt", label: t("it_radiation"), value: radiation ? getLocalValue("yesno", radiation) : null, color: "text-[#9478c4] bg-[#efe8f8]" },
+                    { id: "hospital", icon: "home_health", label: t("it_hospital"), value: hospitalType ? getLocalValue("hospital", hospitalType) : null, color: "text-[#4c3a69] bg-[#e7def3]" },
+                    { id: "insurance", icon: "shield", label: t("it_insurance_status"), value: hasInsurance !== undefined ? (hasInsurance ? (insuranceProvider || t("it_insured")) : t("it_not_insured")) : null, color: "text-[#7458a6] bg-[#ece3f6]" },
+                    { id: "income", icon: "payments", label: t("it_income"), value: incomeBracket ? getLocalValue("income", incomeBracket) : null, color: "text-[#9478c4] bg-[#efe8f8]" }
                   ].map((item) => {
                     const isPending = !item.value;
                     const pendingText = language === "en" ? "Pending" : language === "hi" ? "लंबित" : language === "mr" ? "प्रलंबित" : language === "kn" ? "ಬಾಕಿ ಇದೆ" : "বাকি আছে";

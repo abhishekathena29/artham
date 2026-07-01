@@ -95,7 +95,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <AppShell bare bg="bg-[#f5f3fc]">
+    <AppShell bare bg="bg-[#f5f2fa]">
       <div className="relative">
         {/* HERO */}
         <section className="relative overflow-hidden">
@@ -217,7 +217,7 @@ export default function LandingPage() {
         </section>
 
         {/* STATS STRIP */}
-        <section className="bg-[#ece7fa]">
+        <section className="bg-[#f0ecf7]">
           <div className="max-w-container-max mx-auto px-margin-mobile md:px-md py-lg">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-md">
               {stats.map((s) => (
@@ -262,7 +262,7 @@ export default function LandingPage() {
         </section>
 
         {/* FEATURE GRID (Bento) */}
-        <section className="bg-[#f1edfb]">
+        <section className="bg-[#f9f7fc]">
           <div className="max-w-container-max mx-auto px-margin-mobile md:px-md py-xl">
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-md mb-lg">
               <div className="max-w-2xl">
@@ -369,7 +369,7 @@ export default function LandingPage() {
 
         {/* FINAL CTA */}
         <section className="max-w-container-max mx-auto px-margin-mobile md:px-md pb-xl">
-          <div className="bg-[#e8e2f8] rounded-xl p-lg md:p-xl text-center relative overflow-hidden">
+          <div className="bg-[#e8e2f1] rounded-xl p-lg md:p-xl text-center relative overflow-hidden">
             <div className="absolute -top-20 -left-20 w-72 h-72 bg-primary/10 rounded-full blur-3xl" />
             <div className="absolute -bottom-20 -right-20 w-72 h-72 bg-secondary/15 rounded-full blur-3xl" />
             <div className="relative">

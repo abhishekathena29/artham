@@ -781,7 +781,7 @@ export default function CostBreakdown() {
         {/* Selected Intake Profile Parameters Badge strip */}
         <div className="bg-surface-container-low border border-outline-variant/40 rounded-2xl p-md flex flex-wrap gap-xs items-center justify-between shadow-sm text-xs text-on-surface-variant font-medium font-body-sm">
           <div className="flex flex-wrap items-center gap-y-2 gap-x-sm">
-            <span className="font-bold text-[#B83B5E] flex items-center gap-xs">
+            <span className="font-bold text-[#4c3a69] flex items-center gap-xs">
               <span className="material-symbols-outlined text-sm">tune</span> {t("it_summary")}:
             </span>
             <span>{t("it_state")}: <strong>{patientState || "Pending"}</strong></span>
@@ -801,12 +801,12 @@ export default function CostBreakdown() {
           
           <div className="flex items-center gap-sm">
             {customBreakdown && (
-              <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 text-[10px] font-bold flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="px-2.5 py-1 rounded-full bg-secondary/10 text-secondary border border-secondary/20 text-[10px] font-bold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
                 AI Personalized
               </span>
             )}
-            <Link to="/intake" className="text-xs text-[#B83B5E] hover:underline font-bold flex items-center gap-[2px] shrink-0">
+            <Link to="/intake" className="text-xs text-[#4c3a69] hover:underline font-bold flex items-center gap-[2px] shrink-0">
               {isIntakeFilled ? t("it_edit_details") : t("db_start")} <span className="material-symbols-outlined text-[14px]">{isIntakeFilled ? "edit" : "arrow_forward"}</span>
             </Link>
           </div>
@@ -814,7 +814,7 @@ export default function CostBreakdown() {
 
         {!isIntakeFilled ? (
           <div className="bg-surface-container-lowest border border-outline-variant/40 rounded-3xl p-xl text-center space-y-md shadow-sm max-w-2xl mx-auto my-lg animate-fade-in">
-            <span className="material-symbols-outlined text-[#B83B5E] text-[64px] animate-pulse">payments</span>
+            <span className="material-symbols-outlined text-[#4c3a69] text-[64px] animate-pulse">payments</span>
             <h3 className="font-headline-md text-headline-md text-primary font-bold">{t("cb_pending_title")}</h3>
             <p className="font-body-md text-on-surface-variant text-xs leading-relaxed max-w-md mx-auto">
               {t("cb_pending_desc")}
@@ -860,10 +860,10 @@ export default function CostBreakdown() {
 
               {/* Subsidy notification banner */}
               {subsidyApplied && (
-                <div className="bg-[#F9CBDB]/10 border border-[#F9CBDB]/30 rounded-2xl p-md flex items-start gap-sm">
-                  <span className="material-symbols-outlined text-[#B83B5E] text-[20px] mt-0.5">volunteer_activism</span>
+                <div className="bg-[#e7def3]/10 border border-[#e7def3]/30 rounded-2xl p-md flex items-start gap-sm">
+                  <span className="material-symbols-outlined text-[#4c3a69] text-[20px] mt-0.5">volunteer_activism</span>
                   <div>
-                    <h4 className="text-xs font-bold text-[#B83B5E]">{subsidyName}</h4>
+                    <h4 className="text-xs font-bold text-[#4c3a69]">{subsidyName}</h4>
                     <p className="text-[11px] text-on-surface-variant leading-relaxed mt-0.5">
                       {language === "en" ? (
                         <>Your out-of-pocket share has been reduced by <strong>{formatINR(subsidyAmount)}</strong> because of your income classification. Submit your income certificate during the action plan stages to lock in this subsidy.</>
@@ -1052,7 +1052,7 @@ function LineItem({ title, body, estimate, insurance, oop, isExcluded, isHighlig
         ? "bg-surface-container-lowest border-outline-variant/20 opacity-55 hover:opacity-75"
         : isHighlighted
         ? "bg-primary/5 border-primary/30 shadow-sm hover:border-primary/60"
-        : "bg-surface-container-low border-outline-variant/50 hover:border-[#F9CBDB]/60 hover:shadow-sm"
+        : "bg-surface-container-low border-outline-variant/50 hover:border-[#e7def3]/60 hover:shadow-sm"
     }`}>
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-sm">
         <div className="flex-1 min-w-0 pr-md">
@@ -1061,7 +1061,7 @@ function LineItem({ title, body, estimate, insurance, oop, isExcluded, isHighlig
               {title}
             </h4>
             {isHighlighted && (
-              <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 text-[9px] font-bold uppercase tracking-wider flex items-center gap-[2px]">
+              <span className="px-2 py-0.5 rounded-full bg-secondary/10 text-secondary border border-secondary/20 text-[9px] font-bold uppercase tracking-wider flex items-center gap-[2px]">
                 <span className="material-symbols-outlined text-[10px]">check_circle</span>
                 {t("cb_confirmed_relevant")}
               </span>
@@ -1078,7 +1078,7 @@ function LineItem({ title, body, estimate, insurance, oop, isExcluded, isHighlig
           
           {customNote && (
             <div className="mt-2 p-1.5 rounded-lg bg-surface-container/60 border border-outline-variant/30 text-[10px] text-on-surface-variant flex items-start gap-xs max-w-lg">
-              <span className="material-symbols-outlined text-[12px] text-[#B83B5E] mt-0.5 shrink-0">auto_awesome</span>
+              <span className="material-symbols-outlined text-[12px] text-[#4c3a69] mt-0.5 shrink-0">auto_awesome</span>
               <span><strong>{t("cb_ai_personalizer_title")}:</strong> {customNote}</span>
             </div>
           )}

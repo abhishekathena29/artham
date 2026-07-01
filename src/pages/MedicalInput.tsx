@@ -854,17 +854,17 @@ Failed to analyze document: ${errMsg}.
           <div className="flex items-center gap-xs">
             {/* Gemini API Status Badge */}
             {apiKey ? (
-              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 text-[11px] font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary/10 text-secondary border border-secondary/20 text-[11px] font-bold">
+                <span className="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse" />
                 Gemini Active
               </span>
             ) : (
               <button
                 onClick={() => { setShowKeyModal(true); setTempKey(customApiKey); }}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-700 border border-amber-500/20 text-[11px] font-bold hover:bg-amber-500/20 transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-tertiary/10 text-tertiary border border-tertiary/20 text-[11px] font-bold hover:bg-tertiary/20 transition-all cursor-pointer"
                 title="Configure Gemini API Key"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                <span className="w-1.5 h-1.5 rounded-full bg-tertiary" />
                 Gemini Demo Mode
               </button>
             )}
@@ -1461,10 +1461,10 @@ Failed to analyze document: ${errMsg}.
 
               {/* Status Indicator */}
               <div className={`p-sm rounded-xl border flex items-start gap-sm text-xs ${import.meta.env.VITE_GEMINI_API_KEY
-                  ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-800"
+                  ? "bg-secondary/10 border-secondary/20 text-on-secondary-container"
                   : customApiKey
-                    ? "bg-blue-500/10 border-blue-500/20 text-blue-800"
-                    : "bg-amber-500/10 border-amber-500/20 text-amber-800"
+                    ? "bg-primary/10 border-primary/20 text-on-primary-container"
+                    : "bg-tertiary/10 border-tertiary/20 text-on-tertiary-container"
                 }`}>
                 <span className="material-symbols-outlined mt-0.5 text-[18px]">
                   {import.meta.env.VITE_GEMINI_API_KEY || customApiKey ? "check_circle" : "info"}

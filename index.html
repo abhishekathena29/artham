@@ -14,75 +14,81 @@
         theme: {
           extend: {
             colors: {
-              // --- Neutral, clean palette: near-white surfaces, soft-gray
-              //     borders, one calm blue accent, restrained teal for success ---
+              // --- Lavender palette built on two anchors: #4C3A69 (dark) and
+              //     #B49DDC (light). Full shade scale:
+              //     50 #f4f0fa · 100 #e7def3 · 200 #d6c8ea · 300 #b49ddc(light)
+              //     400 #9478c4 · 500 #7458a6 · 600 #5e4788 · 700 #4c3a69(dark)
+              //     800 #3b2d52 · 900 #2a2039
+              //     On-colors: white on dark/accent fills, near-black on light.
+              //     No flat grey — neutrals are lavender-tinted.
 
-              // Accent (primary) — Meditrace teal/mint brand color
-              primary: "#14b8a6",
+              // Accent (primary) — deep lavender #4C3A69
+              primary: "#4c3a69",
               "on-primary": "#ffffff",
-              "primary-container": "#ccfbf1",
-              "on-primary-container": "#0f766e",
-              "primary-fixed": "#ccfbf1",
-              "primary-fixed-dim": "#99f6e4",
-              "on-primary-fixed": "#042f2e",
-              "on-primary-fixed-variant": "#0f766e",
-              "inverse-primary": "#5eead4",
-              "surface-tint": "#14b8a6",
+              "primary-container": "#e7def3",
+              "on-primary-container": "#3b2d52",
+              "primary-fixed": "#e7def3",
+              "primary-fixed-dim": "#d6c8ea",
+              "on-primary-fixed": "#2a2039",
+              "on-primary-fixed-variant": "#4c3a69",
+              "inverse-primary": "#b49ddc",
+              "surface-tint": "#4c3a69",
 
-              // Success / secondary (calm teal)
-              secondary: "#0d9488",
+              // Secondary — mid lavender (companion accent)
+              secondary: "#7458a6",
               "on-secondary": "#ffffff",
-              "secondary-container": "#ccfbf1",
-              "on-secondary-container": "#115e59",
-              "secondary-fixed": "#ccfbf1",
-              "secondary-fixed-dim": "#99f6e4",
-              "on-secondary-fixed": "#042f2e",
-              "on-secondary-fixed-variant": "#115e59",
+              "secondary-container": "#ece3f6",
+              "on-secondary-container": "#3b2d52",
+              "secondary-fixed": "#ece3f6",
+              "secondary-fixed-dim": "#d6c8ea",
+              "on-secondary-fixed": "#2a2039",
+              "on-secondary-fixed-variant": "#4c3a69",
 
-              // Tertiary (muted amber, used sparingly)
-              tertiary: "#b45309",
+              // Tertiary — light lavender #B49DDC (used for soft accents)
+              tertiary: "#9478c4",
               "on-tertiary": "#ffffff",
-              "tertiary-container": "#fef3c7",
-              "on-tertiary-container": "#92400e",
-              "tertiary-fixed": "#fef3c7",
-              "tertiary-fixed-dim": "#fde68a",
-              "on-tertiary-fixed": "#451a03",
-              "on-tertiary-fixed-variant": "#92400e",
+              "tertiary-container": "#efe8f8",
+              "on-tertiary-container": "#4c3a69",
+              "tertiary-fixed": "#efe8f8",
+              "tertiary-fixed-dim": "#d6c8ea",
+              "on-tertiary-fixed": "#2a2039",
+              "on-tertiary-fixed-variant": "#4c3a69",
 
-              // Error
-              error: "#dc2626",
+              // Error — rose red (reads clearly beside lavender)
+              error: "#d64060",
               "on-error": "#ffffff",
-              "error-container": "#fee2e2",
-              "on-error-container": "#991b1b",
+              "error-container": "#fbdde4",
+              "on-error-container": "#8f2540",
 
-              // Neutral surfaces (grayscale) — subtly off-white page so white
-              // cards/chrome separate cleanly without heavy shadows.
-              background: "#f6f7f9",
+              // Neutral surfaces — faint lavender-white page, pure-white cards.
+              background: "#f5f2fa",
               surface: "#ffffff",
               "surface-bright": "#ffffff",
-              "surface-dim": "#eef0f3",
-              "surface-variant": "#f2f3f5",
+              "surface-dim": "#eae5f2",
+              "surface-variant": "#f0ecf7",
               "surface-container-lowest": "#ffffff",
-              "surface-container-low": "#f6f7f9",
-              "surface-container": "#f1f3f5",
-              "surface-container-high": "#eaecef",
-              "surface-container-highest": "#e3e6ea",
+              "surface-container-low": "#f9f7fc",
+              "surface-container": "#f0ecf7",
+              "surface-container-high": "#e8e2f1",
+              "surface-container-highest": "#ded5ec",
 
-              // Text / on-colors
-              "on-surface": "#18181b",
-              "on-background": "#18181b",
-              "on-surface-variant": "#6b7280",
-              outline: "#9ca3af",
-              "outline-variant": "#e5e7eb",
+              // Text / on-colors — deep plum near-black + muted lavender-taupe
+              "on-surface": "#2a2039",
+              "on-background": "#2a2039",
+              "on-surface-variant": "#6b6280",
+              outline: "#a89ec2",
+              "outline-variant": "#e6e0f1",
 
               // Inverse (for tooltips / dark chips)
-              "inverse-surface": "#27272a",
-              "inverse-on-surface": "#fafafa",
+              "inverse-surface": "#2a2039",
+              "inverse-on-surface": "#f5f2fa",
             },
             borderRadius: {
-              DEFAULT: "0.5rem",
-              lg: "0.75rem",
-              xl: "1rem",
+              DEFAULT: "0.625rem",
+              lg: "0.875rem",
+              xl: "1.25rem",
+              "2xl": "1.5rem",
+              "3xl": "1.75rem",
               full: "9999px",
             },
             spacing: {
@@ -135,61 +141,30 @@
         font-variation-settings: "FILL" 1;
       }
       .tonal-card-shadow {
-        box-shadow: 0 1px 2px rgba(24, 24, 27, 0.04), 0 4px 12px rgba(24, 24, 27, 0.05);
+        box-shadow: 0 1px 2px rgba(42, 32, 57, 0.05), 0 8px 24px rgba(42, 32, 57, 0.08);
       }
       .custom-scrollbar::-webkit-scrollbar { width: 6px; }
       .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-      .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
-      .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #ded5ec; border-radius: 10px; }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #b49ddc; }
       ::-webkit-scrollbar { width: 6px; height: 6px; }
       ::-webkit-scrollbar-track { background: transparent; }
-      ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
-      ::-webkit-scrollbar-thumb:hover { background: #d1d5db; }
+      ::-webkit-scrollbar-thumb { background: #ded5ec; border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: #b49ddc; }
       @keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
       .active-entity-pulse { animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 
-      /* Monochrome theme scope: dashboard is BLACK & WHITE only —
-         black text, white backgrounds, black hairline borders. No grey. */
-      .dash-mono { color: #000; }
-      /* All text (grey secondary text + accents) → black; inverted labels stay white */
-      .dash-mono [class*="text-on-surface-variant"],
-      .dash-mono [class*="text-outline"],
-      .dash-mono [class*="text-error"],
-      .dash-mono [class~="text-on-surface"],
-      .dash-mono [class~="text-primary"],
-      .dash-mono [class~="text-secondary"],
-      .dash-mono [class~="text-tertiary"],
-      .dash-mono [class~="text-on-primary-container"],
-      .dash-mono [class~="text-on-secondary-container"],
-      .dash-mono [class~="text-green-700"],
-      .dash-mono [class~="text-amber-700"] { color: #000 !important; }
-      /* Solid accents / selected fills → black */
-      .dash-mono [class~="bg-primary"],
-      .dash-mono [class~="bg-secondary"],
-      .dash-mono [class*="bg-error"],
-      .dash-mono [class~="bg-green-500"],
-      .dash-mono [class~="bg-amber-500"] { background-color: #000 !important; }
-      /* Every grey / tinted surface → white */
-      .dash-mono [class*="bg-surface"],
-      .dash-mono [class*="bg-white"],
-      .dash-mono [class~="bg-primary-container"],
-      .dash-mono [class~="bg-secondary-container"],
-      .dash-mono [class~="bg-tertiary-container"],
-      .dash-mono [class~="bg-green-100"],
-      .dash-mono [class~="bg-amber-100"] { background-color: #fff !important; }
-      /* Flatten faint accent tints & gradients */
-      .dash-mono [class*="bg-gradient"] { background-image: none !important; }
-      .dash-mono [class~="bg-primary/5"],
-      .dash-mono [class~="bg-secondary/5"],
-      .dash-mono [class~="bg-secondary/10"] { background-color: transparent !important; }
-      /* Borders → black hairline */
-      .dash-mono [class*="border-outline"],
-      .dash-mono [class~="border-primary"],
-      .dash-mono [class~="border-secondary"],
-      .dash-mono [class~="border-secondary-container"],
-      .dash-mono [class~="border-l-primary"],
-      .dash-mono [class~="border-l-secondary"],
-      .dash-mono [class~="border-l-tertiary"] { border-color: #000 !important; }
+      /* Dashboard scope: warm, coral-forward, editorial. Lets the palette
+         tokens (coral accent, sage success, warm neutrals) show through —
+         only maps the few hard-coded green/amber utility classes onto the
+         warm brand tones so nothing reads as raw cool green/grey. */
+      .dash-mono { color: #2a2039; }
+      .dash-mono [class~="text-green-700"] { color: #4c3a69 !important; }
+      .dash-mono [class~="text-amber-700"] { color: #7458a6 !important; }
+      .dash-mono [class~="bg-green-500"] { background-color: #4c3a69 !important; }
+      .dash-mono [class~="bg-amber-500"] { background-color: #9478c4 !important; }
+      .dash-mono [class~="bg-green-100"] { background-color: #e7def3 !important; }
+      .dash-mono [class~="bg-amber-100"] { background-color: #efe8f8 !important; }
     </style>
   </head>
   <body class="bg-background text-on-background">
